@@ -3,605 +3,294 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Complete HTML Tag Encyclopedia - Beginner Friendly</title>
-
-    <!-- The <base> tag specifies the base URL for all relative URLs -->
-    <base href="/" />
-
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="HTML Mastery - All Tags Practice" />
-    <meta
-      property="og:description"
-      content="A simple vertical layout showcasing almost every HTML tag with detailed educational explanations."
-    />
-    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
-
-    <style>
-      :root {
-        --bg: #fffff0;
-        --text: #111111;
-        --border: #dddddd;
-        --highlight: #f9f9f9;
-      }
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
-          sans-serif;
-        line-height: 1.6;
-        max-width: 850px;
-        margin: 40px auto;
-        padding: 20px;
-        color: var(--text);
-        background-color: var(--bg);
-      }
-      section,
-      article,
-      aside {
-        margin-bottom: 40px;
-        padding: 20px 0;
-        border-bottom: 1px solid var(--border);
-      }
-      header h1 {
-        margin-bottom: 0;
-      }
-      nav ul {
-        list-style: none;
-        padding: 10px 0;
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        border-bottom: 2px solid var(--text);
-        margin-bottom: 20px;
-      }
-      nav a {
-        text-decoration: none;
-        color: #0066cc;
-        font-weight: bold;
-      }
-
-      /* Basic Element Styling */
-      code,
-      kbd,
-      samp,
-      var {
-        font-family: monospace;
-        background: var(--highlight);
-        padding: 2px 4px;
-        border-radius: 3px;
-      }
-      pre {
-        background: var(--highlight);
-        padding: 15px;
-        border: 1px solid var(--border);
-        overflow-x: auto;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 20px 0;
-      }
-      th,
-      td {
-        border: 1px solid var(--border);
-        padding: 10px;
-        text-align: left;
-      }
-      th {
-        background: var(--highlight);
-      }
-      blockquote {
-        border-left: 5px solid #eee;
-        margin: 20px 0;
-        padding-left: 20px;
-        font-style: italic;
-      }
-
-      .explanation {
-        display: block;
-        background: #f0f7ff;
-        border-left: 4px solid #0066cc;
-        padding: 10px 15px;
-        margin: 20px 0 10px 0;
-        font-size: 0.95em;
-      }
-      .tag-demo {
-        background: #fff;
-        padding: 15px;
-        border: 1px dashed #ccc;
-        margin-bottom: 10px;
-      }
-      .tag-label {
-        font-weight: bold;
-        font-family: monospace;
-        color: #d14;
-        display: block;
-        margin-bottom: 5px;
-      }
-    </style>
+    <title>HTML Practice</title>
   </head>
   <body>
-    <!-- Main Header using <hgroup> and <search> -->
     <header>
-      <hgroup>
-        <h1>HTML Encyclopedia</h1>
-        <p>Every standard tag explained simply in one vertical scroll.</p>
-      </hgroup>
-
+      <h1>HTML Practice</h1>
+      <h2>Navigation Menu</h2>
       <nav>
         <ul>
-          <li><a href="#text">Typography</a></li>
+          <li><a href="#typography">Typography</a></li>
+          <li><a href="#lists">Lists</a></li>
           <li><a href="#media">Media</a></li>
-          <li><a href="#structure">Structure</a></li>
-          <li><a href="#tables">Tables</a></li>
-          <li><a href="#forms">Forms</a></li>
+          <li><a href="#table">Table</a></li>
+          <li><a href="#form">Form</a></li>
         </ul>
       </nav>
-
-      <search>
-        <div class="explanation">
-          <strong>Tag: &lt;search&gt;</strong> - This is a structural container
-          for search tools. It helps assistive technologies identify the search
-          part of the page.
-        </div>
-        <form action="#" method="GET" class="tag-demo">
-          <label for="site-search">Search this guide:</label>
-          <input
-            type="search"
-            id="site-search"
-            name="q"
-            placeholder="Type a tag name..."
-          />
-          <button type="submit">Search</button>
-        </form>
-      </search>
     </header>
 
     <main>
-      <article>
-        <div class="explanation">
-          <strong>Tag: &lt;article&gt;</strong> - Represents a self-contained
-          composition in a document (like a blog post, news story, or this
-          reference entry).
+      <section id="typography">
+        <h1>Typography & Content</h1>
+
+        <h1>Heading Level 1</h1>
+        <h2>Heading Level 2</h2>
+        <h3>Heading Level 3</h3>
+        <h4>Heading Level 4</h4>
+        <h5>Heading Level 5</h5>
+        <h6>Heading Level 6</h6>
+
+        <div>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do
+            eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            <span>This is a span wrapping some text inside a paragraph.</span>
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut aliquip ex ea commodo consequat.
+          </p>
+
+          <p>
+            Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur.
+            <span>Here is another span element for demonstration.</span>
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+            officia deserunt mollit anim id est laborum.
+          </p>
         </div>
 
-        <!-- SECTION 1: TYPOGRAPHY -->
-        <section id="text">
-          <h2>1. Typography & Text Elements</h2>
-
-          <div class="explanation">
-            <strong>Tag: &lt;p&gt; and &lt;br&gt;</strong> - The paragraph tag
-            groups text blocks. The <code>&lt;br&gt;</code> tag creates a manual
-            line break without starting a new paragraph.
-          </div>
-          <p class="tag-demo">
-            This is a paragraph.<br />This is on the next line because of a
-            break.
+        <div>
+          <h3>Extra Links</h3>
+          <p>
+            <a href="https://example.com/page1">External Link 1</a> |
+            <a href="https://example.com/page2">External Link 2</a> |
+            <a href="https://example.com/page3">External Link 3</a> |
+            <a href="https://example.com/page4">External Link 4</a> |
+            <a href="https://example.com/page5">External Link 5</a> |
+            <a href="https://example.com/page6">External Link 6</a> |
+            <a href="https://example.com/page7">External Link 7</a> |
+            <a href="https://example.com/page8">External Link 8</a> |
+            <a href="https://example.com/page9">External Link 9</a> |
+            <a href="https://example.com/page10">External Link 10</a>
           </p>
+        </div>
+      </section>
 
-          <div class="explanation">
-            <strong>Tag: &lt;abbr&gt;</strong> - Used for abbreviations. The
-            <code>title</code> attribute shows the full text when you hover over
-            the dotted underline.
-          </div>
-          <p class="tag-demo">
-            I love <abbr title="HyperText Markup Language">HTML</abbr>!
-          </p>
+      <section id="lists">
+        <h2>Lists Practice</h2>
+        <div>
+          <h3>Unordered List (10 Items)</h3>
+          <ul>
+            <li>Unordered item 1</li>
+            <li>Unordered item 2</li>
+            <li>Unordered item 3</li>
+            <li>Unordered item 4</li>
+            <li>Unordered item 5</li>
+            <li>Unordered item 6</li>
+            <li>Unordered item 7</li>
+            <li>Unordered item 8</li>
+            <li>Unordered item 9</li>
+            <li>Unordered item 10</li>
+          </ul>
 
-          <div class="explanation">
-            <strong>Tag: &lt;strong&gt; and &lt;em&gt;</strong> -
-            <code>&lt;strong&gt;</code> is for high importance (bold), while
-            <code>&lt;em&gt;</code> is for stress emphasis (italics).
-          </div>
-          <p class="tag-demo">
-            <strong>Danger:</strong> This is a strong warning. Please
-            <em>read carefully</em>.
-          </p>
+          <h3>Ordered List (10 Items)</h3>
+          <ol>
+            <li>Ordered item 1</li>
+            <li>Ordered item 2</li>
+            <li>Ordered item 3</li>
+            <li>Ordered item 4</li>
+            <li>Ordered item 5</li>
+            <li>Ordered item 6</li>
+            <li>Ordered item 7</li>
+            <li>Ordered item 8</li>
+            <li>Ordered item 9</li>
+            <li>Ordered item 10</li>
+          </ol>
+        </div>
+      </section>
 
-          <div class="explanation">
-            <strong>Tag: &lt;b&gt;, &lt;i&gt;, and &lt;u&gt;</strong> - These
-            are stylistic tags. <code>&lt;b&gt;</code> is bold without extra
-            importance, <code>&lt;i&gt;</code> is italics for alternate voice,
-            and <code>&lt;u&gt;</code> is an unarticulated underline.
-          </div>
-          <p class="tag-demo">
-            The word <b>HTML</b> is bold. This text is in <i>italics</i>. This
-            is <u>underlined</u>.
-          </p>
+      <section id="media">
+        <h2>Media Elements</h2>
+        <div>
+          <h3>Placeholder Images</h3>
+          <img
+            src="https://placehold.co/150x150?text=Image+1"
+            alt="Placeholder 1"
+          />
+          <img
+            src="https://placehold.co/150x150?text=Image+2"
+            alt="Placeholder 2"
+          />
+          <img
+            src="https://placehold.co/150x150?text=Image+3"
+            alt="Placeholder 3"
+          />
+          <img
+            src="https://placehold.co/150x150?text=Image+4"
+            alt="Placeholder 4"
+          />
+          <img
+            src="https://placehold.co/150x150?text=Image+5"
+            alt="Placeholder 5"
+          />
+        </div>
+      </section>
 
-          <div class="explanation">
-            <strong>Tag: &lt;del&gt;, &lt;ins&gt;, and &lt;s&gt;</strong> -
-            <code>&lt;del&gt;</code> shows deleted text (usually with a line
-            through it), <code>&lt;ins&gt;</code> shows added text (usually
-            underlined), and <code>&lt;s&gt;</code> shows text that is no longer
-            accurate.
-          </div>
-          <p class="tag-demo">
-            <del>Pre-order Price: $50</del> <ins>Now Only $20!</ins>
-            <s>Offer ends never</s>.
-          </p>
+      <section id="table">
+        <h2>Table Practice</h2>
+        <div>
+          <h3>3x3 Table</h3>
+          <table border="1">
+            <tr>
+              <td>Row 1, Column 1</td>
+              <td>Row 1, Column 2</td>
+              <td>Row 1, Column 3</td>
+            </tr>
+            <tr>
+              <td>Row 2, Column 1</td>
+              <td>Row 2, Column 2</td>
+              <td>Row 2, Column 3</td>
+            </tr>
+            <tr>
+              <td>Row 3, Column 1</td>
+              <td>Row 3, Column 2</td>
+              <td>Row 3, Column 3</td>
+            </tr>
+          </table>
+        </div>
+      </section>
 
-          <div class="explanation">
-            <strong>Tag: &lt;mark&gt;, &lt;sup&gt;, and &lt;sub&gt;</strong> -
-            <code>&lt;mark&gt;</code> highlights text for reference.
-            <code>&lt;sup&gt;</code> creates superscript (top), and
-            <code>&lt;sub&gt;</code> creates subscript (bottom).
-          </div>
-          <p class="tag-demo">
-            Don't forget the <mark>Yellow Highlighting</mark>. Math:
-            X<sup>2</sup>. Chemistry: H<sub>2</sub>O.
-          </p>
-
-          <div class="explanation">
-            <strong>Tag: &lt;blockquote&gt;, &lt;q&gt;, &lt;cite&gt;</strong> -
-            <code>&lt;blockquote&gt;</code> is for long external quotes.
-            <code>&lt;q&gt;</code> is for short inline quotes.
-            <code>&lt;cite&gt;</code> identifies the title of the work cited.
-          </div>
-          <div class="tag-demo">
-            <blockquote>
-              "To be or not to be, that is the question."
-              <footer>— <cite>Hamlet</cite> by Shakespeare</footer>
-            </blockquote>
-            As the saying goes, <q>The early bird catches the worm.</q>
-          </div>
-
-          <div class="explanation">
-            <strong
-              >Tag: &lt;code&gt;, &lt;var&gt;, &lt;kbd&gt;, &lt;samp&gt;</strong
-            >
-            - These are for computer output/documentation.
-            <code>&lt;code&gt;</code> for code snippets,
-            <code>&lt;var&gt;</code> for mathematical variables,
-            <code>&lt;kbd&gt;</code> for keyboard keys, and
-            <code>&lt;samp&gt;</code> for computer output examples.
-          </div>
-          <p class="tag-demo">
-            To run the code <code>print(<var>message</var>)</code>, press
-            <kbd>Ctrl</kbd> + <kbd>P</kbd>. The screen will show
-            <samp>Running...</samp>
-          </p>
-
-          <div class="explanation">
-            <strong>Tag: &lt;pre&gt;</strong> - Defines preformatted text. It
-            keeps every space, tab, and line break exactly as you typed it in
-            the HTML file.
-          </div>
-          <pre class="tag-demo">
-    This text
-        remains 
-            exactly 
-                indented.</pre
-          >
-
-          <div class="explanation">
-            <strong>Tag: &lt;ruby&gt;, &lt;rt&gt;, &lt;rp&gt;</strong> - Used
-            for ruby annotations, often for showing the pronunciation of East
-            Asian characters.
-          </div>
-          <p class="tag-demo">
-            <ruby>漢<rt>kan</rt><rp>(</rp><rp>)</rp></ruby
-            ><ruby>字<rt>ji</rt><rp>(</rp><rp>)</rp></ruby> (Kanji)
-          </p>
-
-          <div class="explanation">
-            <strong>Tag: &lt;bdo&gt;, &lt;bdi&gt;, &lt;wbr&gt;</strong> -
-            <code>&lt;bdo&gt;</code> overrides text direction (e.g.,
-            Right-to-Left). <code>&lt;bdi&gt;</code> isolates part of the text
-            from surrounding direction. <code>&lt;wbr&gt;</code> defines a "word
-            break" opportunity if the screen is too narrow.
-          </div>
-          <div class="tag-demo">
-            <p>Backward: <bdo dir="rtl">This text goes backward</bdo></p>
-            <p>Isolated: The user <bdi>إيان</bdi> joined.</p>
-            <p>
-              Breakpoint: ThisIsAVeryLongWordInHTMLThatNeedsA<wbr />BreakPosition.
-            </p>
-          </div>
-        </section>
-
-        <!-- SECTION 2: MEDIA & EMBEDS -->
-        <section id="media">
-          <h2>2. Media & Multi-media Elements</h2>
-
-          <div class="explanation">
-            <strong
-              >Tag: &lt;figure&gt;, &lt;figcaption&gt;, &lt;picture&gt;,
-              &lt;source&gt;, &lt;img&gt;</strong
-            >
-            - <code>&lt;figure&gt;</code> holds media and its caption.
-            <code>&lt;picture&gt;</code> allows you to provide different image
-            versions (<code>&lt;source&gt;</code>) for different screen sizes
-            before falling back to the <code>&lt;img&gt;</code>.
-          </div>
-          <figure class="tag-demo">
+      <section id="form">
+        <h2>Form Practice</h2>
+        <div>
+          <h3>User Registration Form</h3>
+          <form action="#" method="POST">
+            <div>
+              <label for="firstName">First Name:</label>
+              <input type="text" id="firstName" name="firstName" required />
+            </div>
+            <div>
+              <label for="lastName">Last Name:</label>
+              <input type="text" id="lastName" name="lastName" required />
+            </div>
+            <div>
+              <label for="email">Email Address:</label>
+              <input type="email" id="email" name="email" required />
+            </div>
+            <div>
+              <label for="phone">Phone Number:</label>
+              <input type="tel" id="phone" name="phone" />
+            </div>
+            <div>
+              <label for="dob">Date of Birth:</label>
+              <input type="date" id="dob" name="dob" />
+            </div>
+            <div>
+              <button type="submit">Submit Details</button>
+            </div>
+          </form>
+        </div>
+      <section id="advanced">
+        <h2>Advanced Components</h2>
+        
+        <article>
+          <header>
+            <h3>Article Title: HTML Expansion</h3>
+            <p>Published on <time datetime="2026-02-24">Feb 24, 2026</time></p>
+          </header>
+          
+          <figure>
             <picture>
-              <source
-                media="(min-width: 600px)"
-                srcset="https://placehold.co/600x200"
-              />
-              <img src="https://placehold.co/300x150" alt="Placeholder" />
+              <source media="(min-width: 650px)" srcset="https://placehold.co/600x200?text=Wide+Image" />
+              <img src="https://placehold.co/300x200?text=Fallback+Image" alt="A descriptive placeholder" />
             </picture>
-            <figcaption>
-              This is the caption for the responsive image above.
-            </figcaption>
+            <figcaption>Fig. 1 - A responsive picture element.</figcaption>
           </figure>
 
-          <div class="explanation">
-            <strong>Tag: &lt;map&gt;, &lt;area&gt;</strong> - These create a
-            "Clickable Image Map". You define specific coordinates (shapes) on
-            an image that link to different places.
-          </div>
-          <div class="tag-demo">
-            <img
-              src="https://placehold.co/200x100?text=Click+Left+or+Right"
-              alt="Map Demo"
-              usemap="#map1"
-            />
-            <map name="map1">
-              <area
-                shape="rect"
-                coords="0,0,100,100"
-                href="#text"
-                alt="Go to Text"
-              />
-              <area
-                shape="rect"
-                coords="100,0,200,100"
-                href="#media"
-                alt="Go to Media"
-              />
-            </map>
-          </div>
+          <p>
+            This section uses <strong>strong text</strong> and <em>emphasized text</em>. 
+            We also have <mark>highlighted text</mark> and some <s>strikethrough</s>. 
+            Let's not forget <u>underlined</u> text, <sub>subscript</sub>, and <sup>superscript</sup>.
+          </p>
 
-          <div class="explanation">
-            <strong>Tag: &lt;canvas&gt;, &lt;svg&gt;</strong> -
-            <code>&lt;canvas&gt;</code> is a box for Javascript-drawn graphics.
-            <code>&lt;svg&gt;</code> is for vector graphics (math-based shapes).
-          </div>
-          <div class="tag-demo">
-            Canvas Box:
-            <canvas
-              id="c1"
-              width="80"
-              height="30"
-              style="border: 1px solid #ddd; vertical-align: middle"
-            ></canvas>
-            SVG Shape:
-            <svg width="80" height="30" style="vertical-align: middle">
-              <rect width="80" height="30" fill="#e0e0e0" />
-              <circle cx="40" cy="15" r="10" fill="gray" />
-            </svg>
-          </div>
+          <blockquote>
+            <p>The web is a canvas, and HTML tags are our paint and brushes.</p>
+            <footer>— <cite>Unknown Developer</cite></footer>
+          </blockquote>
 
-          <div class="explanation">
-            <strong
-              >Tag: &lt;audio&gt;, &lt;video&gt;, &lt;track&gt;, &lt;iframe&gt;,
-              &lt;object&gt;</strong
-            >
-            - Tags for playing sound, movies (with
-            <code>&lt;track&gt;</code> for subtitles), and embedding external
-            websites or resources.
-          </div>
-          <div class="tag-demo">
-            <audio controls style="height: 30px">
-              <source src="dummy.mp3" /></audio
-            ><br />
-            <video width="150" controls style="margin-top: 10px">
-              <source src="dummy.mp4" /></video
-            ><br />
-            Iframe:
-            <iframe src="about:blank" height="30" style="width: 100px"></iframe>
-          </div>
-        </section>
+          <p>
+            When writing code, you might define a <var>variable</var> or show 
+            <code>inline code syntax</code>. To save, press <kbd>Ctrl</kbd> + <kbd>S</kbd>. 
+            The system output might be <samp>File saved successfully.</samp>
+          </p>
 
-        <!-- SECTION 3: STRUCTURE & INTERACTIVE -->
-        <section id="structure">
-          <h2>3. Structural & Interactive Elements</h2>
+          <address>
+            Created for: <br>
+            DevSquad-26 Practice<br>
+            Anywhere, Web 10101
+          </address>
+        </article>
 
-          <div class="explanation">
-            <strong>Tag: &lt;aside&gt;, &lt;address&gt;</strong> -
-            <code>&lt;aside&gt;</code> is for "side" content like notes or
-            sidebars. <code>&lt;address&gt;</code> provided contact details for
-            the author.
-          </div>
-          <aside class="tag-demo">
-            <p>Note: This box is an <code>&lt;aside&gt;</code>.</p>
-            <address>Contact: info@devjourney.com</address>
-          </aside>
+        <hr>
 
-          <div class="explanation">
-            <strong>Tag: &lt;details&gt;, &lt;summary&gt;</strong> - Creates a
-            native "accordion". The <code>&lt;summary&gt;</code> is the label
-            you click to show/hide the content inside
-            <code>&lt;details&gt;</code>.
-          </div>
-          <details class="tag-demo">
-            <summary>Click to show hidden details!</summary>
-            <p>
-              Now you can see me. This is built without any Javascript using
-              just HTML.
-            </p>
-          </details>
-
-          <div class="explanation">
-            <strong>Tag: &lt;progress&gt;, &lt;meter&gt;</strong> -
-            <code>&lt;progress&gt;</code> shows task completion (like a loading
-            bar). <code>&lt;meter&gt;</code> shows a measurement within a known
-            range (like disk space or battery).
-          </div>
-          <div class="tag-demo">
-            Progress: <progress value="60" max="100"></progress> 60%<br />
-            Meter:
-            <meter value="0.9" low="0.3" high="0.8" optimum="0.5"></meter> 90%
-            (High/Alert)
-          </div>
-
-          <div class="explanation">
-            <strong>Tag: &lt;dialog&gt;</strong> - Creates a modal/pop-up
-            window. Use Javascript <code>showModal()</code> to trigger it and
-            the <code>&lt;form method="dialog"&gt;</code> to close it.
-          </div>
-          <div class="tag-demo">
-            <button onclick="document.getElementById('diag').showModal()">
-              Open Dialog
-            </button>
-            <dialog id="diag">
-              <p>This is a native HTML Pop-up!</p>
-              <form method="dialog"><button>Close</button></form>
-            </dialog>
-          </div>
-        </section>
-
-        <!-- SECTION 4: TABLES -->
-        <section id="tables">
-          <h2>4. Data Tables & Lists</h2>
-
-          <div class="explanation">
-            <strong>Tag: &lt;dl&gt;, &lt;dt&gt;, &lt;dd&gt;</strong> - A
-            "Description List". Used to define terms (<code>&lt;dt&gt;</code>)
-            and provide their descriptions (<code>&lt;dd&gt;</code>).
-          </div>
-          <dl class="tag-demo">
-            <dt>HTML</dt>
-            <dd>The language used to create the structure of web pages.</dd>
-            <dt>CSS</dt>
-            <dd>The language used to style the web pages.</dd>
+        <details>
+          <summary>Click here for advanced components!</summary>
+          <dl>
+            <dt><dfn>HTML</dfn></dt>
+            <dd>HyperText Markup Language</dd>
+            <dt><abbr title="Cascading Style Sheets">CSS</abbr></dt>
+            <dd>A language used for describing the presentation of a document.</dd>
           </dl>
+          
+          <h4>Progress and Meters</h4>
+          <label for="file">Downloading progress:</label>
+          <progress id="file" value="32" max="100"> 32% </progress>
+          <br>
+          <label for="disk_c">Disk usage:</label>
+          <meter id="disk_c" value="6" min="0" max="10">6 out of 10</meter>
+        </details>
 
-          <div class="explanation">
-            <strong
-              >Tag: &lt;table&gt;, &lt;caption&gt;, &lt;colgroup&gt;,
-              &lt;col&gt;, &lt;thead&gt;, &lt;tbody&gt;, &lt;tfoot&gt;</strong
-            >
-            - A table has a caption (title), colgroups for styling whole columns
-            at once, a header row (thead), main data (tbody), and a summary
-            footer (tfoot).
-          </div>
-          <table>
-            <caption>
-              Example: Class Schedule
-            </caption>
-            <colgroup>
-              <col style="background: #f4f4f4" />
-              <col />
-            </colgroup>
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Subject</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>9:00 AM</td>
-                <td>Intro to Tags</td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <td colspan="2">End of Daily Schedule</td>
-              </tr>
-            </tfoot>
-          </table>
-        </section>
+        <hr>
 
-        <!-- SECTION 5: FORMS -->
-        <section id="forms">
-          <h2>5. Forms & Interactive Inputs</h2>
-
-          <div class="explanation">
-            <strong>Tag: &lt;form&gt;, &lt;fieldset&gt;, &lt;legend&gt;</strong>
-            - The <code>&lt;form&gt;</code> handles the data.
-            <code>&lt;fieldset&gt;</code> groups related inputs with a border,
-            and <code>&lt;legend&gt;</code> provides a title for that group.
-          </div>
-
-          <form
-            action="#"
-            method="POST"
-            oninput="out.value = parseInt(num.value)"
-            class="tag-demo"
-          >
-            <fieldset>
-              <legend>User Preferences</legend>
-
-              <div class="explanation">
-                <strong>Tag: &lt;label&gt;, &lt;input&gt;</strong> - Always
-                connect <code>&lt;label&gt;</code> to an
-                <code>&lt;input&gt;</code> using the <code>for</code> and
-                <code>id</code> attributes for accessibility.
-              </div>
-              <label for="n">Your Name:</label>
-              <input type="text" id="n" name="n" placeholder="John Doe" />
-
-              <div class="explanation">
-                <strong>Tag: &lt;datalist&gt; (Suggestion Link)</strong> - This
-                is how auto-suggestions work. You link an
-                <code>&lt;input&gt;</code> to a
-                <code>&lt;datalist&gt;</code> using the
-                <code>list</code> attribute. Users can still type anything, but
-                they see these options as they type.
-              </div>
-              <label for="brows">Browser Suggestion:</label>
-              <input
-                list="browsers"
-                id="brows"
-                placeholder="Type a browser..."
-              />
+        <h4>Advanced Form Controls</h4>
+        <form action="#" method="get">
+          <fieldset>
+            <legend>Preferences</legend>
+            <div>
+              <label for="browser">Choose a browser from this list:</label>
+              <input list="browsers" id="browser" name="browser" />
               <datalist id="browsers">
                 <option value="Chrome"></option>
                 <option value="Firefox"></option>
                 <option value="Safari"></option>
+                <option value="Edge"></option>
+                <option value="Opera"></option>
               </datalist>
-
-              <div class="explanation">
-                <strong>Tag: &lt;optgroup&gt;, &lt;option&gt;</strong> - Use
-                <code>&lt;optgroup&gt;</code> inside a dropdown
-                (<code>&lt;select&gt;</code>) to categorize your
-                <code>&lt;option&gt;</code> choices.
-              </div>
-              <label for="sel">Favorite Food:</label>
-              <select id="sel">
-                <optgroup label="Fruits">
-                  <option>Apple</option>
-                  <option>Orange</option>
+            </div>
+            <br>
+            <div>
+              <label for="cars">Choose a car:</label>
+              <select name="cars" id="cars">
+                <optgroup label="Swedish Cars">
+                  <option value="volvo">Volvo</option>
+                  <option value="saab">Saab</option>
                 </optgroup>
-                <optgroup label="Veggies">
-                  <option>Carrot</option>
+                <optgroup label="German Cars">
+                  <option value="mercedes">Mercedes</option>
+                  <option value="audi">Audi</option>
                 </optgroup>
               </select>
+            </div>
+            <br>
+            <div>
+              <label for="story">Tell us your story:</label><br>
+              <textarea id="story" name="story" rows="3" cols="30">It was a dark and stormy night...</textarea>
+            </div>
+            <br>
+            <div>
+              <input type="checkbox" id="subscribe" name="subscribe" checked>
+              <label for="subscribe">Subscribe to newsletter</label>
+            </div>
+          </fieldset>
+        </form>
 
-              <div class="explanation">
-                <strong>Tag: &lt;output&gt;</strong> - Displays the result of a
-                calculation (like the range slider below moving).
-              </div>
-              <label for="num">Move Slider:</label>
-              <input type="range" id="num" value="50" />
-              <output name="out" for="num">50</output>
+        <hr>
 
-              <div class="explanation">
-                <strong>Tag: &lt;textarea&gt;, &lt;button&gt;</strong> -
-                <code>&lt;textarea&gt;</code> for multi-line text.
-                <code>&lt;button&gt;</code> for triggers (Submit, Reset, etc.).
-              </div>
-              <p><textarea placeholder="Write a biography..."></textarea></p>
-              <button type="submit">Submit Data</button>
-            </fieldset>
-          </form>
-        </section>
-      </article>
+      </section>
     </main>
 
     <footer>
-      <p>&copy; 2026 DevJourney HTML Mastery Guide</p>
-      <p><small>Created with &lt;small&gt; for semantic footer text.</small></p>
+      <p>&copy; 2026 HTML Practice Assignment</p>
     </footer>
-
-    <!-- Scripts and Templates -->
-    <script>
-      console.log("Encyclopedia Ready.");
-    </script>
-    <noscript><p>Please enable JS.</p></noscript>
-    <template id="t1"><div>I am invisible until JS clones me!</div></template>
   </body>
 </html>
