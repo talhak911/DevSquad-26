@@ -1,0 +1,3 @@
+{
+  "rewrites": [{ "source": "/", "destination": "/day1-html-practice.html" }]
+}
