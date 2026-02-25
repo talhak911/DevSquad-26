@@ -1,0 +1,467 @@
+:root {
+  /* Primary Colors */
+  --clr-primary-purple-50: hsl(260, 100%, 95%);
+  --clr-primary-purple-300: hsl(264, 82%, 80%);
+  --clr-primary-purple-500: hsl(263, 55%, 52%);
+
+  /* Neutral Colors */
+  --clr-neutral-white: hsl(0, 0%, 100%);
+  --clr-neutral-grey-100: hsl(214, 17%, 92%);
+  --clr-neutral-grey-200: hsl(0, 0%, 81%);
+  --clr-neutral-grey-400: hsl(224, 10%, 45%);
+  --clr-neutral-grey-500: hsl(217, 19%, 35%);
+  --clr-neutral-dark-blue: hsl(219, 29%, 14%);
+  --clr-neutral-black: hsl(0, 0%, 7%);
+
+  /* Typography */
+  --ff-primary: "Barlow Semi Condensed", sans-serif;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+
+  /* Theme Defaults (Light Theme) */
+  --theme-bg-color: var(--clr-neutral-grey-100);
+  --theme-text-color: var(--clr-neutral-dark-blue);
+  --theme-card-bg: var(--clr-neutral-white);
+  --theme-card-text: var(--clr-neutral-grey-500);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--ff-primary);
+  font-size: 13px; /* From style guide Body Copy */
+  font-weight: var(--fw-medium);
+  background-color: var(--theme-bg-color);
+  color: var(--theme-text-color);
+}
+
+.container {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 3.07rem 1.53rem; /* 40px 20px */
+  display: grid;
+  gap: 2.3rem; /* 30px */
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 1024px) {
+  .container {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    /* Center the container on the screen on desktop */
+    margin: 6.15rem auto; /* 80px */
+  }
+  .card-daniel {
+    grid-column: 1 / 3;
+  }
+  .card-jonathan {
+    grid-column: 3 / 4;
+  }
+  .card-kira {
+    grid-column: 4 / 5;
+    grid-row: 1 / 3;
+  }
+  .card-jeanette {
+    grid-column: 1 / 2;
+    grid-row: 2 / 3;
+  }
+  .card-patrick {
+    grid-column: 2 / 4;
+    grid-row: 2 / 3;
+  }
+}
+
+/* Base Card Styling */
+.card {
+  border-radius: 0.61rem; /* 8px */
+  padding: 2.46rem; /* 32px */
+  box-shadow: 0 0.76rem 1.53rem -0.76rem rgba(0, 0, 0, 0.1); /* 0 10px 20px -10px */
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 1.23rem; /* 16px */
+  margin-bottom: 1.53rem; /* 20px */
+}
+
+.avatar {
+  border-radius: 50%;
+  width: 2.46rem; /* 32px */
+  height: 2.46rem; /* 32px */
+}
+
+.card-header-text h2 {
+  font-size: 1rem; /* 13px */
+  font-weight: var(--fw-medium);
+  opacity: 0.9;
+}
+
+.card-header-text p {
+  font-size: 0.84rem; /* 11px */
+  opacity: 0.5;
+}
+
+.card-body h3 {
+  font-size: 20px;
+  font-weight: var(--fw-semibold);
+  margin-bottom: 1.23rem; /* 16px */
+  line-height: 1.2;
+}
+
+.card-body p {
+  font-size: 13px;
+  opacity: 0.7;
+  line-height: 1.4;
+}
+
+/* Individual Card*/
+.card-daniel {
+  background-color: var(--clr-primary-purple-500);
+  background-image: url("./images/bg-pattern-quotation.svg");
+  background-repeat: no-repeat;
+  background-position: top right 10%;
+  color: var(--clr-neutral-white);
+}
+.card-daniel .avatar {
+  border: 0.15rem solid var(--clr-primary-purple-300); /* 2px */
+}
+
+.card-jonathan {
+  background-color: var(--clr-neutral-grey-500);
+  color: var(--clr-neutral-white);
+}
+
+.card-jeanette {
+  background-color: var(--clr-neutral-white);
+  color: var(--clr-neutral-grey-500);
+}
+
+.card-patrick {
+  background-color: var(--clr-neutral-dark-blue);
+  color: var(--clr-neutral-white);
+}
+.card-patrick .avatar {
+  border: 0.15rem solid var(--clr-primary-purple-500); /* 2px */
+}
+
+.card-kira {
+  background-color: var(--clr-neutral-white);
+  color: var(--clr-neutral-grey-500);
+}
+
+/* Task 2  */
+.resume-container {
+  max-width: 800px;
+  background-color: white;
+  margin: 1rem auto;
+  box-shadow: 0 0.76rem 1.53rem -0.76rem rgba(0, 0, 0, 0.1); /* 0 10px 20px -10px */
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.resume-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.description {
+  font-size: 0.8rem;
+}
+.contact-details {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem 1rem;
+  width: 100%;
+  justify-items: start;
+}
+
+@media (min-width: 480px) {
+  .contact-details {
+    grid-template-columns: repeat(2, 1fr);
+    justify-items: center;
+  }
+}
+
+@media (min-width: 768px) {
+  .contact-details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+  }
+}
+
+.contact-details a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.contact-details a:hover {
+  text-decoration: underline;
+}
+
+.flex-container {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+/* Style all Lucide icons */
+.lucide {
+  width: 12px;
+  height: 12px;
+  stroke: #107f39; /* A pleasant greenish color */
+}
+
+/* --- Resume Body Styles --- */
+.resume-container h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+.resume-container h2 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+}
+.resume-container h3 {
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0;
+}
+.resume-container p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  color: #333;
+}
+.resume-container strong {
+  font-weight: bold;
+  color: #000;
+}
+
+.section-divider {
+  border: none;
+  border-top: 2px solid #555;
+  margin: 15px 0;
+}
+
+.resume-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.section-title {
+  width: 100%;
+}
+.section-title h2 {
+  color: #000;
+}
+.section-content {
+  flex: 1;
+}
+
+@media (min-width: 640px) {
+  .resume-section {
+    flex-direction: row;
+    gap: 30px;
+  }
+  .section-title {
+    width: 130px;
+    flex-shrink: 0;
+  }
+}
+
+/* Profiles */
+.profiles-grid {
+  display: flex;
+  /* justify-content: space-between; */
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.profile-item {
+  display: flex;
+  flex-direction: column;
+  min-width: 100px;
+}
+.profile-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.profile-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* LinkedIn - Blue background, white icon */
+.profile-icon[data-lucide="linkedin"] {
+  background-color: #0077b5;
+  stroke: #ffffff;
+  stroke-width: 1px;
+  padding: 2px;
+  fill: white;
+  border-radius: 3px;
+}
+
+/* GitHub - Black fill */
+.profile-icon[data-lucide="github"] {
+  stroke: white;
+  fill: white;
+  background-color: black;
+  padding: 2px;
+  border-radius: 3px;
+}
+#header-git {
+  stroke: #107f39;
+}
+
+/* StackOverflow - Orange */
+.profile-icon[data-lucide="terminal-square"],
+.profile-icon[data-lucide="layers"] {
+  stroke: #f48024;
+}
+.profile-link a {
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+  font-size: 13px;
+}
+.profile-link a:hover {
+  text-decoration: underline;
+}
+.profile-item p {
+  font-size: 12px;
+  color: #666;
+}
+
+/* Lists */
+.bullet-list {
+  padding-left: 20px;
+  margin: 5px 0 0 0;
+  font-size: 13px;
+  color: #333;
+}
+.bullet-list li {
+  margin-bottom: 5px;
+  line-height: 1.5;
+}
+.bullet-list li::marker {
+  color: #cbd5e1; /* Subtle light gray bullet point color */
+}
+
+/* Experience & Education */
+.experience-item,
+.education-item {
+  margin-bottom: 20px;
+}
+.experience-item:last-child {
+  margin-bottom: 0;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  row-gap: 5px;
+}
+.item-title-group {
+  display: flex;
+  flex-direction: column;
+}
+.item-meta {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.resume-container p.role,
+.resume-container p.degree,
+.resume-container p.level {
+  color: #555;
+  font-size: 13px;
+  margin-top: 2px;
+}
+.resume-container p.date {
+  font-weight: bold;
+  color: #000;
+}
+.resume-container p.location {
+  color: #555;
+  font-size: 13px;
+}
+
+.company-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: black;
+  text-decoration: none;
+  margin: 5px 0 10px 0;
+}
+.company-link:hover {
+  text-decoration: underline;
+}
+.link-icon {
+  width: 12px;
+  height: 12px;
+  stroke: #107f39;
+}
+
+/* Grid Layouts */
+.grid-2-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 640px) {
+  .grid-2-col {
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+}
+
+.grid-3-col {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 640px) {
+  .grid-3-col {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+}
+
+/* Additional Elements */
+.resume-container p.skill-text {
+  margin-top: 5px;
+}
+.cert-header {
+  display: flex;
+  justify-content: space-between;
+}
+.cert-title h3 {
+  margin-bottom: 2px;
+}
+
+/* Project Links */
+.project-link {
+  color: inherit;
+  text-decoration: underline;
+}
+.project-desc {
+  margin-top: 10px;
+}
