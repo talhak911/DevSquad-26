@@ -1,0 +1,53 @@
+@import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
+
+@import url("https://fonts.googleapis.com/css2?family=Imperial+Script&family=Space+Grotesk:wght@300..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+@theme {
+  --font-sans:
+    "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --font-space: "Space Grotesk", sans-serif;
+  --font-script: "Imperial Script", cursive;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-hero-overlay: var(--hero-overlay);
+  --color-hero-text: var(--hero-text);
+
+  --breakpoint-3xl: 1600px;
+}
+
+:root {
+  --background: #ffffff;
+  --foreground: #111827;
+  --primary: #c9a050;
+  --secondary: #4b5563;
+  --muted: #9ca3af;
+  --accent: #f59e0b;
+  --hero-overlay: rgba(255, 255, 255, 0.4);
+  --hero-text: #111827;
+}
+
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #eab308;
+  --secondary: #cbd5e1;
+  --muted: #64748b;
+  --accent: #fbbf24;
+  --hero-overlay: rgba(0, 0, 0, 0.179);
+  --hero-text: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground font-sans transition-colors duration-300;
+  }
+}
