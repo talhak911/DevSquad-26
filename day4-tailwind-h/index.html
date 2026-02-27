@@ -924,7 +924,16 @@
 
         <!-- Vertical Center Line -->
         <div
-          class="absolute left-[34px] md:left-1/2 top-[220px] bottom-[50px] w-[2px] bg-linear-to-b from-transparent via-[#E08C3C] to-transparent md:-translate-x-1/2 opacity-70"
+          class="absolute left-[34px] md:left-1/2 top-[220px] bottom-[50px] md:-translate-x-1/2"
+          style="
+            width: 4.62px;
+            background: linear-gradient(
+              to bottom,
+              rgba(228, 223, 206, 0.7) 0%,
+              rgba(230, 187, 39, 0.7) 50%,
+              rgba(228, 223, 206, 0.7) 100%
+            );
+          "
         ></div>
 
         <div class="relative flex flex-col gap-10 md:gap-[80px]">
@@ -940,8 +949,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; right: -14px; bottom: -14px; left: 0px;
-                    background: linear-gradient(to left, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    right: -14px;
+                    bottom: -14px;
+                    left: 0px;
+                    background: linear-gradient(
+                      270deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -949,7 +966,7 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 0 0 50%);
+                    clip-path: inset(0 0 0 65%);
                   "
                 ></div>
                 <!-- Card -->
@@ -976,13 +993,13 @@
                 </div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -right-[60px] w-[60px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -right-[46px] w-[46px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50 -z-10"
                 ></div>
               </div>
             </div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E2DDD0] shadow-[0_0_15px_#E2DDD080] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E4E0CF] shadow-[0_0_15px_#E4E0CF80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Spacer -->
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
@@ -996,7 +1013,7 @@
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Content -->
             <div
@@ -1007,8 +1024,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; left: -14px; bottom: -14px; right: 0px;
-                    background: linear-gradient(to right, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    left: -14px;
+                    bottom: -14px;
+                    right: 0px;
+                    background: linear-gradient(
+                      90deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -1016,12 +1041,12 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 50% 0 0);
+                    clip-path: inset(0 65% 0 0);
                   "
                 ></div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -left-[60px] w-[60px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -left-[46px] w-[46px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50 -z-10"
                 ></div>
                 <!-- Card -->
                 <div
@@ -1061,8 +1086,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; right: -14px; bottom: -14px; left: 0px;
-                    background: linear-gradient(to left, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    right: -14px;
+                    bottom: -14px;
+                    left: 0px;
+                    background: linear-gradient(
+                      270deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -1070,7 +1103,7 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 0 0 50%);
+                    clip-path: inset(0 0 0 65%);
                   "
                 ></div>
                 <!-- Card -->
@@ -1097,13 +1130,13 @@
                 </div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -right-[60px] w-[60px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -right-[46px] w-[46px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50 -z-10"
                 ></div>
               </div>
             </div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E2DDD0] shadow-[0_0_15px_#E2DDD080] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E4E0CF] shadow-[0_0_15px_#E4E0CF80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Spacer -->
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
@@ -1117,7 +1150,7 @@
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Content -->
             <div
@@ -1128,8 +1161,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; left: -14px; bottom: -14px; right: 0px;
-                    background: linear-gradient(to right, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    left: -14px;
+                    bottom: -14px;
+                    right: 0px;
+                    background: linear-gradient(
+                      90deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -1137,12 +1178,12 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 50% 0 0);
+                    clip-path: inset(0 65% 0 0);
                   "
                 ></div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -left-[60px] w-[60px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -left-[46px] w-[46px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50 -z-10"
                 ></div>
                 <!-- Card -->
                 <div
@@ -1182,8 +1223,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; right: -14px; bottom: -14px; left: 0px;
-                    background: linear-gradient(to left, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    right: -14px;
+                    bottom: -14px;
+                    left: 0px;
+                    background: linear-gradient(
+                      270deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -1191,7 +1240,7 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 0 0 50%);
+                    clip-path: inset(0 0 0 65%);
                   "
                 ></div>
                 <!-- Card -->
@@ -1218,13 +1267,13 @@
                 </div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -right-[60px] w-[60px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -right-[46px] w-[46px] border-t-[1px] border-dashed border-[#E2DDD0] opacity-50 -z-10"
                 ></div>
               </div>
             </div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E2DDD0] shadow-[0_0_15px_#E2DDD080] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E4E0CF] shadow-[0_0_15px_#E4E0CF80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Spacer -->
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
@@ -1238,7 +1287,7 @@
             <div class="hidden md:block w-full md:w-[calc(50%-60px)]"></div>
             <!-- Center Dot -->
             <div
-              class="absolute left-[24px] md:left-1/2 top-[50px] w-[20px] h-[20px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 z-10"
+              class="absolute left-[24px] md:left-1/2 top-1/2 w-[27px] h-[27px] rounded-full bg-[#E08C3C] shadow-[0_0_15px_#E08C3C80] -translate-x-1/2 -translate-y-1/2 z-10"
             ></div>
             <!-- Content -->
             <div
@@ -1249,8 +1298,16 @@
                 <div
                   class="absolute rounded-[18.46px] pointer-events-none"
                   style="
-                    top: -14px; left: -14px; bottom: -14px; right: 0px;
-                    background: linear-gradient(to right, #E5E0CF 0%, #CF9833 27%, rgba(238,227,188,0) 76%);
+                    top: -14px;
+                    left: -14px;
+                    bottom: -14px;
+                    right: 0px;
+                    background: linear-gradient(
+                      90deg,
+                      #e5e0cf 0.12%,
+                      #cf9833 15%,
+                      rgba(238, 227, 188, 0) 65%
+                    );
                     border-radius: 18.46px;
                     padding: 6.92px;
                     -webkit-mask:
@@ -1258,12 +1315,12 @@
                       linear-gradient(#fff 0 0);
                     -webkit-mask-composite: xor;
                     mask-composite: exclude;
-                    clip-path: inset(0 50% 0 0);
+                    clip-path: inset(0 65% 0 0);
                   "
                 ></div>
                 <!-- Connector Line (Desktop) -->
                 <div
-                  class="hidden md:block absolute top-[60px] -left-[60px] w-[60px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50"
+                  class="hidden md:block absolute top-1/2 -translate-y-1/2 -left-[46px] w-[46px] border-t-[1px] border-dashed border-[#E08C3C] opacity-50 -z-10"
                 ></div>
                 <!-- Card -->
                 <div
