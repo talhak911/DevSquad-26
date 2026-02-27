@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>How It Works</title>
+    <!-- Use the configured output css to pull all custom theme variables -->
+    <link href="/output.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=clash-display@200,300,400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-black text-white relative overflow-hidden">
+    <!-- Background Blur Ellipses (Left and Right) -->
+    <!-- Left Blur -->
+    <div
+      class="absolute left-[-20%] top-[40%] w-[500px] h-[500px] bg-[#FFFFFF] opacity-5 rounded-full blur-[150px] pointer-events-none"
+    ></div>
+    <div
+      class="absolute left-[-10%] top-[50%] w-[400px] h-[400px] bg-[#E08C3C] opacity-5 rounded-full blur-[150px] pointer-events-none"
+    ></div>
+
+    <!-- Right Blur -->
+    <div
+      class="absolute right-[-20%] top-[20%] w-[500px] h-[500px] bg-[#FFFFFF] opacity-5 rounded-full blur-[150px] pointer-events-none"
+    ></div>
+
+    <section
+      class="max-w-[1728px] mx-auto pt-[120px] pb-[120px] px-6 md:px-[146px] relative z-10"
+    >
+      <!-- Section Title -->
+      <div class="flex justify-center mb-[140px]">
+        <h2
+          class="font-['Poppins',sans-serif] font-bold text-[48px] tracking-wide"
+        >
+          How It Works
+        </h2>
+      </div>
+
+      <!-- Rows Container -->
+      <div
+        class="flex flex-col gap-[180px] w-full max-w-[1200px] mx-auto relative z-10"
+      >
+        <!-- Row 1: Image Left, Text Right -->
+        <div
+          class="flex flex-col md:flex-row items-center justify-between gap-10"
+        >
+          <div class="w-full md:w-1/2 flex justify-center md:justify-start">
+            <img
+              src="/assets/h-1.png"
+              alt="Wallet and Coins"
+              class="max-w-[80%] h-auto object-contain"
+            />
+          </div>
+          <div class="w-full md:w-1/2 flex flex-col justify-center relative">
+            <!-- Sparkle top-left of text -->
+            <div class="absolute -top-[80px] -left-[40px] pointer-events-none">
+              <svg
+                width="60"
+                height="60"
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M30 0L32.5 27.5L60 30L32.5 32.5L30 60L27.5 32.5L0 30L27.5 27.5L30 0Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
+
+            <h3
+              class="font-['Clash_Display',sans-serif] font-bold text-[48px] leading-[1.2] tracking-wide mb-6"
+            >
+              Setup And Connect<br />Your Wallet.
+            </h3>
+            <p
+              class="font-['Poppins',sans-serif] text-[12px] md:text-[14px] leading-[1.8] text-white"
+            >
+              Lorem Ipsum Dolor Sit Amet Consectetur. Donec Vitae
+              Pellentesque<br />
+              Nunc Ut Sit A Volutpat Elementum. Nunc Elit Nisi Pellentesque
+              Porta<br />
+              Elementum. Id Mattis Neque Diam Nulla. Amet Et A Felis
+              Pellentesque<br />
+              Sed Odio.
+            </p>
+          </div>
+        </div>
+
+        <!-- Row 2: Text Left, Image Right -->
+        <div
+          class="flex flex-col md:flex-row-reverse items-center justify-between gap-10"
+        >
+          <div class="w-full md:w-1/2 flex justify-center md:justify-end">
+            <!-- Distinct Dark Rounded Container around the Ape -->
+            <div
+              class="bg-[#111111]/80 rounded-[48px] w-full max-w-[450px] aspect-square flex items-center justify-center overflow-hidden border border-white/5 p-4"
+            >
+              <img
+                src="/assets/h-2.png"
+                alt="NFT Ape Character"
+                class="w-full h-auto object-cover transform translate-y-8"
+              />
+            </div>
+          </div>
+          <div class="w-full md:w-1/2 flex flex-col justify-center relative">
+            <h3
+              class="font-['Clash_Display',sans-serif] font-bold text-[48px] leading-[1.2] tracking-wide mb-6"
+            >
+              Create Your Own<br />Digital NFT
+            </h3>
+            <p
+              class="font-['Poppins',sans-serif] text-[12px] md:text-[14px] leading-[1.8] text-white"
+            >
+              Lorem Ipsum Dolor Sit Amet Consectetur. Donec Vitae
+              Pellentesque<br />
+              Nunc Ut Sit A Volutpat Elementum. Nunc Elit Nisi Pellentesque
+              Porta<br />
+              Elementum. Id Mattis Neque Diam Nulla. Amet Et A Felis
+              Pellentesque<br />
+              Sed Odio.
+            </p>
+
+            <!-- Sparkle bottom-right below text -->
+            <div
+              class="absolute -bottom-[120px] right-[40px] pointer-events-none opacity-80 scale-150"
+            >
+              <svg
+                width="60"
+                height="60"
+                viewBox="0 0 60 60"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M30 0L32.5 27.5L60 30L32.5 32.5L30 60L27.5 32.5L0 30L27.5 27.5L30 0Z"
+                  fill="white"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 3: Image Left, Text Right -->
+        <div
+          class="flex flex-col md:flex-row items-center justify-between gap-10"
+        >
+          <div
+            class="w-full md:w-1/2 flex justify-center md:justify-start relative"
+          >
+            <!-- Tiny ambient sparkles around the chest -->
+            <div
+              class="absolute top-[40px] left-[60px] pointer-events-none opacity-60 scale-50"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 0L21.6 18.4L40 20L21.6 21.6L20 40L18.4 21.6L0 20L18.4 18.4L20 0Z"
+                  fill="#E08C3C"
+                />
+              </svg>
+            </div>
+            <div
+              class="absolute bottom-[80px] left-[0px] pointer-events-none opacity-80 scale-50"
+            >
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 40 40"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M20 0L21.6 18.4L40 20L21.6 21.6L20 40L18.4 21.6L0 20L18.4 18.4L20 0Z"
+                  fill="#FFF"
+                />
+              </svg>
+            </div>
+
+            <img
+              src="/assets/h-3.png"
+              alt="Treasure Chest Character"
+              class="max-w-[80%] h-auto object-contain"
+            />
+          </div>
+          <div class="w-full md:w-1/2 flex flex-col justify-center">
+            <h3
+              class="font-['Clash_Display',sans-serif] font-bold text-[48px] leading-[1.2] tracking-wide mb-6"
+            >
+              Setup And Connect<br />Your Wallet.
+            </h3>
+            <p
+              class="font-['Poppins',sans-serif] text-[12px] md:text-[14px] leading-[1.8] text-white"
+            >
+              Lorem Ipsum Dolor Sit Amet Consectetur. Donec Vitae
+              Pellentesque<br />
+              Nunc Ut Sit A Volutpat Elementum. Nunc Elit Nisi Pellentesque
+              Porta<br />
+              Elementum. Id Mattis Neque Diam Nulla. Amet Et A Felis
+              Pellentesque<br />
+              Sed Odio.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </body>
+</html>
