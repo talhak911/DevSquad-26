@@ -8,12 +8,16 @@
   <body>
     <header class="bg-gray mx-auto z-50">
       <nav
-        class="flex items-center max-w-[1728px] mx-auto justify-between py-[43px] text-white pl-[167px] pr-[164px]"
+        class="flex items-center max-w-[1728px] mx-auto justify-between px-6 py-4 2xl:py-[43px] text-white 2xl:pl-[167px] 2xl:pr-[164px]"
       >
         <div class="">
-          <p class="text-[27px] font-bold">Logo</p>
+          <p class="text-[20px] 2xl:text-[27px] font-bold">Logo</p>
         </div>
-        <ul class="flex gap-[62px] text-[21px] font-semibold items-center">
+
+        <!-- Desktop Menu -->
+        <ul
+          class="hidden 2xl:flex gap-[62px] text-[21px] font-semibold items-center"
+        >
           <li>About</li>
           <li>Collection</li>
           <li>Creater</li>
@@ -27,12 +31,35 @@
             </button>
           </li>
         </ul>
+
+        <!-- Mobile Menu Placeholder -->
+        <div class="2xl:hidden flex items-center gap-4">
+          <button
+            class="bg-orange font-bold border border-white px-6 py-2 rounded-full text-sm"
+          >
+            sign in
+          </button>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8 cursor-pointer"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 6h16M4 12h16M4 18h16"
+            />
+          </svg>
+        </div>
       </nav>
     </header>
 
     <!-- Hero Section with background image -->
     <section
-      class="relative h-screen flex items-center justify-center overflow-hidden"
+      class="relative min-h-screen flex items-center justify-center overflow-hidden py-24 2xl:py-0"
     >
       <!-- Background Image -->
       <img
@@ -42,17 +69,22 @@
       />
 
       <!-- Content Container (Example content to show background) -->
-      <div class="pl-[217px] pr-[201px] grid grid-cols-2 items-center">
-        <div>
-          <h1 class="font-bold text-[86px] text-white">
-            We Have High <br />
+      <div
+        class="px-6 md:px-12 2xl:pl-[217px] 2xl:pr-[201px] grid grid-cols-1 2xl:grid-cols-2 gap-4 lg:gap-16 2xl:gap-0 items-center w-full max-w-[1728px] mx-auto"
+      >
+        <div
+          class="flex flex-col order-first 2xl:order-last items-center text-center 2xl:items-start 2xl:text-left mt-10 2xl:mt-0"
+        >
+          <h1
+            class="font-bold text-5xl md:text-6xl 2xl:text-[86px] text-white leading-tight"
+          >
+            We Have High <br class="hidden 2xl:block" />
             Quality
-            <span class="text-orange relative"
+            <span class="text-orange relative inline-block"
               >NFT
 
               <svg
-                class="absolute -right-[130px] top-[20px]"
-                width="103"
+                class="absolute -right-[40px] top-[0px] w-[50px] 2xl:-right-[130px] 2xl:top-[20px] 2xl:w-[103px]"
                 height="102"
                 viewBox="0 0 103 102"
                 fill="none"
@@ -67,7 +99,9 @@
             <br />
             Collections
           </h1>
-          <p class="text-light-gray font-bold text-[13px] max-w-[609px]">
+          <p
+            class="text-light-gray font-bold text-[13px] max-w-[609px] mt-6 2xl:mt-0"
+          >
             Lorem ipsum dolor sit amet consectetur. Rhoncus massa suspendisse
             turpis sed viverra tempus tortor. Habitant accumsan sagittis in
             facilisi placerat ac. Laoreet scelerisque viverra viverra ornare
@@ -75,16 +109,16 @@
             convallis ornare nullam enim neque.
           </p>
           <div
-            class="flex gap-[50px] mt-[58px] items-center text-[17px] text-white"
+            class="flex flex-col md:flex-row gap-4 md:gap-[50px] mt-10 2xl:mt-[58px] items-center text-sm md:text-[17px] text-white"
           >
             <button
-              class="bg-orange font-bold border border-white px-[42px] py-[16px] rounded-[22px]"
+              class="bg-orange font-bold border border-white px-8 py-3 2xl:px-[42px] 2xl:py-[16px] rounded-[22px] w-full md:w-auto"
             >
               Get Whitelist
             </button>
 
             <button
-              class="font-bold border border-white px-[42px] py-[16px] rounded-[22px]"
+              class="font-bold border border-white px-8 py-3 2xl:px-[42px] 2xl:py-[16px] rounded-[22px] w-full md:w-auto"
             >
               Contact Us
             </button>
@@ -92,55 +126,71 @@
             <!-- glass section -->
           </div>
           <div
-            class="relative mt-[70px] overflow-hidden w-[599.51px] h-[162.16px] bg-glass rounded-[39.312px] flex items-center justify-between px-[60px] z-10 font-sans"
+            class="relative mt-[50px] 2xl:mt-[70px] overflow-hidden w-full max-w-[599.51px] 2xl:w-[599.51px] h-auto 2xl:h-[162.16px] bg-glass rounded-[39.312px] flex flex-wrap 2xl:flex-nowrap items-center justify-center 2xl:justify-between py-8 2xl:py-0 px-6 2xl:px-[60px] gap-8 2xl:gap-0 z-10 font-sans"
           >
             <!-- Ellipse 127 -->
             <div
               class="absolute w-[191.65px] h-[164.62px] left-[143.54px] top-[-82.3px] bg-ellipse-orange rounded-full"
             ></div>
-            <div class="flex flex-col gap-1">
-              <span class="text-white text-[34px] font-bold tracking-wide"
+            <div
+              class="flex flex-col gap-1 items-center 2xl:items-start z-10 text-center 2xl:text-left min-w-[120px]"
+            >
+              <span
+                class="text-white text-3xl 2xl:text-[34px] font-bold tracking-wide"
                 >240k+</span
               >
-              <span class="text-white text-[29px] tracking-wide"
+              <span
+                class="text-white text-xl md:text-2xl 2xl:text-[29px] tracking-wide"
                 >Total Sale</span
               >
             </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-white text-[34px] font-bold tracking-wide"
+            <div
+              class="flex flex-col gap-1 items-center 2xl:items-start z-10 text-center 2xl:text-left min-w-[120px]"
+            >
+              <span
+                class="text-white text-3xl 2xl:text-[34px] font-bold tracking-wide"
                 >100k+</span
               >
-              <span class="text-white text-[29px] tracking-wide">Auctions</span>
+              <span
+                class="text-white text-xl md:text-2xl 2xl:text-[29px] tracking-wide"
+                >Auctions</span
+              >
             </div>
-            <div class="flex flex-col gap-1">
-              <span class="text-white text-[34px] font-bold tracking-wide"
+            <div
+              class="flex flex-col gap-1 items-center 2xl:items-start z-10 text-center 2xl:text-left min-w-[120px]"
+            >
+              <span
+                class="text-white text-3xl 2xl:text-[34px] font-bold tracking-wide"
                 >240k+</span
               >
-              <span class="text-white text-[29px] tracking-wide">Artists</span>
+              <span
+                class="text-white text-xl md:text-2xl 2xl:text-[29px] tracking-wide"
+                >Artists</span
+              >
             </div>
           </div>
         </div>
 
         <!-- Image and Decoration Group 865 -->
-        <div class="flex items-end ml-[50px]">
+        <div
+          class="flex items-end order-first 2xl:order-last justify-center 2xl:ml-[50px] mt-16 2xl:mt-0 pb-20 2xl:pb-0"
+        >
           <div
-            class="relative w-[570px] h-[700px] flex items-center justify-center justify-self-end mt-[-30px]"
+            class="relative w-[90%] max-w-[450px] 2xl:max-w-none 2xl:w-[570px] aspect-[4/5] 2xl:aspect-auto 2xl:h-[700px] flex items-center justify-center 2xl:justify-self-end mt-[-30px]"
           >
             <!-- Decorative Border Line (Rectangle 198) -->
             <div
-              class="absolute inset-0 right-[40px] border-[1.35px] border-white rounded-[181.695px_181.695px_0px_181.695px]"
+              class="absolute inset-0 right-[20px] 2xl:right-[40px] border-[1.35px] border-white rounded-[100px_100px_0px_100px] 2xl:rounded-[181.695px_181.695px_0px_181.695px]"
             ></div>
 
             <!-- Background Shape (Rectangle 197) -->
             <div
-              class="absolute inset-[0_0_0_40px] bg-bg-rect rounded-[181.695px_181.695px_0px_181.695px] z-0"
+              class="absolute inset-[0_0_0_20px] 2xl:inset-[0_0_0_40px] bg-bg-rect rounded-[100px_100px_0px_100px] 2xl:rounded-[181.695px_181.695px_0px_181.695px] z-0"
             ></div>
 
             <!-- Bottom Left Star SVG -->
             <svg
-              class="absolute -left-[50px] -bottom-[30px] z-20"
-              width="75"
-              height="75"
+              class="absolute -left-[30px] 2xl:-left-[50px] -bottom-[15px] 2xl:-bottom-[30px] z-20 w-[45px] 2xl:w-[75px] h-[45px] 2xl:h-[75px]"
               viewBox="0 0 75 75"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -156,13 +206,13 @@
             <!-- The Image -->
             <img
               src="/assets/tiger.png"
-              class="absolute mb-5 w-[487.61px] h-[652.62px] object-cover rounded-[181.695px_181.695px_0px_181.695px] right-[2px] bottom-0 z-10"
+              class="absolute mb-5 w-[85%] 2xl:w-[487.61px] h-[92%] 2xl:h-[652.62px] object-cover rounded-[100px_100px_0px_100px] 2xl:rounded-[181.695px_181.695px_0px_181.695px] right-[2px] bottom-0 z-10"
               alt=""
             />
           </div>
           <!-- Right floating arrow button -->
           <div
-            class="pt-[168px] pb-[136px] mb-5 px-4 border-y border-r border-white rounded-tr-3xl rounded-br-3xl flex items-center justify-center z-20 cursor-pointer"
+            class="hidden 2xl:flex pt-[168px] pb-[136px] mb-5 px-4 border-y border-r border-white rounded-tr-3xl rounded-br-3xl flex items-center justify-center z-20 cursor-pointer"
           >
             <svg
               width="6"
@@ -185,28 +235,28 @@
     </section>
 
     <!-- About Section -->
-    <section class="bg-black">
+    <section class="bg-black py-12 2xl:py-0">
       <div>
         <h1
-          class="mb-[131px] text-[54px] w-full text-center text-white font-bold"
+          class="mb-12 2xl:mb-[131px] text-4xl 2xl:text-[54px] w-full text-center text-white font-bold"
         >
           About Us
         </h1>
 
-        <div>
+        <div class="px-6 md:px-12 2xl:px-0">
           <!-- Group 1261152709 Container -->
           <div
-            class="w-full relative min-h-[620.14px] bg-about-glass backdrop-blur-[6.46px] flex justify-center py-[36px] box-border"
+            class="w-full relative min-h-auto 2xl:min-h-[620.14px] bg-about-glass backdrop-blur-[6.46px] flex flex-col items-center py-10 2xl:py-[36px] box-border rounded-3xl 2xl:rounded-none overflow-hidden"
           >
             <div
-              class="max-w-[1728px] w-full px-[146px] flex items-center justify-between gap-[85px]"
+              class="max-w-[1728px] w-full px-6 2xl:px-[146px] flex flex-col 2xl:flex-row items-center justify-between gap-12 2xl:gap-[85px]"
             >
               <!-- Left Side: Images Grid -->
               <div
-                class="grid grid-cols-2 gap-y-[30px] gap-x-[76px] w-[50%] max-w-[650px]"
+                class="grid grid-cols-2 gap-4 md:gap-8 2xl:gap-y-[30px] 2xl:gap-x-[76px] w-full 2xl:w-[50%] max-w-[650px]"
               >
                 <div
-                  class="w-[297px] h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
+                  class="w-full aspect-square 2xl:w-[297px] 2xl:h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
                 >
                   <img
                     src="/assets/tiger-1.png"
@@ -215,7 +265,7 @@
                   />
                 </div>
                 <div
-                  class="w-[297px] h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
+                  class="w-full aspect-square 2xl:w-[297px] 2xl:h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
                 >
                   <img
                     src="/assets/tiger-2.png"
@@ -224,7 +274,7 @@
                   />
                 </div>
                 <div
-                  class="w-[297px] h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
+                  class="w-full aspect-square 2xl:w-[297px] 2xl:h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
                 >
                   <img
                     src="/assets/tiger-3.png"
@@ -233,7 +283,7 @@
                   />
                 </div>
                 <div
-                  class="w-[297px] h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
+                  class="w-full aspect-square 2xl:w-[297px] 2xl:h-[258.32px] bg-dark-card rounded-[13.814px] flex items-center justify-center overflow-hidden"
                 >
                   <img
                     src="/assets/tiger-4.png"
@@ -244,9 +294,11 @@
               </div>
 
               <!-- Right Side: Text & Button -->
-              <div class="w-[50%] flex flex-col items-start pb-[39px]">
+              <div
+                class="w-full 2xl:w-[50%] flex flex-col items-center text-center 2xl:items-start 2xl:text-left pb-[39px]"
+              >
                 <p
-                  class="font-['Poppins',sans-serif] font-bold text-[16.2px] leading-[35px] text-white mb-[50px]"
+                  class="font-['Poppins',sans-serif] font-bold text-sm md:text-base 2xl:text-[16.2px] leading-relaxed 2xl:leading-[35px] text-white mb-8 2xl:mb-[50px] opacity-90"
                 >
                   Lorem ipsum dolor sit amet consectetur. Pharetra faucibus
                   donec ultrices eros elit metus morbi aliquam quis. Suspendisse
@@ -322,10 +374,14 @@
 
       <!-- Section Header Content -->
       <div class="relative z-10 flex flex-col items-center pb-[50px] mb-[30px]">
-        <h2 class="text-white font-bold text-[54px] mb-[15px]">
+        <h2
+          class="text-white font-bold text-4xl 2xl:text-[54px] mb-4 2xl:mb-[15px]"
+        >
           Top Collections
         </h2>
-        <p class="text-white text-center text-[18px] max-w-[500px]">
+        <p
+          class="text-white text-center text-sm md:text-base 2xl:text-[18px] max-w-[500px] px-6 2xl:px-0"
+        >
           The largest and unique Super rare NFT marketplace<br />For
           crypto-collectibles
         </p>
@@ -343,15 +399,17 @@
 
       <div class="max-w-[1728px] mx-auto">
         <!-- Card Grid -->
-        <div class="grid grid-cols-3 gap-[30px] px-[146px]">
+        <div
+          class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-8 2xl:gap-[30px] px-6 md:px-12 2xl:px-[146px]"
+        >
           <!-- Card 1 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -359,7 +417,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -367,7 +425,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tt-1.png"
@@ -379,12 +437,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -395,12 +453,12 @@
 
           <!-- Card 2 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -408,7 +466,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -416,7 +474,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tt-2.png"
@@ -428,12 +486,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -444,12 +502,12 @@
 
           <!-- Card 3 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -457,7 +515,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -465,7 +523,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tt-3.png"
@@ -477,12 +535,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -493,12 +551,12 @@
 
           <!-- Card 4 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -506,7 +564,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -514,7 +572,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tt-4.png"
@@ -526,12 +584,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -542,12 +600,12 @@
 
           <!-- Card 5 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -555,7 +613,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -563,7 +621,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tt-5.png"
@@ -575,12 +633,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -591,12 +649,12 @@
 
           <!-- Card 6 -->
           <div
-            class="w-full bg-card-bg-nft rounded-[18.53px] p-[18.53px] flex flex-col box-border min-h-[531.9px]"
+            class="w-full bg-card-bg-nft rounded-[18.53px] p-4 2xl:p-[18.53px] flex flex-col box-border min-h-auto 2xl:min-h-[531.9px]"
           >
             <!-- Header -->
             <div class="flex flex-col gap-[4.63px]">
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-text-creator"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-text-creator"
                 >Created by</span
               >
               <div class="flex flex-row items-center gap-[9.27px]">
@@ -604,7 +662,7 @@
                   class="w-[27.8px] h-[27.8px] bg-avatar-bg rounded-full"
                 ></div>
                 <span
-                  class="font-['Clash_Display',sans-serif] font-semibold text-[18.53px] leading-[28px] text-author-name"
+                  class="font-['Clash_Display',sans-serif] font-semibold text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-author-name"
                   >James Watson</span
                 >
               </div>
@@ -612,7 +670,7 @@
             <!-- Image -->
             <div class="mt-[50px] mb-[35px] flex justify-center">
               <div
-                class="w-[299.7px] h-[286.2px] rounded-full overflow-hidden shrink-0"
+                class="w-full max-w-[299.7px] aspect-square rounded-[36px] overflow-hidden shrink-0"
               >
                 <img
                   src="/assets/tiger.png"
@@ -624,12 +682,12 @@
             <!-- Footer Text -->
             <div class="mt-auto flex flex-col gap-[4.63px]">
               <h3
-                class="font-['Poppins',sans-serif] font-bold text-[27px] leading-[28px] text-card-title"
+                class="font-['Poppins',sans-serif] font-bold text-xl 2xl:text-[27px] leading-relaxed 2xl:leading-[28px] text-card-title"
               >
                 Nfts Collections
               </h3>
               <span
-                class="font-['Clash_Display',sans-serif] text-[18.53px] leading-[28px] text-card-subtitle"
+                class="font-['Clash_Display',sans-serif] text-base 2xl:text-[18.53px] leading-relaxed 2xl:leading-[28px] text-card-subtitle"
                 >Created by
                 <span class="text-author-name font-semibold"
                   >James Watson</span
@@ -652,28 +710,36 @@
 
     <!-- Top Creators Section -->
     <div class="bg-black">
-      <section class="max-w-[1728px] mx-auto pt-[100px] pb-[100px]">
-        <div class="flex flex-col items-center mb-[80px]">
-          <h2 class="text-white font-bold text-[54px] mb-[15px]">
+      <section
+        class="max-w-[1728px] mx-auto pt-16 pb-16 2xl:pt-[100px] 2xl:pb-[100px]"
+      >
+        <div class="flex flex-col items-center mb-[40px] 2xl:mb-[80px]">
+          <h2
+            class="text-white font-bold text-4xl 2xl:text-[54px] mb-4 2xl:mb-[15px]"
+          >
             Top Creators
           </h2>
-          <p class="text-[#AAB0B6] text-center text-[18px]">
+          <p
+            class="text-[#AAB0B6] text-center text-base 2xl:text-[18px] px-6 2xl:px-0"
+          >
             Checkout Top Rated Creators On The NFT Marketplace
           </p>
         </div>
 
         <!-- Grid -->
-        <div class="grid grid-cols-4 gap-[30px] px-[146px]">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-4 gap-6 2xl:gap-[30px] px-6 md:px-12 2xl:px-[146px]"
+        >
           <!-- Artist 1 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >1</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-1.png"
@@ -683,12 +749,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -696,14 +762,14 @@
           </div>
           <!-- Artist 2 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >2</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-2.png"
@@ -713,12 +779,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -726,14 +792,14 @@
           </div>
           <!-- Artist 3 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >3</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-3.png"
@@ -743,12 +809,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -756,14 +822,14 @@
           </div>
           <!-- Artist 4 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >4</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-4.png"
@@ -773,12 +839,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -786,14 +852,14 @@
           </div>
           <!-- Artist 5 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >5</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-5.png"
@@ -803,12 +869,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -816,14 +882,14 @@
           </div>
           <!-- Artist 6 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >6</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-6.png"
@@ -833,12 +899,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -846,14 +912,14 @@
           </div>
           <!-- Artist 7 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >7</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-7.png"
@@ -863,12 +929,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -876,14 +942,14 @@
           </div>
           <!-- Artist 8 -->
           <div
-            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-[27px] gap-[27px] relative transition-transform hover:-translate-y-2"
+            class="bg-artist-bg rounded-[27px] flex flex-col items-center p-6 2xl:p-[27px] gap-4 2xl:gap-[27px] relative transition-transform hover:-translate-y-2 w-full max-w-[350px] mx-auto"
           >
             <span
-              class="absolute top-[27px] left-[27px] text-[16px] text-[#AAB0B6] font-['Clash_Display',sans-serif] font-semibold"
+              class="absolute top-6 left-6 2xl:top-[27px] 2xl:left-[27px] text-sm 2xl:text-[16px] text-[#AAB0B6] font-[\'Clash_Display\',sans-serif] font-semibold"
               >8</span
             >
             <div
-              class="w-[160px] h-[160px] rounded-full overflow-hidden mt-[15px]"
+              class="w-[120px] h-[120px] 2xl:w-[160px] 2xl:h-[160px] rounded-full overflow-hidden mt-[15px] shrink-0"
             >
               <img
                 src="/assets/t-8.png"
@@ -893,12 +959,12 @@
             </div>
             <div class="flex flex-col items-center gap-[10px]">
               <h3
-                class="text-white font-bold text-[24px] font-['Poppins',sans-serif]"
+                class="text-white font-bold text-xl 2xl:text-[24px] font-[\'Poppins\',sans-serif]"
               >
                 Name NFT
               </h3>
               <span
-                class="text-[#AAB0B6] text-[16px] font-['Poppins',sans-serif]"
+                class="text-[#AAB0B6] text-sm 2xl:text-[16px] font-[\'Poppins\',sans-serif]"
                 >Total Sales:
                 <span class="text-white font-bold">34.53 ETH</span></span
               >
@@ -1603,7 +1669,7 @@
         <h2
           class="font-['Clash_Display',sans-serif] font-bold text-[36px] md:text-[54px] text-white tracking-wide text-center mb-6"
         >
-          Join OurCommunity
+          Join Our Community
         </h2>
 
         <p
