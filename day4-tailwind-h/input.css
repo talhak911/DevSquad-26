@@ -1,5 +1,33 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Clash_Display";
+  src: url("/assets/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Clash_Display";
+  src: url("/assets/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Clash_Display";
+  src: url("/assets/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Clash_Display";
+  src: url("/assets/ClashDisplay-Medium.otf") format("opentype");
+  font-weight: bold;
+  font-style: normal;
+}
+
 @theme {
   --color-gray: #191919;
   --color-orange: #da8f4d;
