@@ -8,4 +8,7 @@
   --color-glass: rgba(107, 107, 107, 0.13);
   --color-ellipse-orange: rgba(218, 143, 77, 0.06);
   --color-bg-rect: rgba(253, 216, 173, 0.25);
+  --color-about-glass: rgba(218, 143, 77, 0.09);
+  --color-dark-card: rgba(43, 43, 43, 0.68);
+  --color-btn-glass: rgba(255, 255, 255, 0.35);
 }
