@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-body: var(--bg-body);
+  --color-bg-card: var(--bg-card);
+  --color-bg-unread: var(--bg-unread);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-time: var(--text-time);
+  --color-text-accent: var(--text-accent);
+  --color-text-accent-hover: var(--text-accent-hover);
+  --color-bg-badge: var(--bg-badge);
+  --color-ruby-dot: var(--color-ruby-dot);
+  --color-border-color: var(--border-color);
+  --font-plus-jakarta: "Plus Jakarta Sans", sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-body: hsl(210, 60%, 98%);
+    --bg-card: hsl(0, 100%, 100%);
+    --bg-unread: hsl(211, 68%, 94%);
+    --text-primary: hsl(224, 21%, 14%);
+    --text-secondary: hsl(219, 12%, 42%);
+    --text-time: hsl(219, 14%, 63%);
+    --text-accent: hsl(219, 85%, 26%);
+    --text-accent-hover: hsl(219, 85%, 26%, 0.5); /* or adjust appropriately */
+    --bg-badge: hsl(219, 85%, 26%);
+    --color-ruby-dot: hsl(1, 90%, 64%);
+    --border-color: hsl(205, 33%, 90%);
+  }
+
+  .dark {
+    --bg-body: hsl(224, 21%, 14%);
+    --bg-card: hsl(220, 26%, 10%);
+    --bg-unread: hsl(219, 85%, 26%, 0.2);
+    --text-primary: hsl(0, 100%, 100%);
+    --text-secondary: hsl(205, 33%, 90%);
+    --text-time: hsl(219, 14%, 63%);
+    --text-accent: hsl(211, 68%, 94%);
+    --text-accent-hover: hsl(211, 68%, 94%, 0.8);
+    --bg-badge: hsl(219, 85%, 26%);
+    --color-ruby-dot: hsl(1, 90%, 64%);
+    --border-color: hsl(219, 12%, 42%);
+  }
+}

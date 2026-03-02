@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- displays site properly based on user's device -->
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./assets/images/favicon-32x32.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./src/output.css" />
+    <title>JavaScript Task</title>
+  </head>
+  <body
+    class="bg-bg-body font-plus-jakarta text-text-secondary min-h-screen flex items-center justify-center p-4 antialiased transition-colors duration-300"
+  >
+    <main class="w-full max-w-2xl bg-bg-card rounded-2xl shadow-sm p-4 sm:p-8">
+      <!-- Header -->
+      <header class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <h1 class="text-xl sm:text-2xl font-extrabold text-text-primary">
+            Notifications
+          </h1>
+          <span
+            class="bg-bg-badge text-white px-3 py-0.5 rounded-md text-base font-extrabold"
+            id="unread-count"
+            >3</span
+          >
+        </div>
+        <button
+          class="text-text-secondary hover:text-text-accent transition-colors font-medium text-sm sm:text-base cursor-pointer bg-transparent border-none"
+          id="mark-all-read"
+        >
+          Mark all as read
+        </button>
+      </header>
+
+      <!-- Notifications List -->
+      <div id="notifications-container" class="flex flex-col gap-3">
+        <!-- Notifications will be injected here via JavaScript -->
+      </div>
+    </main>
+
+    <script>
+      // Notifications Data Setup
+      let notifications = [
+        {
+          id: 1,
+          user: "Mark Webber",
+          avatar: "avatar-mark-webber.webp",
+          action: "reacted to your recent post",
+          target: "My first tournament today!",
+          time: "1m ago",
+          unread: true,
+          type: "reaction",
+        },
+        {
+          id: 2,
+          user: "Angela Gray",
+          avatar: "avatar-angela-gray.webp",
+          action: "followed you",
+          time: "5m ago",
+          unread: true,
+          type: "follow",
+        },
+        {
+          id: 3,
+          user: "Jacob Thompson",
+          avatar: "avatar-jacob-thompson.webp",
+          action: "has joined your group",
+          target: "Chess Club",
+          targetIsGroup: true,
+          time: "1 day ago",
+          unread: true,
+          type: "group",
+        },
+        {
+          id: 4,
+          user: "Rizky Hasanuddin",
+          avatar: "avatar-rizky-hasanuddin.webp",
+          action: "sent you a private message",
+          time: "5 days ago",
+          unread: false,
+          message:
+            "Hello, thanks for setting up the Chess Club. I've been a member for a few weeks now and I'm already having lots of fun and improving my game.",
+          type: "message",
+        },
+        {
+          id: 5,
+          user: "Kimberly Smith",
+          avatar: "avatar-kimberly-smith.webp",
+          action: "commented on your picture",
+          targetImage: "image-chess.webp",
+          time: "1 week ago",
+          unread: false,
+          type: "comment",
+        },
+        {
+          id: 6,
+          user: "Nathan Peterson",
+          avatar: "avatar-nathan-peterson.webp",
+          action: "reacted to your recent post",
+          target: "5 end-game strategies to increase your win rate",
+          time: "2 weeks ago",
+          unread: false,
+          type: "reaction",
+        },
+        {
+          id: 7,
+          user: "Anna Kim",
+          avatar: "avatar-anna-kim.webp",
+          action: "left the group",
+          target: "Chess Club",
+          targetIsGroup: true,
+          time: "2 weeks ago",
+          unread: false,
+          type: "group",
+        },
+      ];
+
+      const markAllBtn = document.getElementById("mark-all-read");
+      const container = document.getElementById("notifications-container");
+      const unreadCountEl = document.getElementById("unread-count");
+
+      // Render Function
+      function renderNotifications() {
+        container.innerHTML = "";
+        let unreadCount = 0;
+
+        notifications.forEach((notif) => {
+          if (notif.unread) unreadCount++;
+
+          const article = document.createElement("article");
+
+          // Dynamic classes based on read/unread state
+          const stateClasses = notif.unread
+            ? "bg-bg-unread shadow-sm hover:shadow-md"
+            : "bg-transparent hover:bg-bg-body";
+
+          article.className = `notification-card rounded-xl p-4 flex gap-4 transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-bg-badge ${stateClasses}`;
+          // Make it focusable for keyboard navigation
+          article.tabIndex = 0;
+
+          // Click to mark as read
+          const markRead = () => {
+            if (notif.unread) {
+              notif.unread = false;
+              renderNotifications(); // Re-render to update state
+            }
+          };
+
+          article.addEventListener("click", markRead);
+          article.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              markRead();
+            }
+          });
+
+          let targetHtml = "";
+          if (notif.target) {
+            if (notif.targetIsGroup) {
+              targetHtml = `<span class="font-extrabold text-text-accent hover:text-text-accent-hover transition-colors inline-block ml-1">${notif.target}</span>`;
+            } else {
+              targetHtml = `<span class="font-extrabold text-text-primary hover:text-text-accent transition-colors inline-block ml-1">${notif.target}</span>`;
+            }
+          }
+
+          const unreadDot = notif.unread
+            ? `<span class="inline-block w-2.5 h-2.5 bg-ruby-dot rounded-full ml-1 mb-0.5"></span>`
+            : "";
+
+          const messageBlock = notif.message
+            ? `<div class="mt-3 p-4 rounded-md border border-border-color text-text-secondary hover:bg-bg-unread transition-colors text-sm sm:text-base">${notif.message}</div>`
+            : "";
+
+          const targetImageBlock = notif.targetImage
+            ? `<img src="./assets/images/${notif.targetImage}" alt="Target" class="w-10 h-10 sm:w-12 sm:h-12 rounded-md hover:ring-[3px] focus-visible:ring-[3px] ring-bg-badge transition-all object-cover">`
+            : "";
+
+          // Build Inner Content
+          const textContent = `
+          <div>
+            <p class="text-sm sm:text-base leading-snug break-words">
+              <span class="font-extrabold text-text-primary hover:text-text-accent transition-colors">${notif.user}</span>
+              <span class="text-text-secondary text-wrap p-[0.1px]"> ${notif.action} </span>
+              ${targetHtml}
+              ${unreadDot}
+            </p>
+            <p class="text-text-time text-sm sm:text-base mt-1">${notif.time}</p>
+            ${messageBlock}
+          </div>
+        `;
+
+          if (notif.targetImage) {
+            article.innerHTML = `
+            <img src="./assets/images/${notif.avatar}" alt="${notif.user}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full shrink-0">
+            <div class="flex-1 flex justify-between items-start gap-4">
+              ${textContent}
+              ${targetImageBlock}
+            </div>
+          `;
+          } else {
+            article.innerHTML = `
+            <img src="./assets/images/${notif.avatar}" alt="${notif.user}" class="w-10 h-10 sm:w-12 sm:h-12 rounded-full shrink-0">
+            <div class="flex-1">
+              ${textContent}
+            </div>
+          `;
+          }
+
+          container.appendChild(article);
+        });
+
+        // Update Header Unread count
+        unreadCountEl.textContent = unreadCount;
+      }
+
+      // Initial render
+      renderNotifications();
+
+      // Mark all as read button
+      markAllBtn.addEventListener("click", () => {
+        notifications.forEach((n) => (n.unread = false));
+        renderNotifications();
+      });
+    </script>
+  </body>
+</html>
