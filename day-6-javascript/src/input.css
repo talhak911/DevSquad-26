@@ -1,0 +1,93 @@
+@import "tailwindcss";
+
+@theme {
+  --color-purple-primary: var(--color-purple);
+  --color-red-light: var(--color-red);
+  --color-white-bg: var(--color-white);
+  --color-off-white: var(--color-off-white);
+
+  --color-light-grey: var(--color-light-grey);
+  --color-smokey-grey: var(--color-smokey-grey);
+  --color-off-black: var(--color-off-black);
+
+  --color-submit-hover: var(--color-hover);
+
+  --font-poppins: "Poppins", sans-serif;
+}
+
+@layer base {
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/fonts/Poppins-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/fonts/Poppins-Italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+  }
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/fonts/Poppins-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/fonts/Poppins-ExtraBold.ttf") format("truetype");
+    font-weight: 800;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Poppins";
+    src: url("../assets/fonts/Poppins-ExtraBoldItalic.ttf") format("truetype");
+    font-weight: 800;
+    font-style: italic;
+  }
+
+  :root {
+    --color-purple: hsl(259, 100%, 65%);
+    --color-red: hsl(0, 100%, 67%);
+    --color-white: hsl(0, 0%, 100%);
+    --color-off-white: hsl(0, 0%, 94%);
+    --color-light-grey: hsl(0, 0%, 86%);
+    --color-smokey-grey: hsl(0, 0%, 44%);
+    --color-off-black: hsl(0, 0%, 8%);
+    --color-hover: hsl(259, 75%, 55%); /* User can change this */
+  }
+
+  /* Dark mode via prefers-color-scheme */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-purple: hsl(259, 100%, 75%);
+      --color-red: hsl(0, 100%, 72%);
+      --color-white: hsl(0, 0%, 12%);
+      --color-off-white: hsl(0, 0%, 6%);
+      --color-light-grey: hsl(0, 0%, 25%);
+      --color-smokey-grey: hsl(0, 0%, 60%);
+      --color-off-black: hsl(0, 0%, 95%);
+    }
+  }
+
+  /* Explicit dark mode class */
+  :root[data-theme="dark"] {
+    --color-purple: hsl(259, 100%, 75%);
+    --color-red: hsl(0, 100%, 72%);
+    --color-white: hsl(0, 0%, 12%);
+    --color-off-white: hsl(0, 0%, 6%);
+    --color-light-grey: hsl(0, 0%, 25%);
+    --color-smokey-grey: hsl(0, 0%, 60%);
+    --color-off-black: hsl(0, 0%, 95%);
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
