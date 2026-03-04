@@ -385,108 +385,148 @@
       </div>
 
       <!-- Know more about us! -->
-      <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] py-16">
-        <!-- header row with tabs -->
-        <div class="flex justify-between items-center mb-8">
-          <h2 class="text-3xl font-bold">Know more about us!</h2>
-          <div
-            class="hidden md:flex gap-4 border border-border rounded-full p-1 bg-white shadow-sm"
-          >
-            <button
-              class="bg-black text-white px-6 py-2 rounded-full font-semibold text-sm"
-            >
-              Frequent Questions
-            </button>
-            <button
-              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
-            >
-              Who we are?
-            </button>
-            <button
-              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
-            >
-              Partner Program
-            </button>
-            <button
-              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
-            >
-              Help & Support
-            </button>
-          </div>
-        </div>
-
+      <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px]">
         <div
-          class="bg-secondary rounded-3xl p-8 md:p-12 text-white flex flex-col lg:flex-row gap-8 items-center justify-between shadow-lg"
+          class="bg-[#D9D9D9]/30 rounded-xl px-4 lg:px-[110px] pt-10 pb-16 lg:py-16"
         >
+          <!-- header row with tabs -->
           <div
-            class="w-full lg:w-1/3 flex flex-col gap-6 bg-white/5 p-8 rounded-2xl items-start h-full"
+            class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-10 gap-6"
           >
-            <button
-              class="bg-primary text-black font-bold px-8 py-3 rounded-full hover:bg-primary-hover transition-colors shadow-md"
+            <h2
+              class="text-3xl lg:text-[44px] font-bold text-black tracking-tight w-full lg:w-auto"
             >
               Know more about us!
-            </button>
+            </h2>
             <div
-              class="flex flex-col gap-4 mt-6 font-semibold text-white/90 text-sm"
+              class="flex flex-wrap lg:flex-nowrap items-center gap-4 lg:gap-8 font-bold text-sm lg:text-[18px] text-black w-full lg:w-auto justify-between lg:justify-end"
             >
-              <p
-                class="hover:text-primary transition-colors cursor-pointer border-b border-white/10 pb-4"
+              <button
+                class="border border-primary text-black px-6 lg:px-8 py-2 lg:py-3 rounded-[120px] font-bold"
               >
-                What goes into our business and recipes?
-              </p>
-              <p
-                class="hover:text-primary transition-colors cursor-pointer border-b border-white/10 pb-4"
+                Frequent Questions
+              </button>
+              <button
+                class="hover:text-primary transition-colors whitespace-nowrap"
               >
-                Did you know we have our own farm?
-              </p>
-              <p class="hover:text-primary transition-colors cursor-pointer">
-                Our measures against Food Waste and your Carbon Footprint
-              </p>
+                Who we are?
+              </button>
+              <button
+                class="hover:text-primary transition-colors whitespace-nowrap"
+              >
+                Partner Program
+              </button>
+              <button
+                class="hover:text-primary transition-colors whitespace-nowrap"
+              >
+                Help & Support
+              </button>
             </div>
           </div>
 
-          <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <!-- card 1 -->
+          <div
+            class="bg-[#03081F] rounded-[12px] p-8 lg:p-10 flex flex-col lg:flex-row gap-7 items-stretch shadow-lg"
+          >
+            <!-- Left side: Questions -->
             <div
-              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
+              class="flex flex-col gap-6 lg:gap-8 justify-center items-center lg:items-center text-center w-full lg:w-[35%] relative"
             >
-              <h4 class="font-bold text-lg mb-2 pt-2">Choose Order</h4>
-              <img
-                src="./assets/order-1.png"
-                alt="Choose Order"
-                class="h-28 my-4 object-contain"
-              />
-              <p class="text-sm text-gray-600 pb-2">
-                Browse and pick your favorite meal from our vast menu.
-              </p>
+              <button
+                class="bg-primary text-black font-bold px-8 py-4 lg:py-[18px] rounded-[120px] shadow-md text-[18px] lg:w-[346px]"
+              >
+                How does Order.UK work?
+              </button>
+              <div
+                class="flex flex-col gap-5 lg:gap-6 font-bold text-white text-[18px] text-center w-full"
+              >
+                <p class="hover:text-primary transition-colors cursor-pointer">
+                  What payment methods are accepted?
+                </p>
+                <p class="hover:text-primary transition-colors cursor-pointer">
+                  Can I track my order in real-time?
+                </p>
+                <p
+                  class="hover:text-primary transition-colors cursor-pointer text-center mx-auto lg:w-[303px]"
+                >
+                  Are there any special discounts or promotions available?
+                </p>
+                <p class="hover:text-primary transition-colors cursor-pointer">
+                  Is Order.UK available in my area?
+                </p>
+              </div>
             </div>
-            <!-- card 2 -->
+
+            <!-- Vertical Separator line on large screens -->
+            <div class="hidden lg:block w-[1px] bg-white/10 shrink-0"></div>
+
+            <!-- Right side: Cards & Text -->
             <div
-              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
+              class="flex-1 flex flex-col justify-center items-center lg:items-start text-center"
             >
-              <h4 class="font-bold text-lg mb-2 pt-2">Track Progress</h4>
-              <img
-                src="./assets/order-2.png"
-                alt="Track Progress"
-                class="h-28 my-4 object-contain"
-              />
-              <p class="text-sm text-gray-600 pb-2">
-                Track your progress and see exactly when it will arrive.
-              </p>
-            </div>
-            <!-- card 3 -->
-            <div
-              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
-            >
-              <h4 class="font-bold text-lg mb-2 pt-2">Get your Order</h4>
-              <img
-                src="./assets/order-3.png"
-                alt="Get your Order"
-                class="h-28 my-4 object-contain"
-              />
-              <p class="text-sm text-gray-600 pb-2">
-                Receive your order at your doorstep & enjoy your meal.
-              </p>
+              <div
+                class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-[20px] w-full mb-[20px] lg:mb-[33px]"
+              >
+                <!-- card 1 -->
+                <div
+                  class="bg-[#D9D9D9] text-[#03081F] p-6 lg:p-5 rounded-[12px] flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-2 cursor-pointer h-full justify-start"
+                >
+                  <h4 class="font-bold text-[18px] mb-4 lg:mb-6">
+                    Place an Order!
+                  </h4>
+                  <img
+                    src="./assets/order-1.png"
+                    alt="Place an Order!"
+                    class="h-[100px] lg:h-[128px] w-auto mb-6 lg:mb-8 object-contain"
+                  />
+                  <p class="text-[16px] leading-[25px] font-medium text-black">
+                    Place order through our
+                    <br class="hidden lg:block" />website or Mobile app
+                  </p>
+                </div>
+                <!-- card 2 -->
+                <div
+                  class="bg-[#D9D9D9] text-[#03081F] p-6 lg:p-5 rounded-[12px] flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-2 cursor-pointer h-full justify-start"
+                >
+                  <h4 class="font-bold text-[18px] mb-4 lg:mb-6">
+                    Track Progress
+                  </h4>
+                  <img
+                    src="./assets/order-2.png"
+                    alt="Track Progress"
+                    class="h-[100px] lg:h-[115px] w-auto mb-6 lg:mb-8 object-contain"
+                  />
+                  <p class="text-[16px] leading-[25px] font-medium text-black">
+                    Your can track your order status with delivery time
+                  </p>
+                </div>
+                <!-- card 3 -->
+                <div
+                  class="bg-[#D9D9D9] text-[#03081F] p-6 lg:p-5 rounded-[12px] flex flex-col items-center text-center shadow-lg transition-transform hover:-translate-y-2 cursor-pointer h-full justify-start"
+                >
+                  <h4 class="font-bold text-[18px] mb-4 lg:mb-6">
+                    Get your Order!
+                  </h4>
+                  <img
+                    src="./assets/order-3.png"
+                    alt="Get your Order!"
+                    class="h-[100px] lg:h-[128px] w-auto mb-6 lg:mb-8 object-contain"
+                  />
+                  <p class="text-[16px] leading-[25px] font-medium text-black">
+                    Receive your order at a lighting fast speed!
+                  </p>
+                </div>
+              </div>
+
+              <div class="w-full text-center flex justify-center mt-auto">
+                <p
+                  class="text-white text-[16px] leading-[24px] lg:max-w-[625px]"
+                >
+                  Order.UK simplifies the food ordering process. Browse through
+                  our diverse menu, select your favorite dishes, and proceed to
+                  checkout. Your delicious meal will be on its way to your
+                  doorstep in no time!
+                </p>
+              </div>
             </div>
           </div>
         </div>
