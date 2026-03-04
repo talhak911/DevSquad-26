@@ -19,7 +19,7 @@
       class="sticky top-0 z-40 w-full bg-white shadow-sm border-b border-border"
     >
       <div
-        class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-4 flex items-center justify-between"
+        class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] py-4 flex items-center justify-between"
       >
         <!-- Logo -->
         <div class="flex items-center gap-2">
@@ -86,42 +86,56 @@
     <main class="grow">
       <!-- Hero Section -->
       <div
-        class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-8 lg:py-12"
+        class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] py-8 lg:pt-12 lg:pb-[46px]"
       >
         <div
-          class="relative w-full rounded-[24px] bg-secondary text-white pb-8 md:pb-0"
+          class="relative w-full rounded-[12px] bg-secondary text-white pb-8 md:pb-0"
         >
-          <!-- The background image could be dynamic, but for now fixed layout based on design -->
+          <!-- Background Image with Fading Overlay -->
+          <div class="absolute inset-0 pointer-events-none">
+            <img
+              src="./assets/burger-1.png"
+              alt=""
+              class="w-full h-full object-cover opacity-15"
+            />
+            <div
+              class="absolute inset-0 rounded-[12px] bg-linear-to-r from-secondary/60 via-secondary/20 to-transparent"
+            ></div>
+          </div>
 
           <div
-            class="flex flex-col md:flex-row items-center justify-between p-6 md:p-12 lg:p-16 z-10 relative"
+            class="flex flex-col md:flex-row items-center lg:items-end justify-between p-6 md:p-12 lg:p-[57px] z-10 relative"
           >
-            <div class="max-w-xl">
-              <p class="text-sm text-gray-300 mb-4">I'm lovin' it!</p>
-              <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
+            <div class="max-w-2xl">
+              <p class="text-sm lg:text-[20px] text-gray-300 mb-4">
+                I'm lovin' it!
+              </p>
+              <h1
+                class="text-4xl md:text-5xl lg:text-[54px] font-semibold mb-[30px]"
+              >
                 McDonald's East London
               </h1>
 
               <div class="flex flex-wrap items-center gap-4 mb-6">
                 <div
-                  class="flex items-center gap-3 border border-white/50 px-6 py-3 rounded-full text-sm font-semibold"
+                  class="flex items-center gap-3 border border-white/50 px-6 lg:text-lg py-3 rounded-full text-sm font-semibold"
                 >
-                  <i class="fa-solid fa-file-invoice text-white text-lg"></i>
+                  <img src="./assets/Order Completed.png" alt="" />
                   Minimum Order: 12 GBP
                 </div>
                 <div
-                  class="flex items-center gap-3 border border-white/50 px-6 py-3 rounded-full text-sm font-semibold"
+                  class="flex items-center gap-3 border border-white/50 px-6 lg:text-lg py-3 rounded-full text-sm font-semibold"
                 >
-                  <i class="fa-solid fa-motorcycle text-white text-lg"></i>
+                  <img src="./assets/Motocross.png" alt="" />
                   Delivery in 20-25 Minutes
                 </div>
               </div>
             </div>
 
             <!-- Hero Image block -->
-            <div class="relative w-full md:w-[60%] flex justify-end">
+            <div class="relative w-full md:w-[45%] flex justify-end">
               <div
-                class="bg-white rounded-[24px] p-4 shadow-xl relative w-full lg:w-[480px] h-64 lg:h-[350px] flex items-center justify-center overflow-hidden"
+                class="bg-white rounded-[12px] shadow-xl relative w-full lg:max-w-[581px] h-64 lg:h-[350px] flex items-center justify-center overflow-hidden"
               >
                 <!-- Burger image inside -->
                 <img
@@ -133,11 +147,11 @@
 
               <!-- Rating Box Absolute to Hero Image Container -->
               <div
-                class="absolute bottom-6 -left-4 md:-left-8 bg-white shadow-2xl text-black px-6 py-4 lg:px-8 lg:py-6 rounded-2xl font-bold flex flex-col items-center z-20"
+                class="absolute -bottom-4 lg:left-1 -left-4 md:-left-8 bg-white shadow-2xl text-black px-6 py-4 lg:px-6 lg:py-4 rounded-2xl font-bold flex flex-col items-center z-20"
               >
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3 flex-col">
                   <span
-                    class="text-5xl lg:text-[68px] font-black tracking-tight leading-none"
+                    class="text-5xl lg:text-[68px] font-normal tracking-tight leading-none"
                     >3.4</span
                   >
                   <div class="flex flex-col gap-1 items-start">
@@ -159,28 +173,31 @@
 
           <!-- Open Until Absolute Box -->
           <div
-            class="absolute bottom-0 left-0 bg-primary text-white font-bold px-8 lg:px-12 py-4 lg:py-5 rounded-bl-[24px] rounded-r-3xl flex items-center gap-3 z-20 shadow-lg text-sm lg:text-base translate-y-1/2"
+            class="absolute bottom-0 left-0 bg-primary text-white font-semibold px-8 lg:px-12 py-4 lg:py-[18px] rounded-r-2xl flex items-center gap-3 lg:gap-[19px] z-20 shadow-lg text-sm lg:text-base translate-y-1/2"
           >
-            <i class="fa-regular fa-clock text-xl"></i> Open until 3:00 AM
+            <img src="./assets/Clock.png" alt="" />
+            Open until 3:00 AM
           </div>
         </div>
 
         <!-- Search and Info row below hero -->
         <div
-          class="flex flex-col md:flex-row justify-between items-center my-8 gap-4"
+          class="flex flex-co lg:mx-[57px] md:flex-row justify-between items-center mt-8 lg:mt-[64px] gap-4"
         >
-          <div class="flex items-center gap-2 text-xl font-bold">
+          <div class="flex items-center gap-2 text-xl lg:text-[32px] font-bold">
             All Offers from McDonald's East London
           </div>
 
           <div class="relative w-full md:w-80">
-            <i
-              class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-            ></i>
+            <img
+              src="./assets/Search More.png"
+              class="absolute left-4 lg:left-7 top-1/2 transform -translate-y-1/2"
+              alt=""
+            />
             <input
               type="text"
               placeholder="Search from menu..."
-              class="w-full pl-10 pr-4 py-3 rounded-full border border-border bg-white focus:outline-none focus:border-primary transition-colors focus:ring-1 focus:ring-primary shadow-sm text-sm"
+              class="w-full pl-12 lg:pl-16 pr-4 py-[20px] rounded-full border border-secondary bg-white focus:outline-none focus:border-primary transition-colors focus:ring-1 focus:ring-primary shadow-sm text-sm lg:text-lg"
             />
           </div>
         </div>
@@ -188,9 +205,9 @@
 
       <!-- Category Navigation -->
       <div class="w-full bg-primary overflow-x-auto py-3">
-        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+        <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px]">
           <div
-            class="flex items-center gap-4 lg:gap-8 whitespace-nowrap min-w-max text-sm font-semibold"
+            class="flex items-center gap-4 lg:text-base lg:text-[21px] justify-around lg:gap-8 whitespace-nowrap min-w-max text-sm font-semibold"
           >
             <a
               href="#"
@@ -237,12 +254,22 @@
               class="text-white hover:text-black transition-colors"
               >Hot drinks</a
             >
+            <a
+              href="#hot-drinks"
+              class="text-white hover:text-black transition-colors"
+              >Sauces</a
+            >
+            <a
+              href="#hot-drinks"
+              class="text-white hover:text-black transition-colors"
+              >Orbit®</a
+            >
           </div>
         </div>
       </div>
 
       <!-- Main Menu Area -->
-      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-12">
+      <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] py-12">
         <!-- Offers Section Placeholder -->
         <!-- We will skip exact offers section and render all products group by type -->
         <div id="menu-container" class="flex flex-col gap-12">
@@ -253,7 +280,7 @@
       <!-- Info Module: Delivery, Contact, Operational Times -->
       <div class="bg-section-bg py-16 mt-8 shadow-inner">
         <div
-          class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] grid grid-cols-1 md:grid-cols-3 gap-8"
+          class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] grid grid-cols-1 md:grid-cols-3 gap-8"
         >
           <!-- Delivery Info -->
           <div class="bg-white p-8 rounded-2xl shadow-sm flex flex-col gap-4">
@@ -329,7 +356,7 @@
       </div>
 
       <!-- Know more about us! -->
-      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-16">
+      <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px] py-16">
         <!-- header row with tabs -->
         <div class="flex justify-between items-center mb-8">
           <h2 class="text-3xl font-bold">Know more about us!</h2>
@@ -438,7 +465,7 @@
 
       <!-- Customer Reviews -->
       <div class="bg-gray py-16 lg:pt-[87px] lg:pb-[129px]">
-        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+        <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px]">
           <div class="flex justify-between items-center mb-10">
             <h2 class="text-3xl md:text-4xl font-bold">Customer Reviews</h2>
             <div class="flex gap-4">
@@ -487,7 +514,7 @@
 
       <!-- Similar Restaurants -->
       <div class="bg-section-bg pt-20 pb-16">
-        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+        <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px]">
           <h2 class="text-3xl font-bold mb-10">Similar Restaurants</h2>
           <div
             id="similar-restaurants-container"
@@ -501,7 +528,7 @@
 
     <!-- Footer -->
     <footer class="bg-section-bg border-t border-border pt-16">
-      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+      <div class="max-w-[1728px] mx-auto px-4 md:px-8 xl:px-[100px]">
         <div
           class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16"
         >

@@ -39,24 +39,26 @@ function renderProducts() {
     let itemsHtml = items
       .map(
         (p) => `
-      <div class="bg-white border text-left border-border rounded-xl p-4 flex justify-between gap-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-         <div class="flex-1 flex flex-col justify-between">
+      <div class="bg-white border text-left border-border rounded-xl p-4 flex justify-between gap-4 shadow-xl hover:shadow-2xl transition-shadow lg:pt-6 lg:pl-[30px] lg:pb-[22px] lg:pr-[25px] relative overflow-hidden group">
+         <div class="flex-1 flex flex-col justify-between my-2">
             <div>
-               <h4 class="font-bold text-lg mb-1">${p.name}</h4>
-               <p class="text-sm text-text-muted line-clamp-2">${p.description}</p>
+               <h4 class="font-semibold lg:text-[20px] lg:leading-[24px] text-lg mb-1 lg:mb-6">${p.name}</h4>
+               <p class="text-sm lg:leading-[25px]   line-clamp-2">${p.description}</p>
             </div>
-            <p class="font-bold mt-4">${p.currency} ${p.price.toFixed(2)}</p>
+            <p class="font-bold text-lg mt-3">${p.currency} ${p.price.toFixed(2)}</p>
          </div>
          
-         <div class="relative w-32 h-32 shrink-0 bg-gray-50 rounded-lg overflow-hidden">
+         <div class="relative w-32 h-32 lg:h-[199px] lg:w-[203px] shrink-0 bg-gray-50 rounded-xl overflow-hidden">
             <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300">
             
             <!-- Adding to base html, positioning Add button at bottom right corner -->
-         </div>
-         <!-- Add button directly on the card -->
-         <button class="absolute -bottom-2 -right-2 bg-white text-black hover:bg-black hover:text-white border shadow-md w-12 h-12 rounded-tl-xl flex justify-center items-center text-2xl transition-all duration-300 z-10 font-bold group-hover:bg-primary group-hover:text-white" onclick="window.app.addToCart(${p.id})">
-            +
+        
+          <!-- Add button directly on the card -->
+         <button class="absolute cursor-pointer -bottom-2 -right-2 bg-white/90  rounded-tl-[45px] flex justify-center items-center text-2xl transition-all duration-300 z-10 font-bold group-hover:bg-primary lg:pl-[24px] lg:pt-[18px] lg:pr-[15px] lg:pb-[14px] group-hover:text-white" onclick="window.app.addToCart(${p.id})">
+          <img src="../assets/Plus.png" alt="">
          </button>
+            </div>
+       
       </div>
     `,
       )
@@ -64,7 +66,7 @@ function renderProducts() {
 
     html += `
       <section id="${type.replace(" ", "-")}">
-         <h2 class="text-3xl font-bold mb-6 text-primary">${title}</h2>
+         <h2 class="text-3xl lg:text-[44px] lg:mt-[50px] font-bold mb-6  ${title == "Burgers" ? "text-black" : "text-primary"}">${title}</h2>
          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             ${itemsHtml}
          </div>
