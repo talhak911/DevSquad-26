@@ -172,6 +172,12 @@ function setupEventListeners() {
     cartModal.classList.add("hidden");
     cartModal.classList.remove("flex");
   });
+
+  const closeCartBottomBtn = document.getElementById("close-cart-bottom");
+  closeCartBottomBtn?.addEventListener("click", () => {
+    cartModal.classList.add("hidden");
+    cartModal.classList.remove("flex");
+  });
 }
 
 export function addToCart(productId) {
