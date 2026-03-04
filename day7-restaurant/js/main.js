@@ -118,11 +118,11 @@ function renderSimilarRestaurants() {
   container.innerHTML = similarRestaurants
     .map(
       (r) => `
-    <div class="group relative bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] overflow-hidden hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer flex flex-col aspect-4/5 sm:aspect-square">
-       <div class="flex-1 p-6 flex items-center justify-center bg-white relative z-10">
-         <img src="${r.image}" alt="${r.name}" class="h-20 w-auto object-contain group-hover:scale-110 transition-transform duration-300">
+    <div class="group relative bg-white rounded-2xl shadow-[0_4px_10px_rgba(0,0,0,0.05)] overflow-hidden hover:shadow-[0_10px_20px_rgba(0,0,0,0.1)] transition-all duration-300 cursor-pointer flex flex-col">
+       <div class="flex items-center justify-center bg-white relative z-10">
+         <img src="${r.image}" alt="${r.name}" class="h-full max-h-[200px] w-full object-cover group-hover:scale-110 transition-transform duration-300">
        </div>
-       <div class="bg-primary text-white text-center py-4 font-bold text-sm sm:text-base flex items-center xl:whitespace-nowrap sm:whitespace-normal justify-center z-10 border-t-2 border-white">
+       <div class="bg-primary text-white text-center py-4 font-bold lg:text-lg text-sm sm:text-base flex items-center xl:whitespace-nowrap sm:whitespace-normal justify-center z-10 ">
          ${r.name}
        </div>
        <!-- bg decor -->
@@ -229,23 +229,23 @@ function updateCartUI() {
     cart.forEach((item) => {
       const el = document.createElement("div");
       el.className =
-        "flex items-center justify-between p-4 bg-gray-100/50 rounded-xl mb-2 items-stretch";
+        "flex items-center justify-between p-4 bg-[#E2E6E9] hover:bg-[#03081F] group rounded-xl mb-4 transition-colors items-stretch";
       el.innerHTML = `
         <div class="flex items-center gap-4">
           <div class="h-14 w-14 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0 shadow-sm border border-gray-100">
-             <img src="${item.image}" alt="${item.name}" class="h-full object-cover p-1">
+             <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
           </div>
+          <div class="w-[2px] h-10 bg-gray-300 group-hover:bg-white/20 mx-1"></div>
           <div>
-            <h4 class="font-bold text-base text-black">${item.name}</h4>
-            <p class="text-sm font-semibold text-text-muted mt-1">£${item.price.toFixed(2)}</p>
+            <h4 class="font-bold text-base text-black group-hover:text-[#FC8A06] transition-colors">${item.name}</h4>
           </div>
         </div>
         <div class="flex items-center gap-2 shrink-0">
-          <button class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-lg hover:bg-primary transition-colors" onclick="window.app.updateQuantity(${item.id}, -1)">
+          <button class="w-8 h-8 rounded-full bg-[#03081F] text-white group-hover:bg-[#E2E6E9] group-hover:text-black flex items-center justify-center font-bold text-lg transition-colors shadow-md" onclick="window.app.updateQuantity(${item.id}, -1)">
              <i class="fa-solid fa-minus text-xs"></i>
           </button>
-          <span class="font-bold w-6 text-center text-lg">${item.quantity}</span>
-          <button class="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-lg hover:bg-primary transition-colors" onclick="window.app.updateQuantity(${item.id}, 1)">
+          <span class="font-bold w-10 py-1 bg-white text-black text-center text-lg rounded-md shadow-sm">${item.quantity}</span>
+          <button class="w-8 h-8 rounded-full bg-[#03081F] text-white group-hover:bg-[#E2E6E9] group-hover:text-black flex items-center justify-center font-bold text-lg transition-colors shadow-md" onclick="window.app.updateQuantity(${item.id}, 1)">
              <i class="fa-solid fa-plus text-xs"></i>
           </button>
         </div>
