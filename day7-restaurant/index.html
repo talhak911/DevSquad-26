@@ -1,0 +1,735 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Restaurant - Order Details</title>
+    <link href="./src/output.css" rel="stylesheet" />
+    <!-- Adding a generic icon set -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body
+    class="bg-background text-text-main font-sans antialiased flex flex-col min-h-screen"
+  >
+    <!-- Header Navigation -->
+    <header
+      class="sticky top-0 z-40 w-full bg-white shadow-sm border-b border-border"
+    >
+      <div
+        class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-4 flex items-center justify-between"
+      >
+        <!-- Logo -->
+        <div class="flex items-center gap-2">
+          <img
+            src="./assets/LOGO%201.png"
+            alt="Order.uk"
+            class="h-8 object-contain"
+          />
+        </div>
+
+        <!-- Desktop Nav -->
+        <nav
+          class="hidden md:flex items-center gap-6 font-medium text-sm lg:text-[18px]"
+        >
+          <a href="#" class="hover:text-primary transition-colors">Home</a>
+
+          <a href="#" class="hover:text-primary transition-colors"
+            >Special Offers</a
+          >
+          <a
+            href="#"
+            class="text-white bg-primary px-4 lg:px-8 py-[9px] rounded-full shadow-md"
+            >Restaurants</a
+          >
+          <a href="#" class="hover:text-primary transition-colors"
+            >Track Order</a
+          >
+        </nav>
+
+        <!-- Use Actions -->
+        <div class="flex items-center gap-4">
+          <!-- Cart Icon -->
+          <div
+            id="cart-icon"
+            class="flex items-center gap-3 cursor-pointer group"
+          >
+            <div
+              class="bg-secondary group-hover:bg-primary transition-colors rounded-full w-12 h-12 flex items-center justify-center relative shadow-md"
+            >
+              <svg
+                width="24"
+                height="24"
+                viewBox="0 0 29 29"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M8.5 28.3333C7.72083 28.3333 7.05382 28.0559 6.49896 27.501C5.9441 26.9462 5.66667 26.2792 5.66667 25.5C5.66667 24.7208 5.9441 24.0538 6.49896 23.499C7.05382 22.9441 7.72083 22.6667 8.5 22.6667C9.27917 22.6667 9.94618 22.9441 10.501 23.499C11.0559 24.0538 11.3333 24.7208 11.3333 25.5C11.3333 26.2792 11.0559 26.9462 10.501 27.501C9.94618 28.0559 9.27917 28.3333 8.5 28.3333ZM22.6667 28.3333C21.8875 28.3333 21.2205 28.0559 20.6656 27.501C20.1108 26.9462 19.8333 26.2792 19.8333 25.5C19.8333 24.7208 20.1108 24.0538 20.6656 23.499C21.2205 22.9441 21.8875 22.6667 22.6667 22.6667C23.4458 22.6667 24.1128 22.9441 24.6677 23.499C25.2226 24.0538 25.5 24.7208 25.5 25.5C25.5 26.2792 25.2226 26.9462 24.6677 27.501C24.1128 28.0559 23.4458 28.3333 22.6667 28.3333ZM7.29583 5.66667L10.6958 12.75H20.6125L24.5083 5.66667H7.29583ZM5.95 2.83333H26.8458C27.3889 2.83333 27.8021 3.07535 28.0854 3.55938C28.3687 4.0434 28.3806 4.53333 28.1208 5.02917L23.0917 14.0958C22.8319 14.5681 22.4837 14.934 22.0469 15.1937C21.6101 15.4535 21.1319 15.5833 20.6125 15.5833H10.0583L8.5 18.4167H25.5V21.25H8.5C7.4375 21.25 6.63472 20.7837 6.09167 19.851C5.54861 18.9184 5.525 17.9917 6.02083 17.0708L7.93333 13.6L2.83333 2.83333H0V0H4.60417L5.95 2.83333Z"
+                  fill="white"
+                />
+              </svg>
+              <span
+                id="cart-badge"
+                class="hidden absolute z-10 -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center border-2 border-white rounded-full"
+                >0</span
+              >
+            </div>
+            <span class="font-bold hidden md:block">Cart</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="grow">
+      <!-- Hero Section -->
+      <div
+        class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-8 lg:py-12"
+      >
+        <div
+          class="relative w-full rounded-[24px] bg-secondary text-white pb-8 md:pb-0"
+        >
+          <!-- The background image could be dynamic, but for now fixed layout based on design -->
+
+          <div
+            class="flex flex-col md:flex-row items-center justify-between p-6 md:p-12 lg:p-16 z-10 relative"
+          >
+            <div class="max-w-xl">
+              <p class="text-sm text-gray-300 mb-4">I'm lovin' it!</p>
+              <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-8">
+                McDonald's East London
+              </h1>
+
+              <div class="flex flex-wrap items-center gap-4 mb-6">
+                <div
+                  class="flex items-center gap-3 border border-white/50 px-6 py-3 rounded-full text-sm font-semibold"
+                >
+                  <i class="fa-solid fa-file-invoice text-white text-lg"></i>
+                  Minimum Order: 12 GBP
+                </div>
+                <div
+                  class="flex items-center gap-3 border border-white/50 px-6 py-3 rounded-full text-sm font-semibold"
+                >
+                  <i class="fa-solid fa-motorcycle text-white text-lg"></i>
+                  Delivery in 20-25 Minutes
+                </div>
+              </div>
+            </div>
+
+            <!-- Hero Image block -->
+            <div class="relative w-full md:w-[60%] flex justify-end">
+              <div
+                class="bg-white rounded-[24px] p-4 shadow-xl relative w-full lg:w-[480px] h-64 lg:h-[350px] flex items-center justify-center overflow-hidden"
+              >
+                <!-- Burger image inside -->
+                <img
+                  src="./assets/burger-1.png"
+                  alt="McDonalds Promo"
+                  class="w-full h-full object-cover rounded-xl"
+                />
+              </div>
+
+              <!-- Rating Box Absolute to Hero Image Container -->
+              <div
+                class="absolute bottom-6 -left-4 md:-left-8 bg-white shadow-2xl text-black px-6 py-4 lg:px-8 lg:py-6 rounded-2xl font-bold flex flex-col items-center z-20"
+              >
+                <div class="flex items-center gap-4">
+                  <span
+                    class="text-5xl lg:text-[68px] font-black tracking-tight leading-none"
+                    >3.4</span
+                  >
+                  <div class="flex flex-col gap-1 items-start">
+                    <div class="flex text-primary text-sm lg:text-base -ml-1">
+                      <i class="fa-solid fa-star"></i
+                      ><i class="fa-solid fa-star"></i
+                      ><i class="fa-solid fa-star"></i
+                      ><i class="fa-solid fa-star-half-stroke"></i
+                      ><i class="fa-regular fa-star text-gray-300"></i>
+                    </div>
+                    <span class="text-xs text-text-muted font-semibold mt-1"
+                      >1,360 reviews</span
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Open Until Absolute Box -->
+          <div
+            class="absolute bottom-0 left-0 bg-primary text-white font-bold px-8 lg:px-12 py-4 lg:py-5 rounded-bl-[24px] rounded-r-3xl flex items-center gap-3 z-20 shadow-lg text-sm lg:text-base translate-y-1/2"
+          >
+            <i class="fa-regular fa-clock text-xl"></i> Open until 3:00 AM
+          </div>
+        </div>
+
+        <!-- Search and Info row below hero -->
+        <div
+          class="flex flex-col md:flex-row justify-between items-center my-8 gap-4"
+        >
+          <div class="flex items-center gap-2 text-xl font-bold">
+            All Offers from McDonald's East London
+          </div>
+
+          <div class="relative w-full md:w-80">
+            <i
+              class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
+            ></i>
+            <input
+              type="text"
+              placeholder="Search from menu..."
+              class="w-full pl-10 pr-4 py-3 rounded-full border border-border bg-white focus:outline-none focus:border-primary transition-colors focus:ring-1 focus:ring-primary shadow-sm text-sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Navigation -->
+      <div class="w-full bg-primary overflow-x-auto py-3">
+        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+          <div
+            class="flex items-center gap-4 lg:gap-8 whitespace-nowrap min-w-max text-sm font-semibold"
+          >
+            <a
+              href="#"
+              class="px-6 py-2 rounded-full bg-black text-white shadow-md"
+              >Offers</a
+            >
+            <a
+              href="#burgers"
+              class="text-white hover:text-black transition-colors"
+              >Burgers</a
+            >
+            <a
+              href="#fries"
+              class="text-white hover:text-black transition-colors"
+              >Fries</a
+            >
+            <a
+              href="#snacks"
+              class="text-white hover:text-black transition-colors"
+              >Snacks</a
+            >
+            <a
+              href="#salads"
+              class="text-white hover:text-black transition-colors"
+              >Salads</a
+            >
+            <a
+              href="#cold-drinks"
+              class="text-white hover:text-black transition-colors"
+              >Cold drinks</a
+            >
+            <a
+              href="#happy-meal"
+              class="text-white hover:text-black transition-colors"
+              >Happy Meal®</a
+            >
+            <a
+              href="#desserts"
+              class="text-white hover:text-black transition-colors"
+              >Desserts</a
+            >
+            <a
+              href="#hot-drinks"
+              class="text-white hover:text-black transition-colors"
+              >Hot drinks</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Menu Area -->
+      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-12">
+        <!-- Offers Section Placeholder -->
+        <!-- We will skip exact offers section and render all products group by type -->
+        <div id="menu-container" class="flex flex-col gap-12">
+          <!-- Dynamically inserted by JS -->
+        </div>
+      </div>
+
+      <!-- Info Module: Delivery, Contact, Operational Times -->
+      <div class="bg-section-bg py-16 mt-8 shadow-inner">
+        <div
+          class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] grid grid-cols-1 md:grid-cols-3 gap-8"
+        >
+          <!-- Delivery Info -->
+          <div class="bg-white p-8 rounded-2xl shadow-sm flex flex-col gap-4">
+            <h3
+              class="font-bold text-xl flex items-center gap-2 border-b border-border pb-4"
+            >
+              <i class="fa-solid fa-location-dot"></i> Delivery information
+            </h3>
+            <div class="text-sm text-gray-600 flex flex-col gap-3">
+              <p><strong>Monday:</strong> 12:00 AM–3:00 AM, 8:00 AM–3:00 AM</p>
+              <p><strong>Tuesday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Wednesday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Thursday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Friday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Saturday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Sunday:</strong> 8:00 AM–12:00 AM</p>
+              <p class="font-semibold text-black mt-2">
+                Estimated delivery time: 20-30 min
+              </p>
+            </div>
+          </div>
+
+          <!-- Contact Info -->
+          <div class="bg-white p-8 rounded-2xl shadow-sm flex flex-col gap-4">
+            <h3
+              class="font-bold text-xl flex items-center gap-2 border-b border-border pb-4"
+            >
+              <i class="fa-solid fa-address-book"></i> Contact information
+            </h3>
+            <div class="text-sm text-gray-600 flex flex-col gap-3">
+              <p class="text-black font-semibold">
+                If you have allergies or other dietary
+              </p>
+              <p>
+                restrictions, please contact the restaurant. The restaurant will
+                provide food-specific information upon request.
+              </p>
+              <p class="font-semibold text-black mt-4">Phone number:</p>
+              <p class="text-lg text-black font-bold">+934443-43</p>
+              <p class="font-semibold text-black mt-4">Website:</p>
+              <a href="#" class="text-primary hover:underline"
+                >http://mcdonalds.uk/</a
+              >
+            </div>
+          </div>
+
+          <!-- Operational Times -->
+          <div
+            class="bg-secondary text-white p-8 rounded-2xl shadow-[0_10px_20px_var(--color-secondary)] flex flex-col gap-4 relative overflow-hidden"
+          >
+            <h3
+              class="font-bold text-xl flex items-center gap-2 border-b border-white/20 pb-4 relative z-10"
+            >
+              <i class="fa-solid fa-clock"></i> Operational Times
+            </h3>
+            <div
+              class="text-sm text-gray-300 flex flex-col gap-3 relative z-10"
+            >
+              <p><strong>Monday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Tuesday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Wednesday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Thursday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Friday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Saturday:</strong> 8:00 AM–3:00 AM</p>
+              <p><strong>Sunday:</strong> 8:00 AM–3:00 AM</p>
+            </div>
+            <!-- bg abstract icon -->
+            <i
+              class="fa-solid fa-clock absolute -bottom-10 -right-10 text-9xl text-white/5 rotate-[-15deg]"
+            ></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Know more about us! -->
+      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px] py-16">
+        <!-- header row with tabs -->
+        <div class="flex justify-between items-center mb-8">
+          <h2 class="text-3xl font-bold">Know more about us!</h2>
+          <div
+            class="hidden md:flex gap-4 border border-border rounded-full p-1 bg-white shadow-sm"
+          >
+            <button
+              class="bg-black text-white px-6 py-2 rounded-full font-semibold text-sm"
+            >
+              Frequent Questions
+            </button>
+            <button
+              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
+            >
+              Who we are?
+            </button>
+            <button
+              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
+            >
+              Partner Program
+            </button>
+            <button
+              class="px-6 py-2 rounded-full font-semibold text-sm hover:bg-gray-100 transition-colors"
+            >
+              Help & Support
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="bg-secondary rounded-3xl p-8 md:p-12 text-white flex flex-col lg:flex-row gap-8 items-center justify-between shadow-lg"
+        >
+          <div
+            class="w-full lg:w-1/3 flex flex-col gap-6 bg-white/5 p-8 rounded-2xl items-start h-full"
+          >
+            <button
+              class="bg-primary text-black font-bold px-8 py-3 rounded-full hover:bg-primary-hover transition-colors shadow-md"
+            >
+              Know more about us!
+            </button>
+            <div
+              class="flex flex-col gap-4 mt-6 font-semibold text-white/90 text-sm"
+            >
+              <p
+                class="hover:text-primary transition-colors cursor-pointer border-b border-white/10 pb-4"
+              >
+                What goes into our business and recipes?
+              </p>
+              <p
+                class="hover:text-primary transition-colors cursor-pointer border-b border-white/10 pb-4"
+              >
+                Did you know we have our own farm?
+              </p>
+              <p class="hover:text-primary transition-colors cursor-pointer">
+                Our measures against Food Waste and your Carbon Footprint
+              </p>
+            </div>
+          </div>
+
+          <div class="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- card 1 -->
+            <div
+              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
+            >
+              <h4 class="font-bold text-lg mb-2 pt-2">Choose Order</h4>
+              <img
+                src="./assets/order-1.png"
+                alt="Choose Order"
+                class="h-28 my-4 object-contain"
+              />
+              <p class="text-sm text-gray-600 pb-2">
+                Browse and pick your favorite meal from our vast menu.
+              </p>
+            </div>
+            <!-- card 2 -->
+            <div
+              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
+            >
+              <h4 class="font-bold text-lg mb-2 pt-2">Track Progress</h4>
+              <img
+                src="./assets/order-2.png"
+                alt="Track Progress"
+                class="h-28 my-4 object-contain"
+              />
+              <p class="text-sm text-gray-600 pb-2">
+                Track your progress and see exactly when it will arrive.
+              </p>
+            </div>
+            <!-- card 3 -->
+            <div
+              class="bg-white text-black p-6 rounded-2xl flex flex-col items-center text-center shadow-[0_4px_10px_rgba(0,0,0,0.5)] transition-transform hover:-translate-y-2 cursor-pointer h-full justify-between"
+            >
+              <h4 class="font-bold text-lg mb-2 pt-2">Get your Order</h4>
+              <img
+                src="./assets/order-3.png"
+                alt="Get your Order"
+                class="h-28 my-4 object-contain"
+              />
+              <p class="text-sm text-gray-600 pb-2">
+                Receive your order at your doorstep & enjoy your meal.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Customer Reviews -->
+      <div class="bg-gray py-16 lg:pt-[87px] lg:pb-[129px]">
+        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+          <div class="flex justify-between items-center mb-10">
+            <h2 class="text-3xl md:text-4xl font-bold">Customer Reviews</h2>
+            <div class="flex gap-4">
+              <button
+                id="prev-review"
+                class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-hover shadow-md transition-colors text-lg"
+              >
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <button
+                id="next-review"
+                class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary-hover shadow-md transition-colors text-lg"
+              >
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="reviews-container"
+            class="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scroll-smooth"
+            style="scrollbar-width: none"
+          >
+            <!-- Javascript will inject reviews here -->
+          </div>
+
+          <!-- Rating center -->
+          <div class="mt-12 flex justify-center sticky top-0 md:top-auto z-20">
+            <div
+              class="bg-white px-8 py-4 rounded-xl shadow-lg border border-border text-center transform md:-translate-y-1/2 md:mb-[-40px]"
+            >
+              <span class="text-5xl font-extrabold block mb-1">3.4</span>
+              <div class="flex text-primary text-xl my-1 justify-center gap-1">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i
+                ><i class="fa-solid fa-star"></i
+                ><i class="fa-solid fa-star-half-stroke"></i
+                ><i class="fa-regular fa-star"></i>
+              </div>
+              <span class="text-xs text-gray-500 font-semibold block mt-1"
+                >1,360 reviews</span
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similar Restaurants -->
+      <div class="bg-section-bg pt-20 pb-16">
+        <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+          <h2 class="text-3xl font-bold mb-10">Similar Restaurants</h2>
+          <div
+            id="similar-restaurants-container"
+            class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 xl:gap-6"
+          >
+            <!-- Javascript will inject similar restaurants here -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-section-bg border-t border-border pt-16">
+      <div class="max-w-[1440px] mx-auto px-4 md:px-8 xl:px-[100px]">
+        <div
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12 mb-16"
+        >
+          <!-- Brand -->
+          <div class="col-span-1">
+            <img
+              src="./assets/LOGO%201.png"
+              alt="Order.uk"
+              class="h-12 mb-8 object-contain"
+            />
+            <div class="flex gap-4 mb-4">
+              <a href="#" class="hover:opacity-80 transition-opacity"
+                ><img
+                  src="https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg"
+                  alt="App Store"
+                  class="h-10"
+              /></a>
+              <a href="#" class="hover:opacity-80 transition-opacity"
+                ><img
+                  src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+                  alt="Google Play"
+                  class="h-10"
+              /></a>
+            </div>
+            <p class="text-sm text-gray-500 max-w-[250px]">
+              Company # 490039-445, Registered with House of companies.
+            </p>
+          </div>
+
+          <!-- Newsletter & Social -->
+          <div>
+            <h4 class="font-bold text-lg mb-6">
+              Discover us specially in your inbox
+            </h4>
+            <form
+              class="flex border border-border rounded-full overflow-hidden bg-white shadow-sm max-w-sm mb-8 hover:border-primary transition-colors focus-within:border-primary focus-within:ring-1 focus-within:ring-primary"
+            >
+              <input
+                type="email"
+                placeholder="ex. john@email.com"
+                class="w-full px-5 py-3 outline-none text-sm bg-transparent"
+              />
+              <button
+                type="submit"
+                class="bg-primary text-white px-8 py-3 font-semibold hover:bg-primary-hover transition-colors"
+              >
+                Subscribe
+              </button>
+            </form>
+            <div class="flex gap-4">
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:-translate-y-1 transition-transform shadow-md"
+                ><i class="fa-brands fa-facebook-f"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:-translate-y-1 transition-transform shadow-md"
+                ><i class="fa-brands fa-instagram"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:-translate-y-1 transition-transform shadow-md"
+                ><i class="fa-brands fa-tiktok"></i
+              ></a>
+              <a
+                href="#"
+                class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center hover:-translate-y-1 transition-transform shadow-md"
+                ><i class="fa-brands fa-snapchat"></i
+              ></a>
+            </div>
+          </div>
+
+          <!-- Links 1 -->
+          <div>
+            <h4 class="font-bold text-lg mb-6">Legal Pages</h4>
+            <ul
+              class="flex flex-col gap-4 text-sm text-gray-600 underline decoration-gray-300 underline-offset-4"
+            >
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Terms and conditions</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Privacy</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Cookies</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Modern Slavery Statement</a
+                >
+              </li>
+            </ul>
+          </div>
+
+          <!-- Links 2 -->
+          <div>
+            <h4 class="font-bold text-lg mb-6">Important Links</h4>
+            <ul
+              class="flex flex-col gap-4 text-sm text-gray-600 underline decoration-gray-300 underline-offset-4"
+            >
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Get help</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Add your restaurant</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Sign up to deliver</a
+                >
+              </li>
+              <li>
+                <a href="#" class="hover:text-primary transition-colors"
+                  >Create a business account</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div
+          class="flex flex-col sm:flex-row justify-between items-center py-8 border-t border-border text-sm text-primary md:text-white bg-secondary md:bg-transparent -mx-4 md:mx-0 px-4 md:px-0 mt-8"
+        >
+          <p
+            class="text-white md:text-gray-500 mb-4 sm:mb-0 bg-secondary md:bg-transparent px-4 py-2 w-full md:w-auto text-center"
+          >
+            Order.uk Copyright 2024. All Rights Reserved.
+          </p>
+          <div
+            class="flex flex-wrap justify-center gap-6 md:gap-8 bg-secondary md:bg-transparent py-4 text-white md:text-gray-500 w-full md:w-auto"
+          >
+            <a href="#" class="hover:text-primary transition-colors"
+              >Privacy Policy</a
+            >
+            <a href="#" class="hover:text-primary transition-colors">Terms</a>
+            <a href="#" class="hover:text-primary transition-colors">Pricing</a>
+            <a href="#" class="hover:text-primary transition-colors"
+              >Do not sell or share my personal information</a
+            >
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div
+      id="cart-modal"
+      class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm justify-center items-center p-4 sm:p-8"
+    >
+      <!-- Close button positioned outside/top-right of the modal relative to the container -->
+      <div class="relative w-full max-w-2xl max-h-full flex flex-col">
+        <button
+          id="close-cart"
+          class="absolute -top-4 -right-4 md:-right-6 md:-top-6 bg-primary text-white hover:bg-primary-hover rounded-full w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors shadow-lg z-50 text-xl font-bold border-4 border-white"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+        <div
+          class="bg-white w-full rounded-2xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
+        >
+          <!-- Header Image -->
+          <div class="h-32 sm:h-48 w-full relative shrink-0">
+            <img
+              src="./assets/burger-1.png"
+              alt="Cart Header"
+              class="w-full h-full object-cover"
+            />
+            <!-- Gradient overlay -->
+            <div class="absolute inset-0 bg-black/20"></div>
+          </div>
+
+          <!-- Scrollable Items Area -->
+          <div
+            id="cart-items-container"
+            class="p-4 sm:p-8 overflow-y-auto flex-1 bg-white flex flex-col gap-4"
+          >
+            <!-- Cart items injected by JS -->
+          </div>
+
+          <!-- Footer / Checkout -->
+          <div
+            class="p-4 sm:p-8 border-t border-border bg-white flex flex-col sm:flex-row justify-between items-center gap-6 shrink-0"
+          >
+            <div
+              class="flex items-center bg-primary text-white rounded-lg overflow-hidden w-full sm:w-auto font-bold shadow-md"
+            >
+              <span class="px-4 py-3 bg-white/20">Total to pay</span>
+              <span id="cart-total" class="px-6 py-3 text-xl">£0.00</span>
+            </div>
+
+            <p
+              class="text-xs sm:text-sm text-text-muted text-center sm:text-left"
+            >
+              Delivery & Tax will be calculated in the next step
+            </p>
+
+            <div class="flex gap-4 w-full sm:w-auto">
+              <button
+                class="font-bold text-black border-b-2 border-transparent hover:border-black py-2 transition-colors whitespace-nowrap hidden sm:block"
+                id="close-cart-bottom"
+              >
+                Take me back
+              </button>
+              <button
+                class="flex-1 sm:w-auto font-bold text-white bg-success hover:bg-opacity-90 px-8 py-3 rounded-lg shadow-md transition-colors flex items-center justify-center gap-2"
+              >
+                <i class="fa-solid fa-arrow-right"></i> Next Step
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

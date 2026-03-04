@@ -1,0 +1,53 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-secondary: var(--color-secondary);
+  --color-background: var(--color-background);
+  --color-surface: var(--color-surface);
+  --color-text-main: var(--color-text-main);
+  --color-text-muted: var(--color-text-muted);
+  --color-success: var(--color-success);
+  --color-border: var(--color-border);
+  --color-section-bg: var(--color-section-bg);
+  --color-nav-active: var(--color-nav-active);
+  --color-gray: var(--color-gray);
+
+  --font-sans: "Poppins", sans-serif;
+}
+
+@layer base {
+  :root {
+    --color-primary: #fc8a06;
+    --color-primary-hover: #e57a05;
+    --color-secondary: #03081f; /* Navy */
+    --color-background: #ffffff;
+    --color-surface: #ffffff;
+    --color-text-main: #000000;
+    --color-text-muted: #828282;
+    --color-success: #028643;
+    --color-border: #e0e0e0;
+    --color-section-bg: #f9f9f9; /* Light grey for review section etc. */
+    --color-nav-active: #fc8a06;
+    --color-gray: #d9d9d9;
+  }
+
+  .dark {
+    --color-background: #121212;
+    --color-surface: #1e1e1e;
+    --color-text-main: #ffffff;
+    --color-text-muted: #aaaaaa;
+    --color-border: #333333;
+    --color-section-bg: #1a1a1a;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    @apply transition-colors duration-200;
+  }
+}
