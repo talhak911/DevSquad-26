@@ -17,6 +17,7 @@ function init() {
   renderSimilarRestaurants();
   setupEventListeners();
   updateCartUI();
+  setupScrollSpy();
 }
 
 function renderProducts() {
@@ -100,7 +101,7 @@ function renderReviews() {
                <div class="flex text-primary text-xs mb-1 justify-end gap-0.5">
                  ${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}
                </div>
-               <span class="text-[10px] sm:text-xs font-semibold text-gray-500 whitespace-nowrap"><i class="fa-regular fa-clock"></i> ${r.date}</span>
+               <span class="text-[10px] flex items-center gap-2 sm:text-xs font-semibold text-gray-500 whitespace-nowrap"><img src="../assets/Time Span.png" class="w-6 h-6" alt=""> ${r.date}</span>
             </div>
          </div>
          <p class="text-sm text-gray-700 italic leading-relaxed">"${r.text}"</p>
@@ -192,6 +193,7 @@ export function addToCart(productId) {
   }
 
   updateCartUI();
+  showToast(`${product.name} added to cart!`);
 }
 
 export function removeFromCart(productId) {
@@ -268,5 +270,83 @@ function updateCartUI() {
 
 // Expose to window for inline onclick handlers if needed
 window.app = { addToCart, updateQuantity, removeFromCart };
+
+function showToast(message) {
+  const container = document.getElementById("toast-container");
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className =
+    "bg-[#03081F] text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 flex items-center gap-3";
+  toast.innerHTML = `
+    <i class="fa-solid fa-circle-check text-green-400"></i>
+    <span class="font-semibold text-sm">${message}</span>
+  `;
+
+  container.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(() => {
+    toast.classList.remove("translate-x-full");
+  }, 10);
+
+  // Remove after 3 seconds
+  setTimeout(() => {
+    toast.classList.add("translate-x-full");
+    setTimeout(() => {
+      if (container.contains(toast)) {
+        container.removeChild(toast);
+      }
+    }, 300);
+  }, 3000);
+}
+
+function setupScrollSpy() {
+  const sections = document.querySelectorAll("main section[id]");
+  const navLinks = document.querySelectorAll("#category-nav a[href^='#']");
+
+  const actveClassList = ["bg-black", "text-white", "shadow-md"];
+  const inactiveClassList = [
+    "text-white",
+    "hover:text-black",
+    "transition-colors",
+  ];
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "-120px 0px -60% 0px",
+    threshold: 0,
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
+
+        navLinks.forEach((link) => {
+          link.classList.remove(
+            "px-6",
+            "py-2",
+            "rounded-full",
+            ...actveClassList,
+          );
+          link.classList.add(...inactiveClassList);
+
+          if (link.getAttribute("href") === `#${id}`) {
+            link.classList.remove(...inactiveClassList);
+            link.classList.add(
+              "px-6",
+              "py-2",
+              "rounded-full",
+              ...actveClassList,
+            );
+          }
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach((section) => observer.observe(section));
+}
 
 document.addEventListener("DOMContentLoaded", init);
