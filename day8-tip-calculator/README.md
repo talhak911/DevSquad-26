@@ -61,7 +61,7 @@ function formatNumber(num) {
 
 ### Continued development
 
-Going forward, I wish to test out more complicated states tracking without a virtual DOM.
+Going forward, I wish to test out more complicated states.
 
 ### AI Collaboration
 
