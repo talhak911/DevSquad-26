@@ -1,0 +1,52 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+
+:root {
+  --color-primary: hsl(172, 67%, 45%);
+  --color-primary-hover: hsl(172, 61%, 70%);
+  --color-bg-page: hsl(185, 41%, 84%);
+  --color-bg-card: hsl(0, 100%, 100%);
+  --color-bg-input: hsl(189, 41%, 97%);
+  --color-bg-result: hsl(183, 100%, 15%);
+  --color-text-header: hsl(183, 100%, 15%);
+  --color-text-label: hsl(186, 14%, 43%);
+  --color-text-input: hsl(183, 100%, 15%);
+  --color-text-placeholder: hsl(184, 14%, 56%);
+  --color-btn-grid: hsl(183, 100%, 15%);
+  --color-btn-grid-text: hsl(0, 100%, 100%);
+  --color-btn-grid-active: hsl(172, 67%, 45%);
+  --color-btn-grid-active-text: hsl(183, 100%, 15%);
+  --color-result-label: hsl(0, 100%, 100%);
+  --color-result-sublabel: hsl(184, 14%, 56%);
+  --color-result-value: hsl(172, 67%, 45%);
+  --color-btn-reset-bg: hsl(172, 67%, 45%);
+  --color-btn-reset-bg-empty: hsl(172, 67%, 45%, 0.2);
+  --color-btn-reset-text: hsl(183, 100%, 15%);
+  --color-error-text: hsl(15, 60%, 55%);
+  --color-outline-active: hsl(172, 67%, 45%);
+}
+
+[data-theme="dark"] {
+  --color-bg-page: hsl(183, 100%, 10%);
+  --color-bg-card: hsl(183, 100%, 15%);
+  --color-bg-input: hsl(183, 100%, 10%);
+  --color-bg-result: hsl(183, 100%, 8%);
+
+  --color-text-header: hsl(185, 41%, 84%);
+  --color-text-label: hsl(184, 14%, 56%);
+  --color-text-input: hsl(0, 100%, 100%);
+
+  --color-btn-grid: hsl(183, 100%, 20%);
+  --color-btn-grid-text: hsl(0, 100%, 100%);
+  --color-btn-grid-active: hsl(173, 61%, 50%);
+  --color-btn-reset-bg-empty: hsl(183, 100%, 20%);
+}
+
+/* Base Form Reset for number input */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}

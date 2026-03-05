@@ -1,44 +1,171 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- displays site properly based on user's device -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-  
-  <title>Frontend Mentor | Tip calculator app</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./images/favicon-32x32.png"
+    />
+    <link href="./src/output.css" rel="stylesheet" />
 
-  <!-- Feel free to remove these styles or customise in your own stylesheet 👍 -->
-  <style>
-    .attribution { font-size: 11px; text-align: center; }
-    .attribution a { color: hsl(228, 45%, 44%); }
-  </style>
-</head>
-<body>
+    <title>Frontend Mentor | Tip calculator app</title>
+  </head>
+  <body
+    class="bg-page font-mono min-h-screen text-tx-label flex flex-col items-center justify-center py-8"
+  >
+    <header class="mb-10 md:mb-16 mt-[8vh] md:mt-0 flex justify-center">
+      <img src="./images/logo.svg" alt="Splitter Logo" />
+    </header>
 
-  Bill
+    <main
+      class="w-full max-w-[920px] bg-card rounded-t-3xl md:rounded-3xl p-8 flex flex-col md:flex-row gap-8 shadow-2xl"
+    >
+      <!-- Left panel -->
+      <section class="flex-1 flex flex-col gap-10 md:p-4 md:pr-4">
+        <!-- Bill -->
+        <div class="flex flex-col gap-2 relative">
+          <label class="text-tx-label font-bold text-base" for="bill-input"
+            >Bill</label
+          >
+          <div class="relative flex items-center group">
+            <img
+              class="absolute left-4 w-3"
+              src="./images/icon-dollar.svg"
+              alt="$"
+            />
+            <input
+              type="number"
+              id="bill-input"
+              class="w-full bg-input text-tx-input font-bold text-2xl text-right p-3 pl-10 rounded-md border-2 border-transparent focus:border-outline focus:outline-none placeholder-tx-place cursor-pointer hover:border-outline transition-colors"
+              placeholder="0"
+            />
+          </div>
+        </div>
 
-  Select Tip %
-  5%
-  10%
-  15%
-  25%
-  50%
-  Custom
+        <!-- Tip -->
+        <div class="flex flex-col gap-4">
+          <label class="text-tx-label font-bold text-base">Select Tip %</label>
+          <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <button
+              type="button"
+              data-tip="5"
+              class="bg-btn-reg text-btn-text text-2xl font-bold py-2 rounded-md hover:bg-primary-hover hover:text-btn-active-text transition-colors"
+            >
+              5%
+            </button>
+            <button
+              type="button"
+              data-tip="10"
+              class="bg-btn-reg text-btn-text text-2xl font-bold py-2 rounded-md hover:bg-primary-hover hover:text-btn-active-text transition-colors"
+            >
+              10%
+            </button>
+            <button
+              type="button"
+              data-tip="15"
+              class="bg-btn-reg text-btn-text text-2xl font-bold py-2 rounded-md hover:bg-primary-hover hover:text-btn-active-text transition-colors"
+            >
+              15%
+            </button>
+            <button
+              type="button"
+              data-tip="25"
+              class="bg-btn-reg text-btn-text text-2xl font-bold py-2 rounded-md hover:bg-primary-hover hover:text-btn-active-text transition-colors"
+            >
+              25%
+            </button>
+            <button
+              type="button"
+              data-tip="50"
+              class="bg-btn-reg text-btn-text text-2xl font-bold py-2 rounded-md hover:bg-primary-hover hover:text-btn-active-text transition-colors"
+            >
+              50%
+            </button>
+            <input
+              type="number"
+              id="custom-tip"
+              class="w-full bg-input text-tx-input font-bold text-2xl text-right md:text-center p-2 rounded-md border-2 border-transparent focus:border-outline focus:outline-none placeholder-tx-label hover:border-outline transition-colors cursor-pointer"
+              placeholder="Custom"
+            />
+          </div>
+        </div>
 
-  Number of People
+        <!-- People -->
+        <div class="flex flex-col gap-2 relative group">
+          <div class="flex justify-between items-center">
+            <label class="text-tx-label font-bold text-base" for="people-input"
+              >Number of People</label
+            >
+            <span
+              class="text-err font-bold text-base hidden group-[.has-error]:block"
+              >Can't be zero</span
+            >
+          </div>
+          <div class="relative flex items-center">
+            <img
+              class="absolute left-4 w-3"
+              src="./images/icon-person.svg"
+              alt="Person"
+            />
+            <input
+              type="number"
+              id="people-input"
+              class="w-full bg-input text-tx-input font-bold text-2xl text-right p-3 pl-10 rounded-md border-2 border-transparent focus:border-outline group-[.has-error]:border-err group-[.has-error]:focus:border-err focus:outline-none placeholder-tx-place cursor-pointer hover:border-outline group-[.has-error]:hover:border-err transition-colors"
+              placeholder="0"
+            />
+          </div>
+        </div>
+      </section>
 
-  Tip Amount
-  / person
+      <!-- Right panel -->
+      <section
+        class="flex-1 bg-result rounded-2xl p-6 md:p-10 pt-10 flex flex-col justify-between"
+      >
+        <div class="flex flex-col gap-6 md:gap-10">
+          <!-- Tip Amount -->
+          <div class="flex justify-between items-center gap-4">
+            <div class="flex flex-col shrink-0">
+              <span class="text-res-label font-bold text-base">Tip Amount</span>
+              <span class="text-res-sub font-bold text-sm">/ person</span>
+            </div>
+            <div
+              class="text-res-val font-bold text-4xl md:text-5xl tracking-tighter flex-1 min-w-0 truncate text-right border-0"
+              title="$0.00"
+            >
+              $<span id="tip-amount-result">0.00</span>
+            </div>
+          </div>
 
-  Total
-  / person
+          <!-- Total -->
+          <div class="flex justify-between items-center gap-4">
+            <div class="flex flex-col shrink-0">
+              <span class="text-res-label font-bold text-base">Total</span>
+              <span class="text-res-sub font-bold text-sm">/ person</span>
+            </div>
+            <div
+              class="text-res-val font-bold text-4xl md:text-5xl tracking-tighter flex-1 min-w-0 truncate text-right border-0"
+              title="$0.00"
+            >
+              $<span id="total-amount-result">0.00</span>
+            </div>
+          </div>
+        </div>
 
-  Reset
-  
-  <div class="attribution">
-    Challenge by <a href="https://www.frontendmentor.io?ref=challenge" target="_blank">Frontend Mentor</a>. 
-    Coded by <a href="#">Your Name Here</a>.
-  </div>
-</body>
+        <button
+          type="button"
+          class="mt-8 md:mt-0 w-full bg-btn-reset text-btn-reset-txt uppercase text-xl font-bold py-3 rounded-md hover:bg-primary-hover focus:outline-none transition-colors disabled:opacity-20 disabled:hover:bg-btn-reset disabled:cursor-not-allowed"
+          id="reset-btn"
+          disabled
+        >
+          Reset
+        </button>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
 </html>

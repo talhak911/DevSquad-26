@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@import "../globals.css";
+
+@theme {
+  --font-mono: "Space Mono", monospace;
+
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-page: var(--color-bg-page);
+  --color-card: var(--color-bg-card);
+  --color-input: var(--color-bg-input);
+  --color-result: var(--color-bg-result);
+  --color-tx-header: var(--color-text-header);
+  --color-tx-label: var(--color-text-label);
+  --color-tx-input: var(--color-text-input);
+  --color-tx-place: var(--color-text-placeholder);
+  --color-btn-reg: var(--color-btn-grid);
+  --color-btn-text: var(--color-btn-grid-text);
+  --color-btn-active: var(--color-btn-grid-active);
+  --color-btn-active-text: var(--color-btn-grid-active-text);
+  --color-res-label: var(--color-result-label);
+  --color-res-sub: var(--color-result-sublabel);
+  --color-res-val: var(--color-result-value);
+  --color-btn-reset: var(--color-btn-reset-bg);
+  --color-btn-reset-empty: var(--color-btn-reset-bg-empty);
+  --color-btn-reset-txt: var(--color-btn-reset-text);
+  --color-err: var(--color-error-text);
+  --color-outline: var(--color-outline-active);
+}
