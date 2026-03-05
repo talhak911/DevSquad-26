@@ -223,6 +223,9 @@
   .mb-10 {
     margin-bottom: calc(var(--spacing) * 10);
   }
+  .block {
+    display: block;
+  }
   .contents {
     display: contents;
   }
@@ -412,6 +415,9 @@
   .tracking-tighter {
     --tw-tracking: var(--tracking-tighter);
     letter-spacing: var(--tracking-tighter);
+  }
+  .break-all {
+    word-break: break-all;
   }
   .text-btn-active-text {
     color: var(--color-btn-active-text);
