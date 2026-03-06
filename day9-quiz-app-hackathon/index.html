@@ -109,9 +109,10 @@
           </svg>
         </button>
         <div
-          class="w-10 h-10 rounded-full bg-cover bg-center"
+          id="header-avatar"
+          class="w-10 h-10 rounded-full bg-cover bg-center hidden"
           style="
-            background-image: url(&quot;https://ui-avatars.com/api/?name=Talha&background=random&quot;);
+            background-image: url(&quot;https://ui-avatars.com/api/?name=User&background=random&quot;);
           "
         ></div>
       </div>
@@ -661,13 +662,34 @@
               required
               class="w-full h-[48px] px-4 bg-brand-gray-light text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
             />
-            <input
-              id="login-password"
-              type="password"
-              placeholder="Password"
-              required
-              class="w-full h-[48px] px-4 bg-brand-gray-light text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
-            />
+            <div class="relative w-full">
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Password"
+                required
+                class="w-full h-[48px] px-4 bg-brand-gray-light text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary pr-12"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility('login-password')"
+                class="absolute right-4 top-[14px] text-brand-gray-text hover:text-brand-dark cursor-pointer"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
             <div class="w-full flex justify-start">
               <span
                 class="text-[13px] text-brand-gray-text hover:underline mt-[-4px] cursor-pointer"
@@ -707,6 +729,98 @@
             Create your account
           </h1>
           <form id="signup-form" class="w-full flex flex-col gap-4 mt-4">
+            <!-- Profile Image Upload Section -->
+            <div class="w-full flex flex-col items-center gap-3 mb-2">
+              <label
+                class="text-[14px] font-semibold text-brand-dark text-center"
+                >Profile Image (Optional)</label
+              >
+
+              <!-- Hidden File Input -->
+              <input
+                id="signup-image"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                onchange="handleSignupImageChange(event)"
+              />
+
+              <!-- Preview UI -->
+              <div id="signup-image-preview-container" class="relative hidden">
+                <div
+                  id="signup-image-preview"
+                  class="w-20 h-20 rounded-full bg-cover bg-center border-2 border-brand-border-card cursor-pointer"
+                  onclick="document.getElementById('signup-image').click()"
+                  title="Change image"
+                ></div>
+                <!-- Remove Button -->
+                <button
+                  type="button"
+                  onclick="removeSignupImage()"
+                  class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600 transition-colors shadow-sm cursor-pointer border-2 border-white"
+                  title="Remove image"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+                <!-- Edit Badge (Visual Indicator) -->
+                <div
+                  class="absolute -bottom-1 -right-1 bg-brand-primary text-white rounded-full w-6 h-6 flex items-center justify-center pointer-events-none border-2 border-white shadow-sm"
+                >
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path
+                      d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"
+                    />
+                    <path d="m15 5 4 4" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- Upload Button -->
+              <button
+                id="signup-image-upload-btn"
+                type="button"
+                onclick="document.getElementById('signup-image').click()"
+                class="flex flex-row items-center gap-2 px-4 py-2 bg-brand-gray-light hover:bg-gray-200 text-brand-dark rounded-full text-[13px] font-medium transition-colors cursor-pointer border border-brand-border-card"
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="17 8 12 3 7 8" />
+                  <line x1="12" x2="12" y1="3" y2="15" />
+                </svg>
+                Choose Picture
+              </button>
+            </div>
+
             <input
               id="signup-name"
               type="text"
@@ -721,20 +835,62 @@
               required
               class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
             />
-            <input
-              id="signup-password"
-              type="password"
-              placeholder="Password"
-              required
-              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
-            />
-            <input
-              id="signup-confirm"
-              type="password"
-              placeholder="Confirm Password"
-              required
-              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
-            />
+            <div class="relative w-full">
+              <input
+                id="signup-password"
+                type="password"
+                placeholder="Password"
+                required
+                class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary pr-12"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility('signup-password')"
+                class="absolute right-4 top-[14px] text-brand-gray-text hover:text-brand-dark cursor-pointer"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
+            <div class="relative w-full">
+              <input
+                id="signup-confirm"
+                type="password"
+                placeholder="Confirm Password"
+                required
+                class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary pr-12"
+              />
+              <button
+                type="button"
+                onclick="togglePasswordVisibility('signup-confirm')"
+                class="absolute right-4 top-[14px] text-brand-gray-text hover:text-brand-dark cursor-pointer"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </button>
+            </div>
             <p
               id="signup-error"
               class="text-red-500 text-[14px] font-semibold text-center hidden"

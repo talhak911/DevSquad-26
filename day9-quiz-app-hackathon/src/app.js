@@ -132,12 +132,39 @@ window.addEventListener("hashchange", handleHashChange);
 
 // --- Auth & Form Logic --- //
 
+window.handleSignupImageChange = function (event) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      document.getElementById("signup-image-preview").style.backgroundImage =
+        `url('${e.target.result}')`;
+      document
+        .getElementById("signup-image-preview-container")
+        .classList.remove("hidden");
+      document
+        .getElementById("signup-image-upload-btn")
+        .classList.add("hidden");
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+window.removeSignupImage = function () {
+  document.getElementById("signup-image").value = "";
+  document
+    .getElementById("signup-image-preview-container")
+    .classList.add("hidden");
+  document.getElementById("signup-image-upload-btn").classList.remove("hidden");
+};
+
 function handleSignup(e) {
   e.preventDefault();
   const fullName = document.getElementById("signup-name").value;
   const email = document.getElementById("signup-email").value;
   const password = document.getElementById("signup-password").value;
   const confirmPassword = document.getElementById("signup-confirm").value;
+  const imageInput = document.getElementById("signup-image");
 
   const errorEl = document.getElementById("signup-error");
   errorEl.classList.add("hidden");
@@ -148,12 +175,33 @@ function handleSignup(e) {
     return;
   }
 
-  const user = { fullName, email, password };
-  localStorage.setItem("user_" + email, JSON.stringify(user));
+  // Check if user already exists
+  if (localStorage.getItem("user_" + email)) {
+    errorEl.textContent = "User email already exists.";
+    errorEl.classList.remove("hidden");
+    return;
+  }
 
-  // Clear modal and direct to login cleanly
-  errorEl.classList.add("hidden");
-  navigate("login");
+  let profileImage = `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=random`;
+
+  const saveAndNavigate = (imgStr) => {
+    const user = { fullName, email, password, profileImage: imgStr };
+    localStorage.setItem("user_" + email, JSON.stringify(user));
+    errorEl.classList.add("hidden");
+    alert("Account created successfully! Please log in.");
+    navigate("login");
+  };
+
+  if (imageInput.files && imageInput.files[0]) {
+    const file = imageInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      saveAndNavigate(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  } else {
+    saveAndNavigate(profileImage);
+  }
 }
 
 function handleLogin(e) {
@@ -201,7 +249,36 @@ function updateNav() {
   if (navSignup) navSignup.style.display = isLoggedIn ? "none" : "block";
   if (navProfile) navProfile.style.display = isLoggedIn ? "block" : "none";
   if (navLogout) navLogout.style.display = isLoggedIn ? "block" : "none";
+
+  const headerAvatar = document.getElementById("header-avatar");
+  if (headerAvatar) {
+    if (isLoggedIn) {
+      headerAvatar.classList.remove("hidden");
+      const userStr = localStorage.getItem("currentUser");
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        // Fallback to UI-Avatars if no string
+        const userImg =
+          user.profileImage ||
+          `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=random`;
+        headerAvatar.style.backgroundImage = `url('${userImg}')`;
+      }
+    } else {
+      headerAvatar.classList.add("hidden");
+    }
+  }
 }
+
+window.togglePasswordVisibility = function (inputId) {
+  const passwordInput = document.getElementById(inputId);
+  if (passwordInput) {
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+    } else {
+      passwordInput.type = "password";
+    }
+  }
+};
 
 // --- Quiz & Profile Logic --- //
 
@@ -316,21 +393,9 @@ function initQuizPage() {
         renderQuestion();
       }
     };
-  if (btnNext)
-    btnNext.onclick = () => {
-      // Check if an answer has been selected for the current question
-      if (userAnswers[currentQuestionIndex] === null) {
-        alert("Please select an option before continuing.");
-        return;
-      }
-
-      if (currentQuestionIndex < activeQuiz.questions.length - 1) {
-        currentQuestionIndex++;
-        renderQuestion();
-      } else {
-        finishQuiz();
-      }
-    };
+  if (btnNext) {
+    // Handling is managed inside renderQuestion
+  }
 
   renderQuestion();
 }
@@ -541,9 +606,10 @@ function initProfilePage() {
     const year = new Date().getFullYear();
     joinedDateEl.textContent = `Joined ${year}`;
   }
-  // Avatar using initials UI if no picture is available
+  // Avatar logic
   if (avatarEl) {
-    avatarEl.style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=f9ecd6&color=4a3b32&size=200&font-size=0.33')`;
+    const defaultAvatarURL = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.fullName)}&background=f9ecd6&color=4a3b32&size=200&font-size=0.33`;
+    avatarEl.style.backgroundImage = `url('${user.profileImage || defaultAvatarURL}')`;
   }
 
   // Populate Personal Information
