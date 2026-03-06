@@ -250,6 +250,20 @@ function updateNav() {
   if (navProfile) navProfile.style.display = isLoggedIn ? "block" : "none";
   if (navLogout) navLogout.style.display = isLoggedIn ? "block" : "none";
 
+  const mobileNavLogin = document.getElementById("mobile-nav-login");
+  const mobileNavSignup = document.getElementById("mobile-nav-signup");
+  const mobileNavProfile = document.getElementById("mobile-nav-profile");
+  const mobileNavLogout = document.getElementById("mobile-nav-logout");
+
+  if (mobileNavLogin)
+    mobileNavLogin.style.display = isLoggedIn ? "none" : "block";
+  if (mobileNavSignup)
+    mobileNavSignup.style.display = isLoggedIn ? "none" : "block";
+  if (mobileNavProfile)
+    mobileNavProfile.style.display = isLoggedIn ? "block" : "none";
+  if (mobileNavLogout)
+    mobileNavLogout.style.display = isLoggedIn ? "block" : "none";
+
   const headerAvatar = document.getElementById("header-avatar");
   if (headerAvatar) {
     if (isLoggedIn) {
@@ -278,6 +292,37 @@ window.togglePasswordVisibility = function (inputId) {
       passwordInput.type = "password";
     }
   }
+};
+
+window.toggleMobileMenu = function () {
+  const menu = document.getElementById("mobile-menu");
+  const line1 = document.getElementById("hamburger-line-1");
+  const line2 = document.getElementById("hamburger-line-2");
+  const line3 = document.getElementById("hamburger-line-3");
+
+  if (menu.classList.contains("hidden")) {
+    menu.classList.remove("hidden");
+    menu.classList.add("flex");
+    line1.style.transform = "translateY(6px) rotate(45deg)";
+    line2.style.opacity = "0";
+    line3.style.transform = "translateY(-6px) rotate(-45deg)";
+  } else {
+    menu.classList.add("hidden");
+    menu.classList.remove("flex");
+    line1.style.transform = "none";
+    line2.style.opacity = "1";
+    line3.style.transform = "none";
+  }
+};
+
+window.navigateMobile = function (page) {
+  window.toggleMobileMenu();
+  navigate(page);
+};
+
+window.logoutMobile = function () {
+  window.toggleMobileMenu();
+  logout();
 };
 
 // --- Quiz & Profile Logic --- //
@@ -311,7 +356,7 @@ function initQuizzesPage() {
       quizData.slice(0, 3).forEach((quiz) => {
         const card = document.createElement("div");
         card.className = "flex flex-col gap-4 cursor-pointer group";
-        card.onclick = () => startQuiz(quiz.id);
+        card.onclick = () => confirmStartQuiz(quiz.id);
         card.innerHTML = `
           <div class="w-full h-[180px] rounded-[12px] bg-cover bg-center shrink-0 border border-brand-border-card transition-transform group-hover:scale-[1.02]" style="background-image: url('${quiz.image}')"></div>
           <div class="flex flex-col text-left w-full h-full">
@@ -336,8 +381,8 @@ function initQuizzesPage() {
   filteredQuizzes.forEach((quiz) => {
     const card = document.createElement("div");
     card.className =
-      "flex flex-col-reverse md:flex-row justify-between items-start md:items-center gap-6 w-full cursor-pointer group py-4";
-    card.onclick = () => startQuiz(quiz.id);
+      "flex flex-col-reverse md:flex-row justify-between items-start gap-6 w-full cursor-pointer group py-4";
+    card.onclick = () => confirmStartQuiz(quiz.id);
     card.innerHTML = `
       <div class="flex flex-col flex-1 text-left w-full h-full pr-4">
         <h3 class="text-[18px] md:text-[20px] font-bold text-brand-dark mb-2">${quiz.category === "All" ? quiz.title : quiz.category}</h3>
@@ -348,6 +393,46 @@ function initQuizzesPage() {
     listContainer.appendChild(card);
   });
 }
+
+// Confirm Quiz Start Modal Logic
+let pendingQuizId = null;
+
+window.confirmStartQuiz = function (quizId) {
+  const quiz = quizData.find((q) => q.id === quizId);
+  if (!quiz) return;
+
+  pendingQuizId = quizId;
+  const titleEl = document.getElementById("modal-quiz-title");
+  const descEl = document.getElementById("modal-quiz-desc");
+  const modalEl = document.getElementById("quiz-confirm-modal");
+
+  if (titleEl) titleEl.textContent = quiz.title;
+  if (descEl)
+    descEl.textContent = `This quiz contains ${quiz.questions.length} questions. Are you ready to begin?`;
+
+  if (modalEl) {
+    modalEl.classList.remove("hidden");
+    modalEl.classList.add("flex");
+  }
+
+  const startBtn = document.getElementById("modal-start-btn");
+  if (startBtn) {
+    startBtn.onclick = () => {
+      const idToStart = pendingQuizId;
+      closeQuizModal();
+      startQuiz(idToStart);
+    };
+  }
+};
+
+window.closeQuizModal = function () {
+  const modalEl = document.getElementById("quiz-confirm-modal");
+  if (modalEl) {
+    modalEl.classList.add("hidden");
+    modalEl.classList.remove("flex");
+  }
+  pendingQuizId = null;
+};
 
 function startQuiz(quizId) {
   activeQuiz = quizData.find((q) => q.id === quizId);
