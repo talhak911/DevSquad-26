@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@theme {
+  --font-manrope: "Manrope", sans-serif;
+
+  /* Figma Design Colors */
+  --color-brand-primary: #0d78f2;
+  --color-brand-dark: #121417;
+  --color-brand-gray-light: #f0f2f5;
+  --color-brand-gray-text: #61738a;
+  --color-brand-border-header: #e6e8eb;
+  --color-brand-border-card: #dbe0e6;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-manrope);
+    background-color: #ffffff;
+    color: var(--color-brand-dark);
+  }
+}

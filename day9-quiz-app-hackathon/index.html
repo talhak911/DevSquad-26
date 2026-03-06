@@ -3,12 +3,764 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>QuizMaster</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./src/output.css" />
   </head>
-  <body>
-    <div class="flex justify-center items-center h-screen">
-      <h1 class="text-3xl font-bold underline">Hello world!</h1>
-    </div>
+  <body class="bg-white m-0 p-0 font-manrope text-brand-dark">
+    <!-- Header -->
+    <header
+      class="flex justify-between items-center px-4 md:px-10 h-[65px] border-b border-brand-border-header w-full bg-white relative z-50"
+    >
+      <!-- Logo -->
+      <div class="flex flex-row items-center gap-4">
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill-rule="evenodd"
+            clip-rule="evenodd"
+            d="M0 0H12L10 6L12 12H0L2 6L0 0Z"
+            fill="#121417"
+          />
+        </svg>
+
+        <span class="font-bold text-[18px] leading-[23px] text-brand-dark"
+          >QuizMaster</span
+        >
+      </div>
+
+      <!-- Desktop Navigation -->
+      <nav
+        class="hidden md:flex flex-row justify-end items-start gap-[36px] flex-1"
+      >
+        <div class="flex flex-row items-center gap-[36px] pr-8">
+          <button
+            onclick="navigate('home')"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer"
+          >
+            Home
+          </button>
+          <button
+            onclick="navigate('quizzes')"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer"
+          >
+            Quizzes
+          </button>
+
+          <button
+            id="nav-profile"
+            onclick="navigate('profile')"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer hidden"
+          >
+            Profile
+          </button>
+          <button
+            id="nav-login"
+            onclick="navigate('login')"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer"
+          >
+            Login
+          </button>
+          <button
+            id="nav-signup"
+            onclick="navigate('signup')"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer"
+          >
+            Sign Up
+          </button>
+          <button
+            id="nav-logout"
+            onclick="logout()"
+            class="font-medium text-[14px] leading-[21px] text-brand-dark hover:text-brand-primary transition-colors cursor-pointer hidden"
+          >
+            Logout
+          </button>
+        </div>
+      </nav>
+
+      <!-- Profile & Actions -->
+      <div class="flex flex-row items-center gap-8">
+        <button
+          class="w-10 h-10 bg-brand-gray-light rounded-lg flex justify-center items-center hover:bg-gray-200 transition-colors"
+        >
+          <svg
+            width="15"
+            height="17"
+            viewBox="0 0 15 17"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M14.8271 11.8703C14.3936 11.1234 13.749 9.01016 13.749 6.25C13.749 2.79822 10.9508 0 7.49902 0C4.04724 0 1.24902 2.79822 1.24902 6.25C1.24902 9.01094 0.603711 11.1234 0.170117 11.8703C-0.0552549 12.2568 -0.0568941 12.7342 0.165819 13.1223C0.388532 13.5103 0.801635 13.7497 1.24902 13.75H4.4373C4.73458 15.2046 6.01432 16.2493 7.49902 16.2493C8.98373 16.2493 10.2635 15.2046 10.5607 13.75H13.749C14.1963 13.7494 14.6091 13.5099 14.8316 13.1219C15.0542 12.734 15.0525 12.2567 14.8271 11.8703ZM7.49902 15C6.70464 14.9998 5.99663 14.4989 5.73184 13.75H9.26621C9.00142 14.4989 8.2934 14.9998 7.49902 15ZM1.24902 12.5C1.85059 11.4656 2.49902 9.06875 2.49902 6.25C2.49902 3.48858 4.7376 1.25 7.49902 1.25C10.2604 1.25 12.499 3.48858 12.499 6.25C12.499 9.06641 13.1459 11.4633 13.749 12.5H1.24902Z"
+              fill="#121417"
+            />
+          </svg>
+        </button>
+        <div
+          class="w-10 h-10 rounded-full bg-cover bg-center"
+          style="
+            background-image: url(&quot;https://ui-avatars.com/api/?name=Talha&background=random&quot;);
+          "
+        ></div>
+      </div>
+    </header>
+
+    <!-- App Container for SPA rendering -->
+    <div
+      id="app"
+      class="flex flex-col items-center w-full min-h-[calc(100vh-65px)]"
+    ></div>
+
+    <!-- --- PAGE TEMPLATES --- -->
+    <template id="home">
+      <main
+        class="flex flex-col items-center w-full max-w-[1280px] px-4 md:px-0 py-5 lg:pt-[52px]"
+      >
+        <!-- Hero Section -->
+        <section
+          class="flex flex-col items-start p-0 w-full md:max-w-[960px] mx-auto min-h-[480px]"
+        >
+          <div
+            class="flex flex-col items-center justify-end p-0 w-full min-h-[480px] rounded-[8px] relative overflow-hidden"
+            style="
+              background:
+                linear-gradient(
+                  90deg,
+                  rgba(0, 0, 0, 0.1) 0%,
+                  rgba(0, 0, 0, 0.4) 100%
+                ),
+                url(&quot;./assets/landing.png&quot;);
+              background-size: cover;
+              background-position: center;
+            "
+          >
+            <div
+              class="flex flex-col items-center gap-2 relative mb-3 lg:mb-8 z-10 px-4 md:px-8 w-full max-w-[896px]"
+            >
+              <h1
+                class="font-extrabold text-[36px] leading-[1.2] md:text-[48px] md:leading-[60px] text-center tracking-[-2px] text-white"
+              >
+                Welcome to QuizMaster
+              </h1>
+              <p
+                class="font-normal text-[16px] leading-[24px] text-center text-white pb-6 max-w-2xl mx-auto"
+              >
+                Test your knowledge with our engaging quizzes. Compete with
+                friends and climb the leaderboard. Start your quiz journey
+                today!
+              </p>
+
+              <button
+                class="flex flex-row justify-center items-center px-[20px] py-[0px] w-auto h-[48px] bg-brand-primary rounded-[8px] text-white font-bold text-[16px] leading-[24px] hover:bg-blue-600 transition-colors"
+              >
+                Get Started
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Features Section -->
+        <section
+          class="flex flex-col items-start p-4 md:p-[40px_16px] gap-[40px] w-full md:max-w-[960px] mx-auto mt-4"
+        >
+          <div
+            class="flex flex-col items-start p-0 gap-[16px] w-full max-w-[720px]"
+          >
+            <h2
+              class="font-extrabold text-[28px] md:text-[36px] leading-[1.2] md:leading-[45px] tracking-[-1px] text-brand-dark"
+            >
+              Key Features
+            </h2>
+            <p class="font-normal text-[16px] leading-[24px] text-brand-dark">
+              Explore the exciting features that make QuizMaster the ultimate
+              quiz app.
+            </p>
+          </div>
+
+          <div
+            class="flex flex-col md:flex-row items-stretch p-0 gap-[12px] w-full"
+          >
+            <!-- Feature Card 1 -->
+            <div
+              class="flex flex-col items-start p-[16px] gap-[12px] flex-1 bg-white border border-brand-border-card rounded-[8px] box-border min-h-[157px]"
+            >
+              <div class="w-6 h-6 flex justify-center items-center relative">
+                <svg
+                  width="18"
+                  height="21"
+                  viewBox="0 0 18 21"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M9 3C4.02944 3 0 7.02944 0 12C0 16.9706 4.02944 21 9 21C13.9706 21 18 16.9706 18 12C17.9943 7.03179 13.9682 3.00568 9 3ZM9 19.5C4.85786 19.5 1.5 16.1421 1.5 12C1.5 7.85786 4.85786 4.5 9 4.5C13.1421 4.5 16.5 7.85786 16.5 12C16.4953 16.1402 13.1402 19.4953 9 19.5ZM13.2806 7.71937C13.4215 7.86005 13.5006 8.05094 13.5006 8.25C13.5006 8.44906 13.4215 8.63995 13.2806 8.78063L9.53063 12.5306C9.23757 12.8237 8.76243 12.8237 8.46937 12.5306C8.17632 12.2376 8.17632 11.7624 8.46937 11.4694L12.2194 7.71937C12.3601 7.57854 12.5509 7.49941 12.75 7.49941C12.9491 7.49941 13.1399 7.57854 13.2806 7.71937ZM6 0.75C6 0.335786 6.33579 0 6.75 0H11.25C11.6642 0 12 0.335786 12 0.75C12 1.16421 11.6642 1.5 11.25 1.5H6.75C6.33579 1.5 6 1.16421 6 0.75Z"
+                    fill="#121417"
+                  />
+                </svg>
+              </div>
+              <div class="flex flex-col items-start p-0 gap-[4px] w-full">
+                <h3
+                  class="font-bold text-[16px] leading-[20px] text-brand-dark"
+                >
+                  Timed Quizzes
+                </h3>
+                <p
+                  class="font-normal text-[14px] leading-[21px] text-brand-gray-text"
+                >
+                  Challenge yourself with timed quizzes to test your speed and
+                  accuracy.
+                </p>
+              </div>
+            </div>
+
+            <!-- Feature Card 2 -->
+            <div
+              class="flex flex-col items-start p-[16px] gap-[12px] flex-1 bg-white border border-brand-border-card rounded-[8px] box-border min-h-[157px]"
+            >
+              <div class="w-6 h-6 flex justify-center items-center relative">
+                <svg
+                  width="23"
+                  height="18"
+                  viewBox="0 0 23 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M21 2.25H18.75V1.5C18.75 0.671573 18.0784 0 17.25 0H5.25C4.42157 0 3.75 0.671573 3.75 1.5V2.25H1.5C0.671573 2.25 0 2.92157 0 3.75V5.25C0 7.32107 1.67893 9 3.75 9H4.09219C4.99518 11.8616 7.51452 13.9114 10.5 14.2134V16.5H8.25C7.83579 16.5 7.5 16.8358 7.5 17.25C7.5 17.6642 7.83579 18 8.25 18H14.25C14.6642 18 15 17.6642 15 17.25C15 16.8358 14.6642 16.5 14.25 16.5H12V14.2106C14.9944 13.9078 17.4788 11.8069 18.3825 9H18.75C20.8211 9 22.5 7.32107 22.5 5.25V3.75C22.5 2.92157 21.8284 2.25 21 2.25ZM3.75 7.5C2.50736 7.5 1.5 6.49264 1.5 5.25V3.75H3.75V6.75C3.75 7 3.76219 7.25 3.78656 7.5H3.75ZM17.25 6.66562C17.25 9.99562 14.5791 12.7256 11.2959 12.75H11.25C7.93629 12.75 5.25 10.0637 5.25 6.75V1.5H17.25V6.66562ZM21 5.25C21 6.49264 19.9926 7.5 18.75 7.5H18.7031C18.7339 7.22293 18.7495 6.9444 18.75 6.66562V3.75H21V5.25Z"
+                    fill="#121417"
+                  />
+                </svg>
+              </div>
+              <div class="flex flex-col items-start p-0 gap-[4px] w-full">
+                <h3
+                  class="font-bold text-[16px] leading-[20px] text-brand-dark"
+                >
+                  Leaderboard
+                </h3>
+                <p
+                  class="font-normal text-[14px] leading-[21px] text-brand-gray-text"
+                >
+                  Compete with friends and other users to see who can achieve
+                  the highest scores.
+                </p>
+              </div>
+            </div>
+
+            <!-- Feature Card 3 -->
+            <div
+              class="flex flex-col items-start p-[16px] gap-[12px] flex-1 bg-white border border-brand-border-card rounded-[8px] box-border min-h-[157px]"
+            >
+              <div class="w-6 h-6 flex justify-center items-center relative">
+                <svg
+                  width="20"
+                  height="17"
+                  viewBox="0 0 20 17"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M19.5 15.75C19.5 16.1642 19.1642 16.5 18.75 16.5H0.75C0.335786 16.5 0 16.1642 0 15.75V0.75C0 0.335786 0.335786 0 0.75 0C1.16421 0 1.5 0.335786 1.5 0.75V9.59719L6.25594 5.4375C6.52266 5.20401 6.91644 5.18915 7.2 5.40187L12.7134 9.53719L18.2559 4.6875C18.454 4.49149 18.7443 4.4214 19.0099 4.5055C19.2756 4.58959 19.4727 4.81402 19.5218 5.08828C19.5709 5.36254 19.464 5.64143 19.2441 5.8125L13.2441 11.0625C12.9773 11.296 12.5836 11.3108 12.3 11.0981L6.78656 6.96469L1.5 11.5903V15H18.75C19.1642 15 19.5 15.3358 19.5 15.75Z"
+                    fill="#121417"
+                  />
+                </svg>
+              </div>
+              <div class="flex flex-col items-start p-0 gap-[4px] w-full">
+                <h3
+                  class="font-bold text-[16px] leading-[20px] text-brand-dark"
+                >
+                  Progress Tracking
+                </h3>
+                <p
+                  class="font-normal text-[14px] leading-[21px] text-brand-gray-text"
+                >
+                  Track your progress and see how you improve over time with
+                  detailed performance reports.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </template>
+
+    <template id="quizzes">
+      <div
+        class="px-4 md:px-10 py-8 w-full max-w-[1280px] mx-auto min-h-[600px] flex flex-col items-center"
+      >
+        <!-- The JS logic in app.js will render the actual quizzes here using DOM manipulation -->
+        <h1
+          class="text-[28px] md:text-[36px] font-bold text-brand-dark mb-6 text-left w-full max-w-[960px]"
+        >
+          Select a Quiz
+        </h1>
+
+        <div
+          id="quiz-filters"
+          class="w-full max-w-[960px] flex flex-wrap gap-3 mb-8 text-left"
+        >
+          <!-- Filter buttons dynamically inserted here -->
+        </div>
+
+        <h2
+          id="featured-title"
+          class="text-[20px] md:text-[24px] font-bold text-brand-dark mb-6 text-left w-full max-w-[960px]"
+        >
+          Featured Quizzes
+        </h2>
+        <div
+          id="featured-quiz-list"
+          class="w-full max-w-[960px] grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
+        >
+          <!-- Featured Quizzes dynamically inserted here -->
+        </div>
+
+        <h2
+          class="text-[20px] md:text-[24px] font-bold text-brand-dark mb-6 text-left w-full max-w-[960px]"
+        >
+          All Quizzes
+        </h2>
+        <div
+          id="quiz-list"
+          class="w-full max-w-[960px] flex flex-col gap-6 mb-12"
+        >
+          <!-- Quiz list dynamically inserted here -->
+        </div>
+      </div>
+    </template>
+
+    <template id="quiz">
+      <div
+        class="px-4 md:px-10 py-12 w-full max-w-[1280px] mx-auto min-h-[600px] flex flex-col items-center"
+      >
+        <!-- Main Quiz Container (no border limit per Figma) -->
+        <div class="w-full max-w-[960px] flex flex-col items-start gap-8">
+          <!-- Progress Header -->
+          <div class="w-full flex flex-col gap-2">
+            <span class="text-[16px] font-medium text-brand-dark"
+              >Progress</span
+            >
+            <div
+              class="w-full bg-brand-gray-light h-2 rounded-full overflow-hidden"
+            >
+              <div
+                id="quiz-progress-bar"
+                class="bg-brand-dark h-full rounded-full transition-all duration-300"
+                style="width: 0%"
+              ></div>
+            </div>
+            <p id="quiz-progress-text" class="text-[14px] text-brand-gray-text">
+              Question 1 of 10
+            </p>
+          </div>
+
+          <!-- Timer Blocks -->
+          <div class="w-full grid grid-cols-3 justify-items-center gap-4 mt-4">
+            <div class="flex flex-col items-center w-full">
+              <div
+                id="quiz-timer-h"
+                class="w-full h-[64px] bg-[#F4F5F6] flex justify-center items-center text-[20px] font-bold text-brand-dark rounded-[8px] mb-2"
+              >
+                00
+              </div>
+              <span class="text-[14px] text-brand-dark">Hours</span>
+            </div>
+            <div class="flex flex-col items-center w-full">
+              <div
+                id="quiz-timer-m"
+                class="w-full h-[64px] bg-[#F4F5F6] flex justify-center items-center text-[20px] font-bold text-brand-dark rounded-[8px] mb-2"
+              >
+                00
+              </div>
+              <span class="text-[14px] text-brand-dark">Minutes</span>
+            </div>
+            <div class="flex flex-col items-center w-full">
+              <div
+                id="quiz-timer-s"
+                class="w-full h-[64px] bg-[#F4F5F6] flex justify-center items-center text-[20px] font-bold text-brand-dark rounded-[8px] mb-2"
+              >
+                30
+              </div>
+              <span class="text-[14px] text-brand-dark">Seconds</span>
+            </div>
+          </div>
+
+          <!-- Question Text -->
+          <h3
+            id="question-text"
+            class="text-[24px] md:text-[32px] font-bold text-brand-dark w-full mt-4"
+          >
+            Question text goes here?
+          </h3>
+
+          <!-- Options -->
+          <div id="options-container" class="w-full flex flex-col gap-4">
+            <!-- Option buttons dynamically inserted here -->
+          </div>
+
+          <!-- Dynamic Error Span -->
+          <p
+            id="quiz-error"
+            class="hidden text-red-500 text-[14px] font-bold w-full text-center mt-2"
+          ></p>
+
+          <!-- Navigation Buttons -->
+          <div class="w-full flex justify-between items-center mt-6">
+            <button
+              id="btn-prev"
+              class="px-8 py-3 bg-[#F4F5F6] rounded-[8px] font-bold text-brand-dark hover:bg-gray-200 transition-colors hidden cursor-pointer"
+            >
+              Previous
+            </button>
+            <button
+              id="btn-next"
+              class="px-8 py-3 bg-brand-primary rounded-[8px] font-bold text-white hover:bg-blue-600 transition-colors ml-auto cursor-pointer"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="results">
+      <div
+        class="px-4 md:px-10 py-12 w-full max-w-[1280px] mx-auto min-h-[600px] flex flex-col items-center"
+      >
+        <h1 class="text-[32px] md:text-[40px] font-bold text-brand-dark mb-8">
+          Quiz Results
+        </h1>
+
+        <div
+          class="w-full max-w-[720px] flex justify-between items-center mb-2"
+        >
+          <span class="font-bold text-brand-dark">Quiz Completed</span>
+          <span class="font-bold text-brand-dark">100%</span>
+        </div>
+        <div class="w-full max-w-[720px] bg-black h-2 rounded-full mb-8"></div>
+
+        <div
+          class="w-full max-w-[720px] bg-brand-gray-light rounded-lg p-6 mb-8 flex flex-col"
+        >
+          <p class="text-[16px] text-brand-gray-text">Score</p>
+          <p id="final-score" class="text-[32px] font-bold text-brand-dark">
+            8/10
+          </p>
+        </div>
+
+        <p
+          id="result-message"
+          class="text-center text-[16px] leading-[24px] text-brand-dark max-w-[720px] mb-8"
+        >
+          Congratulations! You've completed the quiz.
+        </p>
+
+        <div class="flex flex-col gap-4">
+          <button
+            onclick="navigate('review')"
+            class="w-[200px] h-[48px] bg-brand-primary text-white font-bold rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Review Answers
+          </button>
+          <button
+            onclick="navigate('quizzes')"
+            class="w-[200px] h-[48px] bg-brand-gray-light text-brand-dark font-bold rounded-lg hover:bg-gray-200 transition-colors"
+          >
+            Take Another Quiz
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template id="review">
+      <div
+        class="px-4 md:px-10 py-8 w-full max-w-[1280px] mx-auto min-h-[600px] flex flex-col items-center"
+      >
+        <h1
+          class="text-[28px] md:text-[36px] font-bold text-brand-dark mb-8 text-left w-full max-w-[960px]"
+        >
+          Review Incorrect Answers
+        </h1>
+        <div
+          id="review-list"
+          class="w-full max-w-[960px] flex flex-col gap-8 mb-8"
+        >
+          <!-- Incorrect answers injected here -->
+        </div>
+        <div class="w-full max-w-[960px] flex justify-end">
+          <button
+            onclick="navigate('quizzes')"
+            class="px-6 py-3 bg-brand-primary text-white font-bold rounded-lg hover:bg-blue-600 transition-colors"
+          >
+            Back to Quizzes
+          </button>
+        </div>
+      </div>
+    </template>
+
+    <template id="profile">
+      <div
+        class="px-4 md:px-10 py-12 w-full max-w-[1280px] mx-auto min-h-[600px] flex flex-col items-center"
+      >
+        <!-- Header: Avatar, Name, Title, Joined Date -->
+        <div class="flex flex-col items-center mb-10 w-full">
+          <div
+            class="w-[120px] h-[120px] rounded-full bg-cover bg-center mb-4 border border-brand-border-card shadow-sm"
+            id="profile-avatar"
+          ></div>
+          <h2
+            id="profile-name"
+            class="text-[28px] font-bold text-brand-dark leading-tight"
+          >
+            User Name
+          </h2>
+          <p class="text-[16px] text-brand-gray-text mt-1">Quiz Enthusiast</p>
+          <p
+            class="text-[14px] text-brand-gray-text opacity-80 mt-1"
+            id="profile-joined"
+          >
+            Joined 2024
+          </p>
+        </div>
+
+        <!-- Container for Tabs & Content -->
+        <div class="w-full max-w-[960px] flex flex-col">
+          <!-- Tabs -->
+          <div
+            class="flex flex-row gap-8 border-b border-brand-border-card w-full mb-8 px-2"
+          >
+            <button
+              class="font-medium text-[16px] pb-3 text-brand-gray-text hover:text-brand-dark transition-colors cursor-pointer border-b-2 border-transparent"
+            >
+              Activity
+            </button>
+            <button
+              class="font-medium text-[16px] pb-3 text-brand-dark border-b-2 border-brand-dark cursor-pointer"
+            >
+              Profile
+            </button>
+          </div>
+
+          <!-- Personal Information Section -->
+          <div class="w-full flex flex-col mb-12">
+            <h3 class="text-[24px] font-bold text-brand-dark mb-6">
+              Personal Information
+            </h3>
+            <div
+              class="flex flex-col md:flex-row gap-8 w-full border-b border-brand-border-card pb-8 mb-8"
+            >
+              <!-- Name Field -->
+              <div class="flex flex-col flex-1">
+                <span class="text-[14px] text-brand-gray-text mb-1">Name</span>
+                <span id="profile-info-name" class="text-[16px] text-brand-dark"
+                  >User Name</span
+                >
+              </div>
+              <!-- Email Field -->
+              <div class="flex flex-col flex-1">
+                <span class="text-[14px] text-brand-gray-text mb-1">Email</span>
+                <span
+                  id="profile-info-email"
+                  class="text-[16px] text-brand-dark"
+                  >email@example.com</span
+                >
+              </div>
+            </div>
+            <div class="flex flex-col w-full">
+              <span class="text-[14px] text-brand-gray-text mb-1">Bio</span>
+              <span class="text-[16px] text-brand-dark max-w-[400px]"
+                >Avid quiz taker and trivia lover. Always up for a
+                challenge!</span
+              >
+            </div>
+          </div>
+
+          <!-- Quiz History Section -->
+          <div class="w-full flex flex-col">
+            <h3 class="text-[24px] font-bold text-brand-dark mb-6">
+              Quiz History
+            </h3>
+            <div
+              class="w-full border border-brand-border-card rounded-lg overflow-hidden bg-white"
+            >
+              <table class="w-full text-left border-collapse min-w-[600px]">
+                <thead>
+                  <tr class="border-b border-brand-border-card bg-[#F9FAFB]">
+                    <th
+                      class="py-4 px-6 text-[14px] font-semibold text-brand-dark"
+                    >
+                      Quiz Name
+                    </th>
+                    <th
+                      class="py-4 px-6 text-[14px] font-semibold text-brand-dark"
+                    >
+                      Score
+                    </th>
+                    <th
+                      class="py-4 px-6 text-[14px] font-semibold text-brand-dark"
+                    >
+                      Date
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="profile-quiz-history">
+                  <!-- History items injected here -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template id="404">
+      <div
+        class="flex flex-col items-center justify-center p-8 w-full min-h-[400px]"
+      >
+        <h1 class="text-[36px] font-bold text-red-500 mb-2">404 - Not Found</h1>
+        <p class="text-brand-gray-text">
+          The page you are looking for does not exist.
+        </p>
+        <button
+          onclick="navigate('home')"
+          class="mt-6 text-brand-primary hover:underline font-semibold cursor-pointer"
+        >
+          Return Home
+        </button>
+      </div>
+    </template>
+
+    <template id="login">
+      <div
+        class="flex flex-col items-center justify-center w-full min-h-[600px] bg-white px-4"
+      >
+        <div class="w-full max-w-[480px] flex flex-col items-center gap-6">
+          <h1 class="text-[28px] font-bold text-brand-dark">Welcome back</h1>
+          <form id="login-form" class="w-full flex flex-col gap-4 mt-4">
+            <input
+              id="login-email"
+              type="email"
+              placeholder="Email"
+              required
+              class="w-full h-[48px] px-4 bg-brand-gray-light text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <input
+              id="login-password"
+              type="password"
+              placeholder="Password"
+              required
+              class="w-full h-[48px] px-4 bg-brand-gray-light text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <div class="w-full flex justify-start">
+              <span
+                class="text-[13px] text-brand-gray-text hover:underline mt-[-4px] cursor-pointer"
+                >Forgot password?</span
+              >
+            </div>
+            <p
+              id="login-error"
+              class="text-red-500 text-[14px] font-semibold text-center hidden"
+            ></p>
+            <button
+              type="submit"
+              class="w-full h-[48px] bg-brand-primary text-white font-bold text-[16px] rounded-[6px] hover:bg-blue-600 transition-colors mt-2 cursor-pointer"
+            >
+              Log in
+            </button>
+          </form>
+          <p class="text-[14px] text-brand-gray-text mt-2">
+            Don't have an account?
+            <button
+              onclick="navigate('signup')"
+              class="text-brand-gray-text hover:underline cursor-pointer"
+            >
+              Sign up
+            </button>
+          </p>
+        </div>
+      </div>
+    </template>
+
+    <template id="signup">
+      <div
+        class="flex flex-col items-center justify-center w-full min-h-[600px] bg-white px-4"
+      >
+        <div class="w-full max-w-[480px] flex flex-col items-center gap-6">
+          <h1 class="text-[28px] font-bold text-brand-dark">
+            Create your account
+          </h1>
+          <form id="signup-form" class="w-full flex flex-col gap-4 mt-4">
+            <input
+              id="signup-name"
+              type="text"
+              placeholder="Full Name"
+              required
+              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <input
+              id="signup-email"
+              type="email"
+              placeholder="Email"
+              required
+              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <input
+              id="signup-password"
+              type="password"
+              placeholder="Password"
+              required
+              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <input
+              id="signup-confirm"
+              type="password"
+              placeholder="Confirm Password"
+              required
+              class="w-full h-[48px] px-4 bg-white text-[14px] text-brand-dark border border-brand-border-card rounded-[6px] focus:outline-none focus:border-brand-primary"
+            />
+            <p
+              id="signup-error"
+              class="text-red-500 text-[14px] font-semibold text-center hidden"
+            ></p>
+            <button
+              type="submit"
+              class="w-full h-[48px] bg-brand-primary text-white font-bold text-[16px] rounded-[6px] hover:bg-blue-600 transition-colors mt-2 cursor-pointer"
+            >
+              Sign Up
+            </button>
+          </form>
+          <p class="text-[14px] text-brand-gray-text mt-2">
+            Already have an account?
+            <button
+              onclick="navigate('login')"
+              class="text-brand-gray-text hover:underline cursor-pointer"
+            >
+              Sign In
+            </button>
+          </p>
+        </div>
+      </div>
+    </template>
+
+    <!-- External SPA Router Script -->
+    <script src="./src/data.js"></script>
+    <script src="./src/app.js"></script>
   </body>
 </html>
