@@ -1,1 +1,32 @@
 @import "tailwindcss";
+
+@theme {
+  --color-header-bg: var(--bg-header);
+  --color-text-muted: var(--text-muted);
+  --color-text-active: var(--text-active);
+  --color-accent-blue: var(--accent-blue);
+  --color-btn-download-text: var(--btn-download-text);
+  --font-poppins: "Poppins", sans-serif;
+}
+
+:root {
+  --bg-header: #ffffff;
+  --text-muted: #666666;
+  --text-active: #000000;
+  --accent-blue: #007aff;
+  --btn-download-text: #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-header: #313131;
+    --text-muted: #aaaaaa;
+    --text-active: #ffffff;
+    --accent-blue: #007aff;
+    --btn-download-text: #ffffff;
+  }
+}
+
+body {
+  font-family: var(--font-poppins);
+}

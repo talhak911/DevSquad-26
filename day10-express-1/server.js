@@ -4,17 +4,20 @@ import { swaggerDocument } from "./src/docs/swagger.js";
 import taskRoutes from "./src/routes/taskRoutes.js";
 import { errorHandler } from "./src/middlewares/errorHandler.js";
 
+import path from "path";
+
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Serve public directory
+app.use(express.static(path.join(process.cwd(), "public")));
 
 // Middleware
 app.use(express.json()); // Parse JSON request bodies
 
 // Root Route - Redirect or Info
 app.get("/", (req, res) => {
-  res.send(
-    `<h1>Task Manager API</h1><p>Visit <a href="/api-docs">/api-docs</a> for Swagger documentation.</p>`,
-  );
+  res.sendFile(path.join(process.cwd(), "public", "home.html"));
 });
 
 // Swagger Docs Route
