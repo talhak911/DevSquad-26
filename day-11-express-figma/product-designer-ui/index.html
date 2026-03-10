@@ -40,7 +40,7 @@
   >
     <!-- Navigation Bar -->
     <header
-      class="w-full max-w-[1728px] mx-auto flex justify-between items-center px-[22px] lg:px-[100px] pt-[50px] pb-[30px] bg-nav-mobile lg:bg-transparent transition-colors duration-300 relative z-20"
+      class="w-full max-w-[1728px] mx-auto flex justify-between items-center px-[22px] md:px-[40px] lg:px-[60px] 2xl:px-[100px] pt-[50px] pb-[30px] bg-nav-mobile 2xl:bg-transparent transition-colors duration-300 relative z-20"
     >
       <!-- Logo -->
       <div class="flex items-center gap-[5px]">
@@ -71,31 +71,31 @@
       </div>
 
       <!-- Desktop Navigation Links -->
-      <nav class="hidden lg:flex items-center gap-[30px]">
+      <nav class="hidden md:flex items-center gap-[30px]">
         <a
           href="#"
-          class="text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
+          class="nav-link text-[20px] leading-none text-text-primary font-bold underline decoration-2 underline-offset-8"
           >Home</a
         >
         <a
           href="#"
-          class="text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
+          class="nav-link text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
           >Portfolio</a
         >
         <a
           href="#"
-          class="text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
+          class="nav-link text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
           >Skills</a
         >
         <a
           href="#"
-          class="text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
+          class="nav-link text-[20px] leading-none text-text-primary hover:opacity-70 transition-opacity"
           >About Me</a
         >
       </nav>
 
       <!-- Right Side: Dark Mode Toggle & Button -->
-      <div class="hidden lg:flex items-center gap-[20px]">
+      <div class="hidden md:flex items-center gap-[20px]">
         <!-- Theme Toggle -->
         <button
           id="theme-toggle"
@@ -124,18 +124,18 @@
             />
           </svg>
           <div
-            class="absolute top-[4px] left-[28px] dark:left-[4px] w-[24px] h-[24px] rounded-[12px] bg-white dark:bg-[#FFFDED] transition-all duration-300 pointer-events-none"
+            class="absolute top-[4px] left-[4px] w-[24px] h-[24px] rounded-[12px] bg-white dark:bg-[#FFFDED] transition-transform duration-300 translate-x-[24px] dark:translate-x-0 pointer-events-none"
           ></div>
         </button>
         <button
-          class="bg-[#925FF0] text-white px-[24px] py-[12px] rounded-[4px] text-[16px] leading-none transition-transform hover:scale-105"
+          class="bg-[#292929] dark:bg-[#925FF0] text-white px-[24px] py-[12px] rounded-[4px] text-[16px] leading-none transition-colors hover:scale-105"
         >
           Contact Me
         </button>
       </div>
 
       <!-- Mobile Menu Button -->
-      <button id="mobile-menu-btn" class="lg:hidden text-text-primary p-2">
+      <button id="mobile-menu-btn" class="md:hidden text-text-primary p-2">
         <svg
           width="24"
           height="24"
@@ -170,10 +170,26 @@
       id="mobile-menu"
       class="fixed inset-0 bg-bg-primary z-10 flex-col py-24 px-6 gap-6 items-center"
     >
-      <a href="#" class="text-2xl text-text-primary">Home</a>
-      <a href="#" class="text-2xl text-text-primary">Portfolio</a>
-      <a href="#" class="text-2xl text-text-primary">Skills</a>
-      <a href="#" class="text-2xl text-text-primary">About Me</a>
+      <a
+        href="#"
+        class="nav-link-mobile text-2xl text-text-primary font-bold underline decoration-2 underline-offset-8"
+        >Home</a
+      >
+      <a
+        href="#"
+        class="nav-link-mobile text-2xl text-text-primary hover:opacity-70 transition-opacity"
+        >Portfolio</a
+      >
+      <a
+        href="#"
+        class="nav-link-mobile text-2xl text-text-primary hover:opacity-70 transition-opacity"
+        >Skills</a
+      >
+      <a
+        href="#"
+        class="nav-link-mobile text-2xl text-text-primary hover:opacity-70 transition-opacity"
+        >About Me</a
+      >
       <button
         id="theme-toggle-mobile"
         class="mt-4 relative w-[56px] h-[32px] rounded-[16px] overflow-hidden focus:outline-none transition-colors duration-300 bg-[#051724] dark:bg-[#FFEC70]"
@@ -201,29 +217,29 @@
           />
         </svg>
         <div
-          class="absolute top-[4px] left-[28px] dark:left-[4px] w-[24px] h-[24px] rounded-[12px] bg-white dark:bg-[#FFFDED] transition-all duration-300 pointer-events-none"
+          class="absolute top-[4px] left-[4px] w-[24px] h-[24px] rounded-[12px] bg-white dark:bg-[#FFFDED] transition-transform duration-300 translate-x-[24px] dark:translate-x-0 pointer-events-none"
         ></div>
       </button>
     </div>
 
     <!-- Main Hero Section -->
     <main
-      class="w-full max-w-[1728px] mx-auto flex flex-col lg:flex-row items-center justify-center lg:justify-between px-[22px] lg:px-[100px] mt-10 lg:mt-0 gap-10 lg:gap-[19px] relative z-0 flex-1"
+      class="w-full max-w-[1728px] mx-auto flex flex-col lg:flex-row items-center justify-center lg:justify-between px-[22px] md:px-[40px] lg:px-[60px] 2xl:px-[100px] mt-10 lg:mt-0 gap-10 2xl:gap-[19px] relative z-0 flex-1"
     >
       <!-- Left Content -->
       <div
-        class="flex flex-col w-full max-w-[366px] lg:max-w-[660px] gap-[70px] shrink-0"
+        class="flex flex-col w-full max-w-[366px] md:max-w-[480px] 2xl:max-w-[660px] gap-[70px] shrink-0"
       >
         <!-- Title Wrapper -->
         <div class="flex flex-col gap-[18px]">
           <div class="flex items-start">
             <h1
-              class="font-anton text-[110px] lg:text-[200px] leading-[90%] tracking-[-0.03em] text-text-primary"
+              class="font-anton text-[110px] md:text-[140px] lg:text-[160px] 2xl:text-[200px] leading-[90%] tracking-[-0.03em] text-text-primary"
             >
               PRODUCT<br />DESIGNER
             </h1>
             <svg
-              class="hidden lg:block w-[160px] h-[160px] text-text-primary shrink-0 z-10"
+              class="hidden lg:block md:w-[100px] md:h-[100px] 2xl:w-[160px] 2xl:h-[160px] text-text-primary shrink-0 z-10"
               viewBox="0 0 160 160"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -237,7 +253,7 @@
             </svg>
           </div>
           <h2
-            class="font-anton text-[64px] lg:text-[114px] leading-[90%] tracking-[-0.03em] text-gradient mt-[-10px] lg:mt-0"
+            class="font-anton text-[64px] md:text-[80px] lg:text-[96px] 2xl:text-[114px] leading-[90%] tracking-[-0.03em] text-gradient pt-[20px] pb-[10px]"
           >
             CRISTIAN MUÑOZ
           </h2>
@@ -484,7 +500,7 @@
 
       <!-- Right Content: Image (Visible only on lg sizes) -->
       <div
-        class="hidden lg:block w-[694px] h-[778px] overflow-hidden bg-cover bg-center shrink-0"
+        class="hidden md:block md:w-[350px] md:h-[400px] lg:w-[480px] lg:h-[540px] 2xl:w-[694px] 2xl:h-[778px] overflow-hidden bg-cover bg-center shrink-0"
         style="background-image: url(&quot;/assets/car-img.jpg&quot;)"
       ></div>
     </main>
@@ -513,6 +529,44 @@
 
       mobileMenuBtn.addEventListener("click", () => {
         mobileMenu.classList.toggle("open");
+      });
+
+      // Active Navigation Link State functionality
+      const desktopNavLinks = document.querySelectorAll(".nav-link");
+      const mobileNavLinks = document.querySelectorAll(".nav-link-mobile");
+
+      function setActiveLink(links, clickedLink) {
+        links.forEach((l) => {
+          l.classList.remove(
+            "font-bold",
+            "underline",
+            "decoration-2",
+            "underline-offset-8",
+          );
+          l.classList.add("hover:opacity-70", "transition-opacity");
+        });
+
+        clickedLink.classList.remove("hover:opacity-70", "transition-opacity");
+        clickedLink.classList.add(
+          "font-bold",
+          "underline",
+          "decoration-2",
+          "underline-offset-8",
+        );
+      }
+
+      desktopNavLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          setActiveLink(desktopNavLinks, this);
+        });
+      });
+
+      mobileNavLinks.forEach((link) => {
+        link.addEventListener("click", function (e) {
+          setActiveLink(mobileNavLinks, this);
+          // Optional: Close menu on mobile link click
+          mobileMenu.classList.remove("open");
+        });
       });
     </script>
   </body>
