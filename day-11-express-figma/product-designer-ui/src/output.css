@@ -404,6 +404,12 @@
   .pt-\[50px\] {
     padding-top: 50px;
   }
+  .pt-\[140px\] {
+    padding-top: 140px;
+  }
+  .pb-10 {
+    padding-bottom: calc(var(--spacing) * 10);
+  }
   .pb-\[10px\] {
     padding-bottom: 10px;
   }
@@ -633,6 +639,16 @@
   .lg\:text-\[160px\] {
     @media (width >= 64rem) {
       font-size: 160px;
+    }
+  }
+  .xl\:block {
+    @media (width >= 80rem) {
+      display: block;
+    }
+  }
+  .xl\:flex-row {
+    @media (width >= 80rem) {
+      flex-direction: row;
     }
   }
   .\32 xl\:mt-0 {
