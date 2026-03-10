@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/globals.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header>
+      <a href="/" class="brand">TaskManager</a>
+      <div class="nav-actions">
+        <button
+          class="btn btn-icon"
+          id="theme-toggle"
+          aria-label="Toggle theme"
+        >
+          🌙
+        </button>
+        <a href="/login" class="btn btn-outline" id="nav-login">Login</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="auth-container">
+        <h1 class="auth-title">Sign Up</h1>
+        <form id="register-form">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="John Doe"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="john@example.com"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary" id="submit-btn">
+            Register
+          </button>
+          <div class="switch-auth">
+            Already have an account? <a href="/login">Login</a>
+          </div>
+        </form>
+      </div>
+    </main>
+
+    <div id="toast" class="toast"></div>
+
+    <script>
+      // Theme logic
+      const themeToggle = document.getElementById("theme-toggle");
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme) {
+        document.documentElement.setAttribute("data-theme", storedTheme);
+        themeToggle.textContent = storedTheme === "dark" ? "☀️" : "🌙";
+      } else {
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        if (prefersDark) {
+          document.documentElement.setAttribute("data-theme", "dark");
+          themeToggle.textContent = "☀️";
+        }
+      }
+
+      themeToggle.addEventListener("click", () => {
+        const currentTheme =
+          document.documentElement.getAttribute("data-theme");
+        const newTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        themeToggle.textContent = newTheme === "dark" ? "☀️" : "🌙";
+      });
+
+      // Check if fully logged in
+      const token = localStorage.getItem("token");
+      if (token) {
+        window.location.href = "/";
+      }
+
+      // Toast function
+      function showToast(message, type = "success") {
+        const toast = document.getElementById("toast");
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+        setTimeout(() => {
+          toast.className = "toast";
+        }, 3000);
+      }
+
+      // Form logic
+      const setupForm = document.getElementById("register-form");
+      const submitBtn = document.getElementById("submit-btn");
+
+      setupForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        submitBtn.textContent = "Registering...";
+        submitBtn.disabled = true;
+
+        try {
+          const response = await fetch("/api/users/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, email, password }),
+          });
+
+          const data = await response.json();
+          if (response.ok) {
+            showToast("Account created successfully!");
+            localStorage.setItem("token", data.data.token);
+            setTimeout(() => {
+              window.location.href = "/";
+            }, 1000);
+          } else {
+            showToast(data.message || "Registration failed", "error");
+            submitBtn.textContent = "Register";
+            submitBtn.disabled = false;
+          }
+        } catch (err) {
+          showToast("Something went wrong", "error");
+          submitBtn.textContent = "Register";
+          submitBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>
