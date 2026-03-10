@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-border-primary: var(--border-primary);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-text: var(--btn-text);
+  --color-toggle-bg: var(--toggle-bg);
+  --color-toggle-circle: var(--toggle-circle);
+  --color-toggle-icon: var(--toggle-icon);
+  --color-nav-mobile: var(--nav-mobile);
+  --color-icon-border: var(--icon-border);
+  --color-icon-fill: var(--icon-fill);
+}
+
+@layer base {
+  :root {
+    /* Light Mode Variables */
+    --bg-primary: #ffffff;
+    --bg-secondary: #292929;
+    --text-primary: #292929;
+    --text-secondary: #ffffff;
+    --border-primary: #e6e6e6;
+    --btn-bg: #292929;
+    --btn-text: #ffffff;
+    --toggle-bg: #051724;
+    --toggle-circle: #ffffff;
+    --toggle-icon: #fff194;
+    --nav-mobile: transparent;
+    --icon-border: #e6e6e6;
+    --icon-fill: #292929;
+  }
+
+  .dark {
+    /* Dark Mode Variables */
+    --bg-primary: #000000;
+    --bg-secondary: #292929;
+    --text-primary: #ffffff;
+    --text-secondary: #292929;
+    --border-primary: #ffffff;
+    --btn-bg: #292929;
+    --btn-text: #ffffff;
+    --toggle-bg: #ffec70;
+    --toggle-circle: #fffded;
+    --toggle-icon: #051724;
+    --nav-mobile: #0b0b0b;
+    --icon-border: #ffffff;
+    --icon-fill: #ffffff;
+  }
+}
