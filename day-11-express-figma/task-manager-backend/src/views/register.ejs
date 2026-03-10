@@ -141,7 +141,11 @@
               window.location.href = "/";
             }, 1000);
           } else {
-            showToast(data.message || "Registration failed", "error");
+            let errorMsg = data.message || "Registration failed";
+            if (data.errors && data.errors.length > 0) {
+              errorMsg = data.errors.map((err) => err.message).join(", ");
+            }
+            showToast(errorMsg, "error");
             submitBtn.textContent = "Register";
             submitBtn.disabled = false;
           }
