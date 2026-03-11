@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #4a90e2;
+  --color-primary-hover: #357abd;
+  --color-secondary: #e0e0e0;
+  --color-danger: #e74c3c;
+  --color-danger-hover: #c0392b;
+  --color-success: #2ecc71;
+
+  --color-bg-light: #f4f7f6;
+  --color-text-light: #333333;
+  --color-card-light: #ffffff;
+  --color-border-light: #dcdcdc;
+  --color-input-bg-light: #ffffff;
+
+  --color-bg-dark: #121212;
+  --color-text-dark: #e0e0e0;
+  --color-card-dark: #1e1e1e;
+  --color-border-dark: #444444;
+  --color-input-bg-dark: #2b2b2b;
+
+  --color-placeholder: #888888;
+}
+
+@layer base {
+  body {
+    @apply bg-bg-light text-text-light min-h-screen transition-colors duration-300;
+  }
+
+  .dark body {
+    @apply bg-bg-dark text-text-dark;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply px-6 py-3 rounded-lg font-semibold inline-block text-center transition-all duration-200 active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-hover w-full shadow-md;
+  }
+
+  .btn-outline {
+    @apply bg-transparent border border-primary text-primary hover:bg-primary hover:text-white;
+  }
+
+  .btn-danger {
+    @apply bg-danger text-white hover:bg-danger-hover;
+  }
+
+  .btn-icon {
+    @apply p-2 bg-transparent text-current hover:text-primary text-xl;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 border border-border-light rounded-lg bg-input-bg-light text-text-light outline-none transition-colors duration-300 placeholder-placeholder focus:border-primary;
+  }
+
+  .dark .input-field {
+    @apply border-border-dark bg-input-bg-dark text-text-dark;
+  }
+
+  .card {
+    @apply bg-card-light rounded-xl shadow-lg transition-colors duration-300;
+  }
+
+  .dark .card {
+    @apply bg-card-dark shadow-[0_8px_30px_rgba(0,0,0,0.5)];
+  }
+
+  .dashboard-container {
+    @apply w-full max-w-3xl mx-auto px-4 lg:px-6 pb-8;
+  }
+
+  .auth-container {
+    @apply w-full max-w-[400px] mx-auto p-10 md:p-6 bg-card-light rounded-xl shadow-lg transition-colors duration-300;
+  }
+
+  .dark .auth-container {
+    @apply bg-card-dark shadow-[0_8px_30px_rgba(0,0,0,0.5)];
+  }
+}
