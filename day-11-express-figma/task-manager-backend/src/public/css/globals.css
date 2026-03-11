@@ -369,3 +369,100 @@ header {
   background-color: var(--danger-color);
   color: #fff;
 }
+
+/* Theme Toggle SVG Animation & Styling */
+.theme-btn {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.theme-btn svg rect:first-child {
+  fill: #051724;
+  transition: fill 0.3s ease;
+}
+
+.theme-btn svg path {
+  transition:
+    fill 0.3s ease,
+    opacity 0.3s ease;
+}
+
+.toggle-circle {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* When the theme is light, rotate circle to the left side and show the sun shapes */
+[data-theme="light"] .theme-btn svg rect:first-child {
+  fill: #e6e6e6; /* Light gray background for light mode */
+}
+
+[data-theme="light"] .theme-btn svg path {
+  fill: #f59e0b; /* Orange-ish sun color */
+  opacity: 1;
+}
+
+[data-theme="light"] .toggle-circle {
+  transform: translateX(-24px);
+  fill: #ffffff;
+}
+
+/* When the theme is dark */
+[data-theme="dark"] .theme-btn svg rect:first-child {
+  fill: #051724;
+}
+
+[data-theme="dark"] .theme-btn svg path {
+  opacity: 0; /* Hide the sun rays in dark mode */
+}
+
+[data-theme="dark"] .toggle-circle {
+  transform: translateX(0); /* Right side */
+  fill: #ffffff;
+}
+
+/* Responsiveness adjustments per user request */
+@media screen and (max-width: 1024px) {
+  /* lg */
+  .dashboard-container {
+    padding: 0 1.5rem 2rem 1.5rem;
+    max-width: 90%;
+  }
+
+  .auth-container {
+    max-width: 360px;
+    padding: 2rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  /* md */
+  header {
+    padding: 1rem 1.5rem;
+  }
+
+  .brand {
+    font-size: 1.3rem;
+  }
+
+  .dashboard-container {
+    max-width: 95%;
+  }
+
+  .auth-container {
+    max-width: 100%;
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+
+  .add-task-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .add-task-form .btn {
+    width: 100%;
+  }
+}

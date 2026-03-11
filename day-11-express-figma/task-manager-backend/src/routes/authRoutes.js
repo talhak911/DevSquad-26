@@ -1,6 +1,12 @@
 const express = require("express");
 const { body } = require("express-validator");
-const { register, login, getMe } = require("../controllers/authController");
+const {
+  register,
+  login,
+  getMe,
+  refreshTokens,
+  logout,
+} = require("../controllers/authController");
 const { protect } = require("../middleware/auth");
 const { validateRequest } = require("../middleware/validateRequest");
 
@@ -13,7 +19,9 @@ const registerValidation = [
     .notEmpty()
     .withMessage("Name is required")
     .isLength({ min: 2, max: 50 })
-    .withMessage("Name must be between 2 and 50 characters"),
+    .withMessage("Name must be between 2 and 50 characters")
+    .isAlpha("en-US", { ignore: " " })
+    .withMessage("Name must contain only alphabetic characters"),
   body("email")
     .trim()
     .notEmpty()
@@ -25,7 +33,11 @@ const registerValidation = [
     .notEmpty()
     .withMessage("Password is required")
     .isLength({ min: 6 })
-    .withMessage("Password must be at least 6 characters"),
+    .withMessage("Password must be at least 6 characters")
+    .isStrongPassword()
+    .withMessage(
+      "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+    ),
 ];
 
 const loginValidation = [
@@ -135,5 +147,31 @@ router.post("/login", loginValidation, validateRequest, login);
  *         description: Not authorized
  */
 router.get("/me", protect, getMe);
+
+/**
+ * @swagger
+ * /api/users/refresh:
+ *   post:
+ *     summary: Exchange refresh token cookie for new access token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Tokens refreshed successfully
+ *       401:
+ *         description: Invalid or expired refresh token
+ */
+router.post("/refresh", refreshTokens);
+
+/**
+ * @swagger
+ * /api/users/logout:
+ *   post:
+ *     summary: Logout user and invalidate refresh token
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Logged out successfully
+ */
+router.post("/logout", logout);
 
 module.exports = router;

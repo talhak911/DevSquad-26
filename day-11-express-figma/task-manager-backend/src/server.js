@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const cookieParser = require("cookie-parser");
 const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const connectDB = require("./config/db");
@@ -14,7 +15,15 @@ connectDB();
 const app = express();
 
 // ─── Body Parsing & Static Assets ──────────────────────────────────────────────
+const cors = require("cors");
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://day-12-react-talha.vercel.app"],
+    credentials: true,
+  }),
+);
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
 
