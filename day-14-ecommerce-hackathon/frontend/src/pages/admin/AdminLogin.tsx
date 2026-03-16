@@ -28,8 +28,10 @@ const AdminLogin: React.FC = () => {
     setError(""); setLoading(true);
     try {
       const user = await login(values.email, values.password);
-      if (user.role === "admin" || user.role === "superadmin") {
+      if (user.role === "superadmin") {
         navigate("/admin");
+      } else if (user.role === "admin") {
+        navigate("/admin/products");
       } else {
         setError("Access denied. Admin accounts only.");
         localStorage.removeItem("access_token");

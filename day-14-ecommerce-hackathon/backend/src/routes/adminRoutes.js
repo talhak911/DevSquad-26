@@ -29,7 +29,7 @@ const isSuperAdmin = [protect, requireRole("superadmin")];
  *       200:
  *         description: Analytics report
  */
-router.get("/analytics", ...isAdmin, ctrl.getAnalytics);
+router.get("/analytics", ...isSuperAdmin, ctrl.getAnalytics);
 
 // Products (admin view - includes inactive)
 router.get("/products", ...isAdmin, async (req, res) => {
@@ -73,8 +73,8 @@ router.patch("/orders/:id/status", ...isAdmin, ctrl.updateOrderStatus);
 router.post("/orders/:id/cancel", ...isAdmin, ctrl.cancelOrder);
 
 // Users / Customers
-router.get("/users", ...isAdmin, ctrl.getUsers);
-router.get("/users/:id", ...isAdmin, ctrl.getUserDetail);
+router.get("/users", ...isSuperAdmin, ctrl.getUsers);
+router.get("/users/:id", ...isSuperAdmin, ctrl.getUserDetail);
 router.patch("/users/:id/block", ...isSuperAdmin, ctrl.blockUser);
 
 // Admin accounts (superadmin only)
@@ -96,6 +96,6 @@ router.delete("/accounts/:id", ...isSuperAdmin, ctrl.deleteAdmin);
  *       200:
  *         description: Audit log list
  */
-router.get("/audit", ...isAdmin, ctrl.getAuditLog);
+router.get("/audit", ...isSuperAdmin, ctrl.getAuditLog);
 
 module.exports = router;

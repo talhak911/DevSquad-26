@@ -7,17 +7,17 @@ import { useAuth } from "../../context/AuthContext";
 const DRAWER_WIDTH = 260;
 
 const navItems = [
-  { label: "Dashboard", icon: <Dashboard />, path: "/admin" },
   { label: "Products", icon: <Storefront />, path: "/admin/products" },
   { label: "Categories", icon: <Category />, path: "/admin/categories" },
   { label: "Orders", icon: <ShoppingCart />, path: "/admin/orders" },
   { label: "Inventory", icon: <Inventory />, path: "/admin/inventory" },
-  { label: "Customers", icon: <People />, path: "/admin/users" },
-  { label: "Analytics", icon: <Assessment />, path: "/admin/analytics" },
-  { label: "Audit Log", icon: <History />, path: "/admin/audit" },
 ];
 
 const superAdminItems = [
+  { label: "Dashboard", icon: <Dashboard />, path: "/admin" },
+  { label: "Customers", icon: <People />, path: "/admin/users" },
+  { label: "Analytics", icon: <Assessment />, path: "/admin/analytics" },
+  { label: "Audit Log", icon: <History />, path: "/admin/audit" },
   { label: "Admin Accounts", icon: <AdminPanelSettings />, path: "/admin/accounts" },
 ];
 

@@ -81,7 +81,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/login" element={<AdminLogin />} />
 
             {/* Admin Panel (Protected) - Note: Pages already wrap themselves in AdminLayout */}
-            <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminDashboard /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminDashboard /></ProtectedRoute>} />
             <Route path="/admin/categories" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminCategories /></ProtectedRoute>} />
             <Route path="/admin/products" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminProducts /></ProtectedRoute>} />
             <Route path="/admin/products/new" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminProductForm /></ProtectedRoute>} />
@@ -89,9 +89,9 @@ const AppContent: React.FC = () => {
             <Route path="/admin/orders" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminOrders /></ProtectedRoute>} />
             <Route path="/admin/orders/:id" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminOrderDetail /></ProtectedRoute>} />
             <Route path="/admin/inventory" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminInventory /></ProtectedRoute>} />
-            <Route path="/admin/users" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminUsers /></ProtectedRoute>} />
+            <Route path="/admin/users" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminUsers /></ProtectedRoute>} />
             <Route path="/admin/accounts" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminAccounts /></ProtectedRoute>} />
-            <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={["admin", "superadmin"]}><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminAnalytics /></ProtectedRoute>} />
             <Route path="/admin/audit" element={<ProtectedRoute allowedRoles={["superadmin"]}><AdminAuditLog /></ProtectedRoute>} />
           </Routes>
         </Box>
