@@ -6,10 +6,12 @@ const Category = require("../models/Category");
 const buildFilter = async (query) => {
   const filter = query._adminView ? {} : { isActive: true };
   if (query.category) {
-    const categories = Array.isArray(query.category) ? query.category : [query.category];
+    const categories = Array.isArray(query.category)
+      ? query.category
+      : String(query.category).split(",");
     const ids = [];
     const slugs = [];
-    categories.forEach(c => {
+    categories.forEach((c) => {
       if (mongoose.Types.ObjectId.isValid(c)) ids.push(c);
       else slugs.push(c);
     });

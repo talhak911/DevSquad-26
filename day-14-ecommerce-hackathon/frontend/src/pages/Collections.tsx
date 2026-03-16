@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box, Container, Grid, Typography, Breadcrumbs, Link as MuiLink,
   Accordion, AccordionSummary, AccordionDetails,
@@ -8,7 +8,8 @@ import {
 import { Add, Remove, ExpandMore, Star } from '@mui/icons-material';
 import { Link, useSearchParams } from 'react-router-dom';
 import Footer from '../components/Footer';
-import { productsApi, categoriesApi } from '../services/api';
+import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 import { CircularProgress } from '@mui/material';
 
 // Static Filter Data (Origin/Flavor/Caffeine are relatively constant for now)
@@ -112,9 +113,6 @@ const Collections: React.FC = () => {
   const categoryIds = searchParams.getAll('category');
   const searchQuery = searchParams.get('q');
 
-  const [allCategories, setAllCategories] = useState<any[]>([]);
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState('newest');
 
   // Advanced Filter state
@@ -124,63 +122,40 @@ const Collections: React.FC = () => {
   const [isOrganic, setIsOrganic] = useState(false);
   const [isVegan, setIsVegan] = useState(false);
 
-  const [category, setCategory] = useState<any>(null);
-
   // Pagination & meta
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
   // Range/Rating
   const [priceRange, setPriceRange] = useState<number[]>([0, 100]);
   const [rating, setRating] = useState<number | null>(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const params: any = {
-          sort: sortBy,
-          category: categoryIds.length > 0 ? categoryIds : undefined,
-          q: searchQuery || undefined,
-          origin: origin.length > 0 ? origin.join(",") : undefined,
-          flavor: flavor.length > 0 ? flavor.join(",") : undefined,
-          caffeine: caffeine.length > 0 ? caffeine.join(",") : undefined,
-          isOrganic: isOrganic ? 'true' : undefined,
-          isVegan: isVegan ? 'true' : undefined,
-          priceMin: priceRange[0] > 0 ? priceRange[0] : undefined,
-          priceMax: priceRange[1] < 100 ? priceRange[1] : undefined,
-          rating: rating || undefined,
-          page,
-          limit: 12
-        };
+  // Query Params for TanStack Query
+  const productParams = {
+    sort: sortBy,
+    category: categoryIds.length > 0 ? categoryIds.join(",") : undefined,
+    q: searchQuery || undefined,
+    origin: origin.length > 0 ? origin.join(",") : undefined,
+    flavor: flavor.length > 0 ? flavor.join(",") : undefined,
+    caffeine: caffeine.length > 0 ? caffeine.join(",") : undefined,
+    isOrganic: isOrganic ? true : undefined,
+    isVegan: isVegan ? true : undefined,
+    priceMin: priceRange[0] > 0 ? priceRange[0] : undefined,
+    priceMax: priceRange[1] < 100 ? priceRange[1] : undefined,
+    rating: rating || undefined,
+    page,
+    limit: 12
+  };
 
-        const fetchRequests: any[] = [
-          productsApi.getAll(params),
-          categoriesApi.getAll()
-        ];
+  const { data: productsData, isLoading: productsLoading } = useProducts(productParams as any);
+  const { data: categoriesData } = useCategories();
 
-        if (categoryIds.length === 1) {
-          fetchRequests.push(categoriesApi.getOne(categoryIds[0]));
-        }
+  const products = productsData?.data || [];
+  // Using metadata from response (assuming current backend structure)
+  const meta = (productsData as any)?.meta || { total: 0, totalPages: 1 };
+  const allCategories = categoriesData?.data || [];
+  const category = categoryIds.length === 1 ? allCategories.find((c: any) => c.slug === categoryIds[0]) : null;
 
-        const results = await Promise.all(fetchRequests);
-        setProducts(results[0].data.data);
-        setMeta(results[0].data.meta);
-        setAllCategories(results[1].data.data);
 
-        if (categoryIds.length === 1 && results[2]) {
-          setCategory(results[2].data.data);
-        } else {
-          setCategory(null);
-        }
-      } catch (err) {
-        console.error('Failed to fetch collections', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [sortBy, JSON.stringify(categoryIds), searchQuery, origin, flavor, caffeine, isOrganic, isVegan, priceRange, rating, page]);
 
   const handleToggle = (list: string[], setList: (l: string[]) => void, value: string) => {
     if (list.includes(value)) {
@@ -399,7 +374,7 @@ const Collections: React.FC = () => {
                 mb: 1,
                 textTransform: 'uppercase'
               }}>
-                {searchQuery ? `SEARCH: ${searchQuery}` : (categoryIds.length === 0 ? 'ALL COLLECTIONS' : (categoryIds.length === 1 ? category?.name : 'MULTIPLE COLLECTIONS'))}
+                {searchQuery ? `SEARCH: ${searchQuery}` : (categoryIds.length === 0 ? 'ALL COLLECTIONS' : (categoryIds.length === 1 ? (category?.name || categoryIds[0].replace(/-/g, ' ')) : 'MULTIPLE COLLECTIONS'))}
               </Typography>
               <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
                 <Typography sx={{ mr: 1, fontSize: '16px', fontWeight: 500, fontFamily: 'Montserrat', letterSpacing: '0.15px' }}>
@@ -425,7 +400,7 @@ const Collections: React.FC = () => {
               </Box>
             </Box>
 
-            {loading ? (
+            {productsLoading ? (
               <Box sx={{ display: 'flex', justifyContent: 'center', py: 10 }}>
                 <CircularProgress />
               </Box>
@@ -487,7 +462,7 @@ const Collections: React.FC = () => {
             )}
 
             {/* Pagination */}
-            {!loading && meta.totalPages > 1 && (
+            {!productsLoading && meta.totalPages > 1 && (
               <Box sx={{ mt: 10, display: 'flex', justifyContent: 'center' }}>
                 <Pagination
                   count={meta.totalPages}

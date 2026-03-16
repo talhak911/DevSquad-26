@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Chip, Stack, Button, Select, MenuItem, FormControl, InputLabel, CircularProgress } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Chip, Button, Select, MenuItem, FormControl, InputLabel, CircularProgress } from "@mui/material";
 import { Link, useSearchParams } from "react-router-dom";
-import { adminApi } from "../../services/api";
+import { useAdminOrders } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
+import { Pagination } from "@mui/material";
 
 const STATUS_COLORS: Record<string, "default" | "warning" | "info" | "success" | "error"> = {
   pending: "warning", paid: "info", shipped: "info", delivered: "success", cancelled: "error",
@@ -10,25 +11,18 @@ const STATUS_COLORS: Record<string, "default" | "warning" | "info" | "success" |
 const AdminOrders: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const userId = searchParams.get("userId");
-  const [orders, setOrders] = useState<unknown[]>([]);
-  const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
-  useEffect(() => {
-    setLoading(true);
-    adminApi.getOrders({ 
-      page, 
-      limit: 20, 
-      status: status || undefined,
-      userId: userId || undefined
-    }).then(r => {
-      setOrders(r.data.data);
-      setMeta(r.data.meta);
-      setLoading(false);
-    }).catch(() => setLoading(false));
-  }, [page, status, userId]);
+  const { data: ordersRes, isLoading: loading } = useAdminOrders({ 
+    page, 
+    limit: 20, 
+    status: status || undefined,
+    userId: userId || undefined
+  });
+
+  const orders = ordersRes?.data || [];
+  const meta = ordersRes?.meta || { total: 0, totalPages: 1 };
 
   const o = (order: unknown) => order as { _id: string; userId: { _id: string; name: string; email: string } | null; items: unknown[]; total: number; status: string; createdAt: string; paymentMethod: string };
 
@@ -105,12 +99,16 @@ const AdminOrders: React.FC = () => {
             </Box>
           </Box>
           <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>{meta.total} orders</Typography>
-            <Stack direction="row" spacing={1}>
-              <Button size="small" disabled={page <= 1} onClick={() => setPage(p => p - 1)} variant="outlined" sx={{ borderRadius: 0 }}>Prev</Button>
-              <Button size="small" disabled variant="outlined" sx={{ borderRadius: 0 }}>{page} / {meta.totalPages}</Button>
-              <Button size="small" disabled={page >= meta.totalPages} onClick={() => setPage(p => p + 1)} variant="outlined" sx={{ borderRadius: 0 }}>Next</Button>
-            </Stack>
+            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>
+              Total: {meta.total} orders
+            </Typography>
+            <Pagination 
+              count={meta.totalPages} 
+              page={page} 
+              onChange={(_, v) => setPage(v)} 
+              shape="rounded"
+              color="primary"
+            />
           </Box>
         </>
       )}

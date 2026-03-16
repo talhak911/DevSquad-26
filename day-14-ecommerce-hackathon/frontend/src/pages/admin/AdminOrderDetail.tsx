@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Chip, Button, Stack, CircularProgress, Divider, Select, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions, IconButton } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { adminApi } from "../../services/api";
+import { useAdminOrderDetail, useUpdateOrderStatus } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
 
 const STATUS_COLORS: Record<string, "default" | "warning" | "info" | "success" | "error"> = {
@@ -12,36 +12,31 @@ const STATUSES = ["pending", "paid", "shipped", "delivered", "cancelled"];
 
 interface OrderItem { productTitle: string; variantLabel: string; quantity: number; unitPrice: number; lineTotal: number; productImage: string }
 interface StatusEntry { status: string; note: string; changedAt: string }
-interface Order {
-  _id: string; status: string; total: number; subtotal: number; delivery: number; paymentMethod: string;
-  createdAt: string; items: OrderItem[]; statusHistory: StatusEntry[];
-  userId: { _id: string; name: string; email: string } | null;
-  shippingAddress: { name: string; street: string; city: string; postalCode: string; country: string } | null;
-}
+
 
 const AdminOrderDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [order, setOrder] = useState<Order | null>(null);
-  const [loading, setLoading] = useState(true);
   const [newStatus, setNewStatus] = useState("");
   const [note, setNote] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [saving, setSaving] = useState(false);
+
+  const { data: orderRes, isLoading: loading } = useAdminOrderDetail(id!);
+  const order = orderRes?.data;
+  const { mutate: updateStatus, isPending: saving } = useUpdateOrderStatus();
 
   useEffect(() => {
-    if (id) adminApi.getOrderDetail(id).then(r => { setOrder(r.data.data); setNewStatus(r.data.data.status); setLoading(false); }).catch(() => setLoading(false));
-  }, [id]);
+    if (order) setNewStatus(order.status);
+  }, [order]);
 
-  const handleStatusUpdate = async () => {
+  const handleStatusUpdate = () => {
     if (!id || !newStatus) return;
-    setSaving(true);
-    await adminApi.updateOrderStatus(id, newStatus, note);
-    const fresh = await adminApi.getOrderDetail(id);
-    setOrder(fresh.data.data);
-    setDialogOpen(false);
-    setNote("");
-    setSaving(false);
+    updateStatus({ id, status: newStatus, note }, {
+      onSuccess: () => {
+        setDialogOpen(false);
+        setNote("");
+      }
+    });
   };
 
   if (loading) return <AdminLayout><Box sx={{ display: "flex", justifyContent: "center", py: 8 }}><CircularProgress /></Box></AdminLayout>;
@@ -61,7 +56,7 @@ const AdminOrderDetail: React.FC = () => {
           <Box sx={{ border: "1px solid var(--color-outline)", p: 3, mb: 3 }}>
             <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600, mb: 2 }}>Items</Typography>
             <Stack spacing={2}>
-              {order.items.map((item, i) => (
+              {(order.items as OrderItem[]).map((item, i) => (
                 <Box key={i} sx={{ display: "flex", gap: 2, pb: 2, borderBottom: i < order.items.length - 1 ? "1px solid var(--color-outline)" : "none" }}>
                   <Box sx={{ width: 50, height: 50, backgroundImage: `url(${item.productImage})`, backgroundSize: "cover", borderRadius: 1, bgcolor: "var(--color-bg-variant)", flexShrink: 0 }} />
                   <Box sx={{ flex: 1 }}>
@@ -133,7 +128,7 @@ const AdminOrderDetail: React.FC = () => {
           <Box sx={{ border: "1px solid var(--color-outline)", p: 3 }}>
             <Typography sx={{ fontFamily: "Montserrat", fontWeight: 600, mb: 2 }}>Timeline</Typography>
             <Stack spacing={2}>
-              {order.statusHistory.map((h, i) => (
+              {(order.statusHistory as StatusEntry[]).map((h, i) => (
                 <Box key={i} sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
                   <Box sx={{ width: 8, height: 8, borderRadius: "50%", bgcolor: "primary.main", mt: 0.6, flexShrink: 0 }} />
                   <Box>

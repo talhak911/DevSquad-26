@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { 
-  Box, Container, Grid, Typography, Divider, 
+import {
+  Box, Container, Grid, Typography, Divider,
   Button, TextField, Stack, Card, CircularProgress, Alert, List
 } from '@mui/material';
 import { CheckCircleOutline } from '@mui/icons-material';
@@ -10,7 +10,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Footer from '../components/Footer';
 import { useCart } from '../context/CartContext';
-import { ordersApi } from '../services/api';
+import { useCreateOrder } from '../hooks/useOrders';
 
 const schema = yup.object({
   name: yup.string().min(2, "Name is too short").required("Full name is required"),
@@ -24,11 +24,12 @@ type FormData = yup.InferType<typeof schema>;
 
 const CheckoutPage: React.FC = () => {
   const { cart, refreshCart } = useCart();
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [error, setError] = useState("");
-  
+
+  const { mutateAsync: createOrder, isPending: loading } = useCreateOrder();
+
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: { name: "", street: "", city: "", postalCode: "", country: "Netherlands" }
@@ -36,18 +37,16 @@ const CheckoutPage: React.FC = () => {
 
   const onSubmit = async (values: FormData) => {
     if (!cart || cart.items.length === 0) return;
-    
-    setLoading(true); setError("");
+
+    setError("");
     try {
-      const { data } = await ordersApi.createOrder({ shippingAddress: values });
-      setOrderId(data.data._id);
+      const res = await createOrder({ shippingAddress: values });
+      setOrderId(res.data.data._id);
       setSuccess(true);
       refreshCart();
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || "Failed to place order. Please check your details.");
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -59,13 +58,13 @@ const CheckoutPage: React.FC = () => {
             <CheckCircleOutline sx={{ fontSize: 80, color: 'success.main', mb: 3 }} />
             <Typography variant="h4" sx={{ fontFamily: 'Montserrat', mb: 2, fontWeight: 600 }}>Thank you!</Typography>
             <Typography sx={{ fontFamily: 'Montserrat', mb: 4, color: 'text.secondary' }}>
-              Your order <strong>#{orderId.slice(-8).toUpperCase()}</strong> has been placed successfully. 
+              Your order <strong>#{orderId.slice(-8).toUpperCase()}</strong> has been placed successfully.
               We'll send you a confirmation email shortly.
             </Typography>
             <Divider sx={{ mb: 4 }} />
             <Stack spacing={2}>
-              <Button variant="contained" component={Link} to="/" fullWidth
-                sx={{ height: 56, bgcolor: 'primary.main', borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600 }}>
+              <Button variant="contained" color="primary" component={Link} to="/" fullWidth
+                sx={{ height: 56, bgcolor: 'primary.main', borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
                 CONTINUE SHOPPING
               </Button>
             </Stack>
@@ -100,41 +99,41 @@ const CheckoutPage: React.FC = () => {
             <Grid size={{ xs: 12, md: 7 }}>
               <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 600, mb: 4 }}>Shipping Address</Typography>
               {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
-              
+
               <Stack spacing={3}>
-                <TextField 
+                <TextField
                   label="Full Name" fullWidth size="small"
-                  {...register("name")} 
-                  error={!!errors.name} helperText={errors.name?.message} 
+                  {...register("name")}
+                  error={!!errors.name} helperText={errors.name?.message}
                 />
-                <TextField 
+                <TextField
                   label="Street & Number" fullWidth size="small"
-                  {...register("street")} 
-                  error={!!errors.street} helperText={errors.street?.message} 
+                  {...register("street")}
+                  error={!!errors.street} helperText={errors.street?.message}
                 />
                 <Grid container spacing={2}>
                   <Grid size={{ xs: 7 }}>
-                    <TextField 
+                    <TextField
                       label="City" fullWidth size="small"
-                      {...register("city")} 
-                      error={!!errors.city} helperText={errors.city?.message} 
+                      {...register("city")}
+                      error={!!errors.city} helperText={errors.city?.message}
                     />
                   </Grid>
                   <Grid size={{ xs: 5 }}>
-                    <TextField 
+                    <TextField
                       label="Postal Code" fullWidth size="small"
-                      {...register("postalCode")} 
-                      error={!!errors.postalCode} helperText={errors.postalCode?.message} 
+                      {...register("postalCode")}
+                      error={!!errors.postalCode} helperText={errors.postalCode?.message}
                     />
                   </Grid>
                 </Grid>
-                <TextField 
+                <TextField
                   label="Country" fullWidth size="small"
-                  {...register("country")} 
-                  error={!!errors.country} helperText={errors.country?.message} 
+                  {...register("country")}
+                  error={!!errors.country} helperText={errors.country?.message}
                 />
               </Stack>
-              
+
               <Box sx={{ mt: 6 }}>
                 <Typography variant="h6" sx={{ fontFamily: 'Montserrat', fontWeight: 600, mb: 2 }}>Payment Method</Typography>
                 <Card variant="outlined" sx={{ p: 3, borderRadius: 0, border: '1px solid primary.main', bgcolor: 'rgba(0,0,0,0.02)' }}>
@@ -149,7 +148,7 @@ const CheckoutPage: React.FC = () => {
                 <Typography variant="h5" sx={{ fontFamily: 'Montserrat', fontWeight: 400, fontSize: '22px', mb: 4 }}>
                   Order summary
                 </Typography>
-                
+
                 <List disablePadding sx={{ mb: 3 }}>
                   {cart?.items.map(item => (
                     <Box key={item._id} sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
@@ -158,9 +157,9 @@ const CheckoutPage: React.FC = () => {
                     </Box>
                   ))}
                 </List>
-                
+
                 <Divider sx={{ mb: 3 }} />
-                
+
                 <Stack spacing={2} sx={{ mb: 3 }}>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                     <Typography sx={{ fontFamily: 'Montserrat', fontSize: '14px' }}>Subtotal</Typography>
@@ -180,7 +179,7 @@ const CheckoutPage: React.FC = () => {
                   sx={{ height: 64, bgcolor: 'primary.main', fontFamily: 'Montserrat', fontWeight: 700, fontSize: '18px', borderRadius: 0 }}>
                   {loading ? <CircularProgress size={24} color="inherit" /> : `PLACE ORDER — €${cart?.total.toFixed(2)}`}
                 </Button>
-                
+
                 <Button fullWidth component={Link} to="/cart" sx={{ mt: 2, fontFamily: 'Montserrat', color: 'text.secondary' }}>
                   BACK TO BAG
                 </Button>

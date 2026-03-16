@@ -1,32 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Box, Typography, Button, Grid, Container, CircularProgress } from '@mui/material';
 import { LocalCafe, Redeem, LocalShipping, Sell } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import Footer from '../components/Footer';
-import { productsApi, categoriesApi } from '../services/api';
+import { useProducts } from '../hooks/useProducts';
+import { useCategories } from '../hooks/useCategories';
 
 const Home: React.FC = () => {
-  const [categories, setCategories] = useState<any[]>([]);
-  const [bestSellers, setBestSellers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: catRes, isLoading: catLoading } = useCategories();
+  const { data: prodRes, isLoading: prodLoading } = useProducts({ limit: 3, sort: '-sales' } as any);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [catRes, prodRes] = await Promise.all([
-          categoriesApi.getAll(),
-          productsApi.getAll({ limit: 3, sort: '-sales' })
-        ]);
-        setCategories(catRes.data.data);
-        setBestSellers(prodRes.data.data);
-      } catch (err) {
-        console.error('Failed to fetch home data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
+  const categories = catRes?.data || [];
+  const bestSellers = prodRes?.data || [];
+  const loading = catLoading || prodLoading;
 
   return (
     <Box sx={{ bgcolor: 'background.default', color: 'text.primary' }}>
@@ -68,10 +54,10 @@ const Home: React.FC = () => {
           }}>
             Discover our curated collection of organic, handcrafted teas from the world's finest tea gardens. Each tea is selected for its unique flavor profile and health benefits.
           </Typography>
-          <Button component={Link} to="/collections" variant="contained" sx={{
-            bgcolor: 'primary.main',
+          <Button component={Link} to="/collections" variant="contained" color="primary" sx={{
             py: 2, px: 6, width: 'fit-content',
-            fontSize: '14px', fontFamily: 'Montserrat', fontWeight: 600, borderRadius: 0
+            fontSize: '14px', fontFamily: 'Montserrat', fontWeight: 600, borderRadius: 0,
+            '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' }
           }}>
             BROWSE COLLECTIONS
           </Button>

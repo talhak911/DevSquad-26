@@ -1,60 +1,40 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, IconButton, CircularProgress } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
-import toast from "react-hot-toast";
-import { adminApi, productsApi } from "../../services/api";
+import { useAdminProduct, useCreateProduct, useUpdateProduct, useAdminCategories } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
 import ProductForm from "../../components/admin/forms/ProductForm";
 
-interface Category { _id: string; name: string; slug: string }
 
 const AdminProductForm: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
 
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [productData, setProductData] = useState<any>(null);
-  const [loading, setLoading] = useState(isEdit);
+  const { data: catRes, isLoading: loadingCats } = useAdminCategories();
+  const { data: productRes, isLoading: loadingProduct } = useAdminProduct(id!);
+
+  const categories = catRes?.data || [];
+  const productData = productRes?.data;
+  
+  const loading = loadingCats || (isEdit && loadingProduct);
+
+  const { mutateAsync: createProduct } = useCreateProduct();
+  const { mutateAsync: updateProduct } = useUpdateProduct();
+
   const [saving, setSaving] = useState(false);
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const catRes = await adminApi.getCategories();
-      setCategories(catRes.data.data);
-
-      if (isEdit) {
-        const res = await productsApi.getOne(id!);
-        setProductData(res.data.data);
-      }
-    } catch (err) {
-      console.error("Failed to fetch data", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchData();
-  }, [id, isEdit]);
 
   const handleSubmit = async (formData: FormData) => {
     setSaving(true);
     try {
       if (isEdit) {
-        await adminApi.updateProduct(id!, formData);
-        toast.success("Product updated successfully!");
-        // Re-fetch to update the form with latest data (especially image URLs)
-        await fetchData();
+        await updateProduct({ id: id!, formData });
       } else {
-        await adminApi.createProduct(formData);
-        toast.success("Product created successfully!");
+        await createProduct(formData);
         navigate("/admin/products");
       }
     } catch (e: any) {
-      // Re-throw to let ProductForm handle the error message display
       throw e;
     } finally {
       setSaving(false);

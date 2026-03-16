@@ -1,41 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Button, Stack, Chip, CircularProgress, TextField, InputAdornment, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import React, { useState } from "react";
+import { Box, Typography, Button, Chip, CircularProgress, TextField, InputAdornment, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { Search, Add, Remove } from "@mui/icons-material";
-import { adminApi } from "../../services/api";
+import { useAdminInventory, useAdjustStock } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
+import { Pagination } from "@mui/material";
 
 interface StockItem { productId: string; productTitle: string; variantId: string; sku: string; label: string; stockQuantity: number; isLowStock: boolean }
 
 const AdminInventory: React.FC = () => {
-  const [items, setItems] = useState<StockItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
   const [adjItem, setAdjItem] = useState<StockItem | null>(null);
   const [delta, setDelta] = useState(0);
   const [reason, setReason] = useState("");
-  const [saving, setSaving] = useState(false);
 
-  const fetch = async () => {
-    setLoading(true);
-    const { data } = await adminApi.getInventory({ page, limit: 20, q: q || undefined });
-    setItems(data.data); setMeta(data.meta); setLoading(false);
-  };
+  const { data: inventoryRes, isLoading: loading } = useAdminInventory({ page, limit: 20, q: q || undefined });
+  const items = inventoryRes?.data || [];
+  const meta = inventoryRes?.meta || { total: 0, totalPages: 1 };
 
-  useEffect(() => { fetch(); }, [page, q]);
+  const { mutate: adjustStock, isPending: saving } = useAdjustStock();
 
-  const doAdjust = async () => {
+  const doAdjust = () => {
     if (!adjItem) return;
-    setSaving(true);
-    try {
-      await adminApi.adjustStock(adjItem.productId, adjItem.variantId, delta, reason);
-      setAdjItem(null); setDelta(0); setReason("");
-      fetch();
-    } catch (e: unknown) {
-      const err = e as { response?: { data?: { message?: string } } };
-      alert(err.response?.data?.message || "Failed to adjust stock");
-    } finally { setSaving(false); }
+    adjustStock({ productId: adjItem.productId, variantId: adjItem.variantId, delta, reason }, {
+      onSuccess: () => {
+        setAdjItem(null); setDelta(0); setReason("");
+      }
+    });
   };
 
   return (
@@ -79,13 +70,17 @@ const AdminInventory: React.FC = () => {
               </Box>
             </Box>
           </Box>
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>{meta.total} products</Typography>
-            <Stack direction="row" spacing={1}>
-              <Button size="small" disabled={page <= 1} onClick={() => setPage(p => p - 1)} variant="outlined" sx={{ borderRadius: 0 }}>Prev</Button>
-              <Button size="small" disabled variant="outlined" sx={{ borderRadius: 0 }}>{page} / {meta.totalPages}</Button>
-              <Button size="small" disabled={page >= meta.totalPages} onClick={() => setPage(p => p + 1)} variant="outlined" sx={{ borderRadius: 0 }}>Next</Button>
-            </Stack>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>
+              Total: {meta.total} products
+            </Typography>
+            <Pagination 
+              count={meta.totalPages} 
+              page={page} 
+              onChange={(_, v) => setPage(v)} 
+              shape="rounded"
+              color="primary"
+            />
           </Box>
         </>
       )}

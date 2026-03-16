@@ -52,7 +52,8 @@ const CartPage: React.FC = () => {
             <ShoppingBagOutlined sx={{ fontSize: 80, color: 'var(--color-outline)', mb: 3 }} />
             <Typography variant="h4" sx={{ fontFamily: 'Montserrat', mb: 2 }}>Your bag is empty</Typography>
             <Typography sx={{ fontFamily: 'Montserrat', color: 'text.secondary', mb: 4 }}>Looks like you haven't added any tea to your bag yet.</Typography>
-            <Button variant="contained" component={Link} to="/collections" sx={{ height: 56, px: 6, bgcolor: 'primary.main', borderRadius: 0, fontFamily: 'Montserrat' }}>
+            <Button variant="contained" color="primary" component={Link} to="/collections" 
+              sx={{ height: 56, px: 6, borderRadius: 0, fontFamily: 'Montserrat', '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
               START SHOPPING
             </Button>
           </Box>
@@ -140,8 +141,8 @@ const CartPage: React.FC = () => {
                   Estimated shipping time: 2-3 business days
                 </Typography>
 
-                <Button fullWidth variant="contained" onClick={handleCheckout}
-                  sx={{ height: 64, bgcolor: 'primary.main', fontFamily: 'Montserrat', fontWeight: 700, fontSize: '18px', borderRadius: 0 }}>
+                <Button fullWidth variant="contained" color="primary" onClick={handleCheckout}
+                  sx={{ height: 64, fontFamily: 'Montserrat', fontWeight: 700, fontSize: '18px', borderRadius: 0, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
                   CHECK OUT
                 </Button>
               </Box>

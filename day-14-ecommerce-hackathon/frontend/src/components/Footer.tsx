@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
   }, []);
 
   return (
-    <Box sx={{ bgcolor: '#F4F4F4', pt: { xs: 4, md: 8 }, pb: { xs: 4, md: 4 }, px: { xs: 2, md: 0 } }}>
+    <Box sx={{ bgcolor: 'var(--color-bg-variant)', pt: { xs: 4, md: 8 }, pb: { xs: 4, md: 4 }, px: { xs: 2, md: 0 } }}>
       <Container maxWidth="lg" sx={{ px: { xs: 0, md: 3 } }}>
         <Grid container spacing={{ xs: 2, md: 4 }}>
           <Grid size={{ xs: 6, md: 3 }} sx={{ mb: { xs: 2, md: 0 } }}>
@@ -30,7 +30,7 @@ const Footer: React.FC = () => {
               textTransform: 'uppercase',
               fontFamily: 'Montserrat',
               fontSize: '16px',
-              color: '#282828'
+              color: 'text.primary'
             }}>Collections</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 1 } }}>
               {categories.slice(0, 9).map(cat => (
@@ -40,7 +40,7 @@ const Footer: React.FC = () => {
                   to={`/collections?category=${cat.slug}`}
                   variant="body2" 
                   sx={{ 
-                    color: '#282828', 
+                    color: 'text.primary', 
                     textDecoration: 'none',
                     fontFamily: 'Montserrat',
                     fontSize: '14px',
@@ -60,12 +60,12 @@ const Footer: React.FC = () => {
               textTransform: 'uppercase',
               fontFamily: 'Montserrat',
               fontSize: '16px',
-              color: '#282828'
+              color: 'text.primary'
             }}>Learn</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 1 } }}>
               {['About us', 'About our teas', 'Tea academy'].map(item => (
                 <Typography key={item} variant="body2" sx={{ 
-                  color: '#282828', 
+                  color: 'text.primary', 
                   fontFamily: 'Montserrat',
                   fontSize: '14px',
                   cursor: 'pointer', 
@@ -81,12 +81,12 @@ const Footer: React.FC = () => {
               textTransform: 'uppercase',
               fontFamily: 'Montserrat',
               fontSize: '16px',
-              color: '#282828'
+              color: 'text.primary'
             }}>Customer Service</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 1 } }}>
               {['Ordering and payment', 'Delivery', 'Privacy and policy', 'Terms & Conditions'].map(item => (
                 <Typography key={item} variant="body2" sx={{ 
-                  color: '#282828', 
+                  color: 'text.primary', 
                   fontFamily: 'Montserrat',
                   fontSize: '14px',
                   cursor: 'pointer', 
@@ -102,29 +102,29 @@ const Footer: React.FC = () => {
               textTransform: 'uppercase',
               fontFamily: 'Montserrat',
               fontSize: '16px',
-              color: '#282828'
+              color: 'text.primary'
             }}>Contact Us</Typography>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 1, md: 2 } }}>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <LocationOn sx={{ fontSize: 18, color: '#282828' }} />
+                <LocationOn sx={{ fontSize: 18, color: 'text.primary' }} />
                 <Typography variant="body2" sx={{ 
-                  color: '#282828', 
+                  color: 'text.primary', 
                   fontFamily: 'Montserrat',
                   fontSize: '14px'
                 }}>3 Falahi, Falahi St, Pasdaran Ave, Shiraz, Fars Provieence Iran</Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Mail sx={{ fontSize: 18, color: '#282828' }} />
+                <Mail sx={{ fontSize: 18, color: 'text.primary' }} />
                 <Typography variant="body2" sx={{ 
-                  color: '#282828', 
+                  color: 'text.primary', 
                   fontFamily: 'Montserrat',
                   fontSize: '14px'
                 }}>Email: amoopur@gmail.com</Typography>
               </Box>
               <Box sx={{ display: 'flex', gap: 1 }}>
-                <Call sx={{ fontSize: 18, color: '#282828' }} />
+                <Call sx={{ fontSize: 18, color: 'text.primary' }} />
                 <Typography variant="body2" sx={{ 
-                  color: '#282828', 
+                  color: 'text.primary', 
                   fontFamily: 'Montserrat',
                   fontSize: '14px'
                 }}>Tel: +98 9173038406</Typography>

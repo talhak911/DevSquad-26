@@ -1,23 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { Box, Typography, Chip, Button, Stack, CircularProgress, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
-import { adminApi } from "../../services/api";
+import React, { useState } from "react";
+import { Box, Typography, Chip, CircularProgress, Select, MenuItem, FormControl, InputLabel } from "@mui/material";
+import { useAdminAuditLog } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
+import { Pagination } from "@mui/material";
 
-interface AuditEntry { _id: string; action: string; entity: string; note: string; createdAt: string; adminId: { name: string; email: string } | null; before: unknown; after: unknown }
 
 const ENTITIES = ["", "Product", "Order", "User"];
 
 const AdminAuditLog: React.FC = () => {
-  const [logs, setLogs] = useState<AuditEntry[]>([]);
-  const [loading, setLoading] = useState(true);
   const [entity, setEntity] = useState("");
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
-  useEffect(() => {
-    setLoading(true);
-    adminApi.getAuditLog({ page, limit: 20, entity: entity || undefined }).then(r => { setLogs(r.data.data); setMeta(r.data.meta); setLoading(false); }).catch(() => setLoading(false));
-  }, [page, entity]);
+  const { data: logRes, isLoading: loading } = useAdminAuditLog({ page, limit: 20, entity: entity || undefined });
+  const logs = logRes?.data || [];
+  const meta = logRes?.meta || { total: 0, totalPages: 1 };
 
   return (
     <AdminLayout>
@@ -58,13 +54,17 @@ const AdminAuditLog: React.FC = () => {
               </Box>
             </Box>
           </Box>
-          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between" }}>
-            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>{meta.total} entries</Typography>
-            <Stack direction="row" spacing={1}>
-              <Button size="small" disabled={page <= 1} onClick={() => setPage(p => p - 1)} variant="outlined" sx={{ borderRadius: 0 }}>Prev</Button>
-              <Button size="small" disabled variant="outlined" sx={{ borderRadius: 0 }}>{page} / {meta.totalPages}</Button>
-              <Button size="small" disabled={page >= meta.totalPages} onClick={() => setPage(p => p + 1)} variant="outlined" sx={{ borderRadius: 0 }}>Next</Button>
-            </Stack>
+          <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>
+              Total: {meta.total} entries
+            </Typography>
+            <Pagination 
+              count={meta.totalPages} 
+              page={page} 
+              onChange={(_, v) => setPage(v)} 
+              shape="rounded"
+              color="primary"
+            />
           </Box>
         </>
       )}

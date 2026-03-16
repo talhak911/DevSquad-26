@@ -1,35 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Box, Typography, Grid, Paper, CircularProgress, 
   Select, MenuItem, FormControl, InputLabel 
 } from '@mui/material';
-import { 
-  TrendingUp 
-} from '@mui/icons-material';
-import { adminApi } from '../../services/api';
+import {TrendingUp} from '@mui/icons-material';
+import { useAnalytics } from '../../hooks/useAdmin';
 import AdminLayout from '../../components/admin/AdminLayout';
 
 const AdminAnalytics: React.FC = () => {
   const [range, setRange] = useState('30d');
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<any>(null);
+  const { data: analyticsRes, isLoading: loading } = useAnalytics(range);
+  const data = analyticsRes?.data;
 
-  useEffect(() => {
-    const fetchAnalytics = async () => {
-      try {
-        setLoading(true);
-        const { data } = await adminApi.getAnalytics(range);
-        setData(data.data);
-      } catch (err) {
-        console.error('Failed to fetch analytics', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchAnalytics();
-  }, [range]);
-
-  if (loading && !data) return <AdminLayout><CircularProgress /></AdminLayout>;
+  if (loading && !data) return <AdminLayout><Box sx={{ display: "flex", justifyContent: "center", py: 8 }}><CircularProgress /></Box></AdminLayout>;
 
   return (
     <AdminLayout>
@@ -52,7 +35,7 @@ const AdminAnalytics: React.FC = () => {
               <TrendingUp sx={{ mr: 1, color: 'success.main', fontSize: 20 }} />
               <Typography variant="subtitle2" sx={{ fontFamily: 'Montserrat', color: 'text.secondary' }}>Total Revenue</Typography>
             </Box>
-            <Typography variant="h4" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>€{data?.revenue?.total?.toFixed(2) || '0.00'}</Typography>
+            <Typography variant="h4" sx={{ fontFamily: 'Montserrat', fontWeight: 700 }}>€{(data?.revenue ?? 0).toFixed(2)}</Typography>
           </Paper>
         </Grid>
         <Grid size={{ xs: 12 }}>

@@ -113,8 +113,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({ open, onClose }) => {
               <Typography sx={{ fontFamily: 'Montserrat', fontWeight: 700, fontSize: '20px' }}>€{cart.total.toFixed(2)}</Typography>
             </Box>
           </Stack>
-          <Button fullWidth variant="contained" onClick={handleCheckout} disabled={loading}
-            sx={{ height: 56, bgcolor: 'primary.main', borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600 }}>
+          <Button fullWidth variant="contained" color="primary" onClick={handleCheckout} disabled={loading}
+            sx={{ height: 56, borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
             CHECKOUT
           </Button>
         </Box>

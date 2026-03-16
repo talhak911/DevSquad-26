@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, Button, Stack, Chip, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Alert } from "@mui/material";
 import { Add } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { adminApi } from "../../services/api";
+import { useAdminAccounts, useCreateAdmin, useUpdateAdmin, useDeleteAdmin } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
 import { useAuth } from "../../context/AuthContext";
 
-interface AdminAccount { _id: string; name: string; email: string; role: string; isBlocked: boolean; createdAt: string }
 
 const schema = yup.object({
   name: yup.string().min(2, "Name is too short").required("Name is required"),
@@ -20,45 +19,40 @@ type FormData = yup.InferType<typeof schema>;
 
 const AdminAccounts: React.FC = () => {
   const { user: currentUser } = useAuth();
-  const [admins, setAdmins] = useState<AdminAccount[]>([]);
-  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState("");
-  const [saving, setSaving] = useState(false);
+
+  const { data: adminsRes, isLoading: loading } = useAdminAccounts();
+  const admins = adminsRes?.data || [];
+
+  const { mutateAsync: createAdmin, isPending: saving } = useCreateAdmin();
+  const { mutate: updateAdmin } = useUpdateAdmin();
+  const { mutate: deleteAdmin } = useDeleteAdmin();
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<FormData>({
     resolver: yupResolver(schema),
     defaultValues: { name: "", email: "", password: "" }
   });
 
-  const fetch = () => {
-    setLoading(true);
-    adminApi.getAdmins().then(r => { setAdmins(r.data.data); setLoading(false); }).catch(() => setLoading(false));
-  };
-  useEffect(() => { fetch(); }, []);
-
   const onSubmit = async (values: FormData) => {
-    setSaving(true); setError("");
+    setError("");
     try {
-      await adminApi.createAdmin(values);
+      await createAdmin(values);
       setDialogOpen(false); 
       reset();
-      fetch();
     } catch (e: unknown) {
       const err = e as { response?: { data?: { message?: string } } };
       setError(err.response?.data?.message || "Failed to create admin");
-    } finally { setSaving(false); }
+    }
   };
 
-  const handleToggleBlock = async (id: string, blocked: boolean) => {
-    await adminApi.updateAdmin(id, { isBlocked: !blocked });
-    fetch();
+  const handleToggleBlock = (id: string, blocked: boolean) => {
+    updateAdmin({ id, data: { isBlocked: !blocked } });
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Remove this admin account?")) return;
-    await adminApi.deleteAdmin(id);
-    fetch();
+    deleteAdmin(id);
   };
 
   return (

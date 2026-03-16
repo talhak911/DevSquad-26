@@ -1,21 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Grid, Typography, Card, CardContent, Chip, Stack, CircularProgress, Button } from "@mui/material";
 import { ShoppingCart, People, Inventory, TrendingUp, Storefront, ListAlt, Warning } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { adminApi } from "../../services/api";
+import { useAnalytics } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
 
-interface Analytics {
-  totalOrders: number;
-  pendingOrders: number;
-  shippedOrders: number;
-  deliveredOrders: number;
-  totalUsers: number;
-  revenue: number;
-  lowStockCount: number;
-  topProducts: { _id: string; title: string; totalSold: number; revenue: number }[];
-  dailySeries: { _id: string; orders: number; revenue: number }[];
-}
+
 
 const StatCard = ({ title, value, icon, color = "primary.main", subtitle }: { title: string; value: string | number; icon: React.ReactNode; color?: string; subtitle?: string }) => (
   <Card elevation={0} sx={{ border: "1px solid var(--color-outline)", height: "100%" }}>
@@ -33,13 +23,9 @@ const StatCard = ({ title, value, icon, color = "primary.main", subtitle }: { ti
 );
 
 const AdminDashboard: React.FC = () => {
-  const [data, setData] = useState<Analytics | null>(null);
-  const [loading, setLoading] = useState(true);
   const [range, setRange] = useState("30d");
-
-  useEffect(() => {
-    adminApi.getAnalytics(range).then(res => { setData(res.data.data); setLoading(false); }).catch(() => setLoading(false));
-  }, [range]);
+  const { data: analyticsRes, isLoading: loading } = useAnalytics(range);
+  const data = analyticsRes?.data;
 
   return (
     <AdminLayout>

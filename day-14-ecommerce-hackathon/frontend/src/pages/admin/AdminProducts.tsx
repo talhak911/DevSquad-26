@@ -1,56 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Box, Typography, TextField, InputAdornment, Button, Chip, IconButton, CircularProgress, Stack, Tooltip } from "@mui/material";
 import { Search, Add, Edit, Delete, Visibility } from "@mui/icons-material";
 import { Link } from "react-router-dom";
-import { adminApi, categoriesApi } from "../../services/api";
+import { useAdminProducts, useDeactivateProduct } from "../../hooks/useAdmin";
+import { useCategories } from "../../hooks/useCategories";
 import AdminLayout from "../../components/admin/AdminLayout";
-import { FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { FormControl, InputLabel, Select, MenuItem, Pagination } from "@mui/material";
 
-interface Product {
-  _id: string;
-  title: string;
-  basePrice: number;
-  isActive: boolean;
-  variants: { stockQuantity: number; isActive: boolean; priceDelta: number }[];
-  categoryId: { name: string } | null;
-  images: string[];
-}
+import type { Product } from "../../types/api";
 
 const AdminProducts: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-   const [q, setQ] = useState("");
+  const [q, setQ] = useState("");
   const [category, setCategory] = useState("");
-  const [categories, setCategories] = useState<any[]>([]);
   const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, totalPages: 1 });
 
-  const fetchProducts = async () => {
-    setLoading(true);
-     try {
-      const { data } = await adminApi.getProducts({ 
-        page, 
-        limit: 15, 
-        q: q || undefined,
-        category: category || undefined
-      });
-      setProducts(data.data);
-      setMeta(data.meta);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: productsRes, isLoading: loading } = useAdminProducts({ 
+    page, 
+    limit: 15, 
+    q: q || undefined,
+    category: category || undefined
+  });
+  
+  const products = productsRes?.data || [];
+  const meta = productsRes?.meta || { total: 0, totalPages: 1 };
 
-  useEffect(() => {
-    categoriesApi.getAll().then(res => setCategories(res.data.data)).catch(console.error);
-  }, []);
+  const { data: categoriesRes } = useCategories();
+  const categories = categoriesRes?.data || [];
 
-  useEffect(() => { fetchProducts(); }, [page, q, category]);
+  const { mutate: deactivateProduct } = useDeactivateProduct();
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Deactivate this product?")) return;
-    await adminApi.deleteProduct(id);
-    fetchProducts();
+    deactivateProduct(id);
   };
 
   const totalStock = (p: Product) => p.variants.reduce((s, v) => s + v.stockQuantity, 0);
@@ -176,15 +157,15 @@ const AdminProducts: React.FC = () => {
           {/* Pagination */}
           <Box sx={{ mt: 3, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <Typography sx={{ fontFamily: "Montserrat", fontSize: "14px", color: "text.secondary" }}>
-              {meta.total} products
+              Total: {meta.total} products
             </Typography>
-            <Stack direction="row" spacing={1}>
-              <Button size="small" disabled={page <= 1} onClick={() => setPage(p => p - 1)} variant="outlined" sx={{ fontFamily: "Montserrat", borderRadius: 0 }}>Prev</Button>
-              <Button size="small" disabled variant="outlined" sx={{ fontFamily: "Montserrat", borderRadius: 0 }}>
-                {page} / {meta.totalPages}
-              </Button>
-              <Button size="small" disabled={page >= meta.totalPages} onClick={() => setPage(p => p + 1)} variant="outlined" sx={{ fontFamily: "Montserrat", borderRadius: 0 }}>Next</Button>
-            </Stack>
+            <Pagination 
+              count={meta.totalPages} 
+              page={page} 
+              onChange={(_, v) => setPage(v)} 
+              shape="rounded"
+              color="primary"
+            />
           </Box>
         </>
       )}

@@ -9,7 +9,7 @@ import {
 } from '@mui/icons-material';
 import { Link, useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
-import { productsApi } from '../services/api';
+import { useProductBySlug } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
 
 const VariantIcon: React.FC<{ label: string }> = ({ label }) => {
@@ -55,33 +55,22 @@ const VariantIcon: React.FC<{ label: string }> = ({ label }) => {
 const ProductDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { addToCart } = useCart();
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [selectedVariantId, setSelectedVariantId] = useState<string>('');
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const { data: productData, isLoading: loading, isError } = useProductBySlug(slug!);
+  const product = productData?.data;
+
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        setLoading(true);
-        const { data } = await productsApi.getOne(slug!);
-        setProduct(data.data);
-        if (data.data.variants?.length > 0) {
-          setSelectedVariantId(data.data.variants[0]._id);
-        }
-      } catch (err) {
-        console.error('Failed to fetch product', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProduct();
-  }, [slug]);
+    if (product && product.variants?.length > 0 && !selectedVariantId) {
+      setSelectedVariantId(product.variants[0]._id);
+    }
+  }, [product, selectedVariantId]);
 
   const handleAdd = async () => {
-    if (!selectedVariantId) return;
+    if (!selectedVariantId || !product) return;
     setAdding(true);
     try {
       await addToCart(product._id, selectedVariantId, quantity);
@@ -94,7 +83,7 @@ const ProductDetail: React.FC = () => {
   };
 
   if (loading) return <Box sx={{ py: 20, textAlign: 'center' }}><CircularProgress /></Box>;
-  if (!product) return <Box sx={{ py: 20, textAlign: 'center' }}><Alert severity="error">Product not found</Alert></Box>;
+  if (isError || !product) return <Box sx={{ py: 20, textAlign: 'center' }}><Alert severity="error">Product not found</Alert></Box>;
 
   const selectedVariant = product.variants.find((v: any) => v._id === selectedVariantId);
 
@@ -165,7 +154,7 @@ const ProductDetail: React.FC = () => {
                       '&:hover': { bgcolor: selectedVariantId === v._id ? 'transparent' : 'rgba(0,0,0,0.02)' }
                     }}
                   >
-                    <Box sx={{ color: '#282828', mb: 1.5 }}>
+                    <Box sx={{ color: 'text.primary', mb: 1.5 }}>
                       <VariantIcon label={v.label} />
                     </Box>
                     <Typography sx={{ fontFamily: 'Montserrat', fontSize: '14px', fontWeight: 400, color: 'text.primary', whiteSpace: 'nowrap' }}>
@@ -176,7 +165,7 @@ const ProductDetail: React.FC = () => {
               ))}
             </Grid>
 
-            {selectedVariant?.stockQuantity <= 0 ? (
+            {(selectedVariant?.stockQuantity ?? 0) <= 0 ? (
                <Alert severity="warning" sx={{ mb: 3, borderRadius: 0 }}>Out of Stock </Alert>
             ) : (
               <Stack direction="row" spacing={3} alignItems="center">
@@ -187,8 +176,8 @@ const ProductDetail: React.FC = () => {
                 </Box>
                 
                 <Button 
-                  variant="contained" fullWidth disabled={adding} onClick={handleAdd}
-                  sx={{ height: 56, maxWidth: 300, bgcolor: 'primary.main', borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600 }}>
+                  variant="contained" color="primary" fullWidth disabled={adding} onClick={handleAdd}
+                  sx={{ height: 56, maxWidth: 300, borderRadius: 0, fontFamily: 'Montserrat', fontWeight: 600, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
                   {adding ? <CircularProgress size={24} color="inherit" /> : 'ADD TO BAG'}
                 </Button>
               </Stack>

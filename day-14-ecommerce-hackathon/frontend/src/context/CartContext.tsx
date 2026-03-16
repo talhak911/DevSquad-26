@@ -1,6 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, { createContext, useContext } from "react";
 import { cartApi } from "../services/api";
 import { useAuth } from "./AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import type { ApiResponse } from "../types/api";
+import toast from "react-hot-toast";
 
 export interface CartItem {
   _id: string;
@@ -36,52 +39,66 @@ const CartContext = createContext<CartContextValue | null>(null);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
-  const [cart, setCart] = useState<Cart | null>(null);
-  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
 
-  const refreshCart = useCallback(async () => {
-    if (!user || user.role !== "user") { 
-      setCart(null); 
-      return; 
-    }
-    try {
-      setLoading(true);
+  const isCustomer = user?.role === "user";
+
+  const { data: cartRes, isLoading: loading, refetch: refreshCart } = useQuery<ApiResponse<Cart>>({
+    queryKey: ["cart"],
+    queryFn: async () => {
       const { data } = await cartApi.getCart();
-      setCart(data.data);
-    } catch {
-      setCart(null);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
+      return data;
+    },
+    enabled: isCustomer,
+  });
 
-  useEffect(() => { 
-    if (user?.role === "user") {
-      refreshCart(); 
-    } else {
-      setCart(null);
+  const cart = cartRes?.data || null;
+
+  const addItemMutation = useMutation({
+    mutationFn: ({ productId, variantId, quantity }: { productId: string; variantId: string; quantity: number }) => 
+      cartApi.addItem(productId, variantId, quantity),
+    onSuccess: () => {
+      toast.success("Added to bag");
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    },
+    onError: () => toast.error("Failed to add to bag")
+  });
+
+  const updateItemMutation = useMutation({
+    mutationFn: ({ itemId, quantity }: { itemId: string; quantity: number }) => 
+      cartApi.updateItem(itemId, quantity),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
     }
-  }, [refreshCart, user]);
+  });
+
+  const removeItemMutation = useMutation({
+    mutationFn: (itemId: string) => cartApi.removeItem(itemId),
+    onSuccess: () => {
+      toast.success("Removed from bag");
+      queryClient.invalidateQueries({ queryKey: ["cart"] });
+    }
+  });
 
   const addToCart = async (productId: string, variantId: string, quantity = 1) => {
-    const { data } = await cartApi.addItem(productId, variantId, quantity);
-    setCart(data.data);
+    await addItemMutation.mutateAsync({ productId, variantId, quantity });
   };
 
   const updateCartItem = async (itemId: string, quantity: number) => {
-    const { data } = await cartApi.updateItem(itemId, quantity);
-    setCart(data.data);
+    await updateItemMutation.mutateAsync({ itemId, quantity });
   };
 
   const removeCartItem = async (itemId: string) => {
-    const { data } = await cartApi.removeItem(itemId);
-    setCart(data.data);
+    await removeItemMutation.mutateAsync(itemId);
   };
 
   const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
-    <CartContext.Provider value={{ cart, cartCount, loading, refreshCart, addToCart, updateCartItem, removeCartItem }}>
+    <CartContext.Provider value={{ 
+      cart, cartCount, loading: loading || addItemMutation.isPending || updateItemMutation.isPending || removeItemMutation.isPending, 
+      refreshCart: () => refreshCart(), addToCart, updateCartItem, removeCartItem 
+    }}>
       {children}
     </CartContext.Provider>
   );

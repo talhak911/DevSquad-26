@@ -1,44 +1,28 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { 
   Box, Typography, Button, Stack, Chip, CircularProgress, 
   Dialog, DialogTitle, DialogContent, IconButton
 } from "@mui/material";
 import { Add, Edit, Delete } from "@mui/icons-material";
-import { adminApi } from "../../services/api";
+import { useAdminCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "../../hooks/useAdmin";
 import AdminLayout from "../../components/admin/AdminLayout";
 import CategoryForm from "../../components/admin/forms/CategoryForm";
+import type { Category } from "../../types/api";
 
-interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  imageUrl: string;
-  isActive: boolean;
-  createdAt: string;
-}
+
 
 const AdminCategories: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+
+  const { data: categoriesRes, isLoading: loading } = useAdminCategories();
+  const categories = categoriesRes?.data || [];
+
+  const { mutateAsync: createCategory } = useCreateCategory();
+  const { mutateAsync: updateCategory } = useUpdateCategory();
+  const { mutate: deleteCategory } = useDeleteCategory();
+
   const [saving, setSaving] = useState(false);
-
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      const { data } = await adminApi.getCategories();
-      setCategories(data.data);
-    } catch (err) {
-      console.error("Failed to fetch categories", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
 
   const handleOpen = (cat?: Category) => {
     if (cat) {
@@ -53,28 +37,21 @@ const AdminCategories: React.FC = () => {
     setSaving(true);
     try {
       if (editId) {
-        await adminApi.updateCategory(editId, formData);
+        await updateCategory({ id: editId, formData });
       } else {
-        await adminApi.createCategory(formData);
+        await createCategory(formData);
       }
       setDialogOpen(false);
-      fetchCategories();
     } catch (e: any) {
-      // Re-throw to be caught by CategoryForm
       throw e;
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     if (!window.confirm("Permanently delete this category?")) return;
-    try {
-      await adminApi.deleteCategory(id);
-      fetchCategories();
-    } catch (err) {
-      alert("Failed to delete category");
-    }
+    deleteCategory(id);
   };
 
   return (

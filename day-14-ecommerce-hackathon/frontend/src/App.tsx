@@ -6,6 +6,7 @@ import Navbar from "./components/Navbar";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { Toaster } from "react-hot-toast";
 
 // Public Pages
 import Home from "./pages/Home";
@@ -16,6 +17,8 @@ import CheckoutPage from "./pages/CheckoutPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import UserDashboard from "./pages/UserDashboard";
+import Blog from "./pages/Blog";
+import Contact from "./pages/Contact";
 
 // Admin Pages
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -57,6 +60,7 @@ const AppContent: React.FC = () => {
   return (
     <ThemeProvider theme={theme(mode)}>
       <CssBaseline />
+      <Toaster position="top-center" />
       <Box sx={{ minHeight: "100vh", bgcolor: "background.default", display: "flex", flexDirection: "column" }}>
         {!isAuthPage && !isAdminView && <Navbar mode={mode} toggleMode={toggleMode} />}
         <Box sx={{ flex: 1 }}>
@@ -70,6 +74,8 @@ const AppContent: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<ProtectedRoute allowedRoles={['user', 'admin', 'superadmin']}><UserDashboard /></ProtectedRoute>} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/contact" element={<Contact />} />
 
             {/* Admin Auth */}
             <Route path="/admin/login" element={<AdminLogin />} />

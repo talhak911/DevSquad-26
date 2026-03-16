@@ -4,7 +4,7 @@ import {
     ListItemText, useMediaQuery, Badge, Tooltip, Menu, MenuItem, Avatar, Divider
 } from "@mui/material";
 import {
-    Search, PersonOutline, LocalMall, Menu as MenuIcon, Close, 
+    Search, PersonOutline, LocalMall, Menu as MenuIcon, Close,
     LightMode, DarkMode, AdminPanelSettings, Logout
 } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -37,9 +37,9 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
 
     const navLinks = [
         { label: "TEA COLLECTIONS", path: "/collections" },
-        { label: "ACCESSORIES", path: "#" },
-        { label: "BLOG", path: "#" },
-        { label: "CONTACT US", path: "#" },
+        { label: "CART", path: "/cart" },
+        { label: "BLOG", path: "/blog" },
+        { label: "CONTACT US", path: "/contact" },
     ];
 
     const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -70,16 +70,16 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
 
     return (
         <>
-            <AppBar position="sticky" elevation={0} sx={{ 
-                bgcolor: "var(--color-bg)", 
+            <AppBar position="sticky" elevation={0} sx={{
+                bgcolor: "var(--color-bg)",
                 borderBottom: "1px solid var(--color-outline)",
                 height: "80px",
                 justifyContent: "center",
                 zIndex: 1201
             }}>
-                <Toolbar sx={{ 
-                    maxWidth: "1400px", 
-                    width: "100%", 
+                <Toolbar sx={{
+                    maxWidth: "1400px",
+                    width: "100%",
                     margin: "0 auto",
                     px: { xs: 2, md: 4 },
                     display: "flex",
@@ -87,17 +87,18 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                 }}>
                     {/* Logo */}
                     <Box component={Link} to="/" sx={{ display: "flex", alignItems: "center", gap: 1, textDecoration: "none" }}>
-                        <svg width="32" height="32" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M24 4L28 16L40 20L28 24L24 36L20 24L8 20L20 16L24 4Z" fill="var(--color-primary)" />
+                        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 36V20.05C13.8667 20.05 11.8167 19.6413 9.85 18.824C7.88333 18.008 6.15 16.85 4.65 15.35C3.15 13.85 2 12.1167 1.2 10.15C0.4 8.18333 0 6.13333 0 4V0H4C6.1 0 8.13333 0.408 10.1 1.224C12.0667 2.04133 13.8 3.2 15.3 4.7C16.3333 5.73333 17.192 6.86667 17.876 8.1C18.5587 9.33333 19.0833 10.65 19.45 12.05C19.6167 11.8167 19.8 11.592 20 11.376C20.2 11.1587 20.4167 10.9333 20.65 10.7C22.15 9.2 23.8833 8.04133 25.85 7.224C27.8167 6.408 29.8667 6 32 6H36V10C36 12.1333 35.592 14.1833 34.776 16.15C33.9587 18.1167 32.8 19.85 31.3 21.35C29.8 22.85 28.0747 24 26.124 24.8C24.1747 25.6 22.1333 26 20 26V36H16Z" fill="var(--color-text-primary)" />
                         </svg>
-                        <Typography sx={{ 
-                            fontFamily: '"Prosto One", sans-serif', 
-                            fontWeight: 400, 
-                            fontSize: "20px", 
+
+                        <Typography sx={{
+                            fontFamily: '"Prosto One", sans-serif',
+                            fontWeight: 400,
+                            fontSize: "20px",
                             color: "text.primary",
                             display: { xs: "none", sm: "block" }
                         }}>
-                            TEA SHOP
+                            Brand Name
                         </Typography>
                     </Box>
 
@@ -128,12 +129,12 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                     {/* Icons */}
                     <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 1.5 } }}>
                         {!isMobile && (
-                            <Box 
-                                component="form" 
+                            <Box
+                                component="form"
                                 onSubmit={handleSearchSubmit}
-                                sx={{ 
-                                    display: "flex", 
-                                    alignItems: "center", 
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
                                     position: "relative",
                                     bgcolor: isSearchExpanded ? "var(--color-bg-secondary)" : "transparent",
                                     borderRadius: "4px",
@@ -162,16 +163,16 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                                         }}
                                     />
                                 )}
-                                <IconButton 
-                                    size="small" 
-                                    onClick={() => isSearchExpanded ? handleSearchSubmit({ preventDefault: () => {} } as any) : setIsSearchExpanded(true)}
+                                <IconButton
+                                    size="small"
+                                    onClick={() => isSearchExpanded ? handleSearchSubmit({ preventDefault: () => { } } as any) : setIsSearchExpanded(true)}
                                     sx={{ color: "text.primary" }}
                                 >
                                     <Search />
                                 </IconButton>
                                 {isSearchExpanded && (
-                                    <IconButton 
-                                        size="small" 
+                                    <IconButton
+                                        size="small"
                                         onClick={() => { setIsSearchExpanded(false); setSearchQuery(""); }}
                                         sx={{ color: "text.primary" }}
                                     >
@@ -180,7 +181,7 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                                 )}
                             </Box>
                         )}
-                        
+
                         {isAuthenticated ? (
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                 <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0.5 }}>
@@ -217,7 +218,7 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                                 <PersonOutline />
                             </IconButton>
                         )}
-                        
+
                         <IconButton size="small" onClick={() => setCartOpen(true)} sx={{ color: "text.primary" }}>
                             <Badge badgeContent={cartCount} color="primary" sx={{ "& .MuiBadge-badge": { bgcolor: "primary.main", color: "primary.contrastText", fontFamily: "Montserrat", fontWeight: 700 } }}>
                                 <LocalMall />
@@ -273,9 +274,9 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                                 "&:focus": { borderColor: "primary.main" }
                             }}
                         />
-                        <IconButton 
+                        <IconButton
                             type="submit"
-                            size="small" 
+                            size="small"
                             sx={{ position: "absolute", right: 8, top: "50%", transform: "translateY(-50%)", color: "text.primary" }}
                         >
                             <Search />
@@ -283,28 +284,28 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                     </Box>
                     <List>
                         {navLinks.map((link) => (
-                            <ListItemButton 
-                                key={link.label} 
-                                component={Link} 
-                                to={link.path} 
+                            <ListItemButton
+                                key={link.label}
+                                component={Link}
+                                to={link.path}
                                 onClick={() => setDrawerOpen(false)}
                                 sx={{ py: 2 }}
                             >
-                                <ListItemText 
-                                    primary={link.label} 
-                                    primaryTypographyProps={{ 
+                                <ListItemText
+                                    primary={link.label}
+                                    primaryTypographyProps={{
                                         fontFamily: '"Montserrat", sans-serif',
                                         fontSize: "14px",
                                         fontWeight: isActive(link.path) ? 600 : 500,
                                         color: isActive(link.path) ? "primary.main" : "text.primary"
-                                    }} 
+                                    }}
                                 />
                             </ListItemButton>
                         ))}
                         {isAuthenticated && isAdmin() && (
-                             <ListItemButton component={Link} to="/admin" onClick={() => setDrawerOpen(false)} sx={{ py: 2 }}>
+                            <ListItemButton component={Link} to="/admin" onClick={() => setDrawerOpen(false)} sx={{ py: 2 }}>
                                 <ListItemText primary="ADMIN PANEL" primaryTypographyProps={{ fontFamily: '"Montserrat", sans-serif', fontSize: "14px", fontWeight: 500 }} />
-                             </ListItemButton>
+                            </ListItemButton>
                         )}
                     </List>
                 </Box>

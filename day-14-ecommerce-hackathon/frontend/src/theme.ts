@@ -5,11 +5,11 @@ const getTheme = (mode: "light" | "dark") =>
     palette: {
       mode,
       primary: { 
-        main: "#282828", 
-        contrastText: "#FFFFFF" 
+        main: mode === "dark" ? "#F5F5F5" : "#282828", 
+        contrastText: mode === "dark" ? "#121212" : "#FFFFFF" 
       },
       secondary: { 
-        main: "#C3B212",
+        main: mode === "dark" ? "#E5D85C" : "#C3B212",
         contrastText: "#000000"
       },
       error: { main: "#D32F2F" },
@@ -43,8 +43,22 @@ const getTheme = (mode: "light" | "dark") =>
           root: {
             borderRadius: "8px",
             boxShadow: "none",
-            "&:hover": { boxShadow: "none" },
+            fontFamily: "'Montserrat', sans-serif",
+            "&:hover": { 
+              boxShadow: "none",
+            },
           },
+          contained: {
+            "&:hover": {
+              backgroundColor: mode === "dark" ? "#FFFFFF" : "#404040", // Subtle change or same
+              color: mode === "dark" ? "#121212" : "#FFFFFF",
+            }
+          },
+          outlined: {
+            "&:hover": {
+              backgroundColor: mode === "dark" ? "rgba(255,255,255,0.05)" : "rgba(40,40,40,0.05)",
+            }
+          }
         },
       },
       MuiCard: {

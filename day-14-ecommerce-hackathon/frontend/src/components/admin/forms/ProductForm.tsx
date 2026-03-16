@@ -381,8 +381,8 @@ const ProductForm: React.FC<ProductFormProps> = ({
             </Box>
             <Stack spacing={2}>
               <Button
-                fullWidth variant="contained" type="submit" disabled={isLoading}
-                sx={{ bgcolor: "primary.main", fontFamily: "Montserrat", fontWeight: 500, height: 48, borderRadius: 0 }}
+                fullWidth variant="contained" color="primary" type="submit" disabled={isLoading}
+                sx={{ fontFamily: "Montserrat", fontWeight: 500, height: 48, borderRadius: 0, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}
               >
                 {isLoading ? "Saving..." : initialData ? "Update Product" : "Create Product"}
               </Button>

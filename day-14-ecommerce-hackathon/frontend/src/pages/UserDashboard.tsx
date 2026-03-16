@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { 
   Box, Container, Typography, Paper, Table, TableBody, 
   TableCell, TableContainer, TableHead, TableRow, Chip, 
@@ -6,7 +6,7 @@ import {
 } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp, LocalMall } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { ordersApi } from '../services/api';
+import { useOrders } from '../hooks/useOrders';
 import Footer from '../components/Footer';
 
 interface OrderRowProps {
@@ -121,26 +121,10 @@ const OrderRow: React.FC<OrderRowProps> = ({ order }) => {
 };
 
 const UserDashboard: React.FC = () => {
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        setLoading(true);
-        const res = await ordersApi.getOrders(page);
-        setOrders(res.data.data);
-        setTotalPages(res.data.meta.totalPages);
-      } catch (err) {
-        console.error('Failed to fetch orders', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchOrders();
-  }, [page]);
+  const { data: ordersRes, isLoading: loading } = useOrders(page);
+  const orders = ordersRes?.data || [];
+  const meta = ordersRes?.meta || { total: 0, totalPages: 1 };
 
   const handlePageChange = (_: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
@@ -172,7 +156,7 @@ const UserDashboard: React.FC = () => {
             <Typography sx={{ fontFamily: 'Montserrat', color: 'text.secondary', mb: 3 }}>
               You haven't placed any orders yet.
             </Typography>
-            <Button component={Link} to="/collections" variant="contained" sx={{ borderRadius: 0, px: 4 }}>
+            <Button component={Link} to="/collections" variant="contained" color="primary" sx={{ borderRadius: 0, px: 4, '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
               START SHOPPING
             </Button>
           </Paper>
@@ -197,10 +181,13 @@ const UserDashboard: React.FC = () => {
           </TableContainer>
         )}
 
-        {totalPages > 1 && (
-          <Box sx={{ mt: 6, display: 'flex', justifyContent: 'center' }}>
+        {meta.totalPages > 0 && (
+          <Box sx={{ mt: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Typography sx={{ fontFamily: 'Montserrat', fontSize: '14px', color: 'text.secondary' }}>
+              Showing {orders.length} of {meta.total} orders
+            </Typography>
             <Pagination 
-              count={totalPages} 
+              count={meta.totalPages} 
               page={page} 
               onChange={handlePageChange}
               shape="rounded"
