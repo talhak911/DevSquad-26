@@ -1,7 +1,8 @@
-'use client';
+"use client";
 
-import { useJobStore } from '@/store/useJobStore';
-import Image from 'next/image';
+import { useJobStore } from "@/store/useJobStore";
+import Image from "next/image";
+import Link from "next/link";
 
 interface JobCardProps {
   job: {
@@ -27,15 +28,15 @@ export default function JobCard({ job }: JobCardProps) {
   const tags = [job.role, job.level, ...job.languages, ...job.tools];
 
   return (
-    <div className={`job-card ${job.featured ? 'featured' : ''}`}>
+    <div className={`job-card ${job.featured ? "featured" : ""}`}>
       <div className="job-info">
         <div className="logo-wrapper">
-          <Image 
-            src={job.logo.replace('./', '/')} 
-            alt={`${job.company} logo`} 
-            width={88} 
-            height={88} 
-            className="logo" 
+          <Image
+            src={job.logo.replace("./", "/")}
+            alt={`${job.company} logo`}
+            width={88}
+            height={88}
+            className="logo"
           />
         </div>
         <div className="details">
@@ -43,10 +44,14 @@ export default function JobCard({ job }: JobCardProps) {
             <span className="company">{job.company}</span>
             <div className="badges">
               {job.new && <span className="badge badge-new">New!</span>}
-              {job.featured && <span className="badge badge-featured">Featured</span>}
+              {job.featured && (
+                <span className="badge badge-featured">Featured</span>
+              )}
             </div>
           </div>
-          <h2 className="position">{job.position}</h2>
+          <Link href={`/jobs/${job.id}`} className="position">
+            {job.position}
+          </Link>
           <div className="meta">
             <span>{job.postedAt}</span>
             <span className="dot"></span>

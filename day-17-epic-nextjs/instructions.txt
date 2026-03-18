@@ -1,0 +1,22 @@
+What You’ll Build
+
+* Based on a Figma design of the Epic Games landing page, you'll recreate it using Next.js and Zustand.
+* Use mock data (e.g., game titles, images, descriptions) to dynamically populate the page.
+* For sliders/carousels (e.g., featured games), you can use SwiperJS or any other lightweight library you prefer.
+
+Pages to Implement
+
+1. Landing Page
+  * Hero banner
+  * Featured games slider
+  * Navigation menu
+2. Games Showcase
+  * Render game card components from mock data
+
+Learning Objectives
+
+* Correctly use Next.js file-based routing and dynamic routing
+* Manage global state with Zustand
+* Fetch and render mock data dynamically instead of hardcoding
+* Maintain responsiveness and UI fidelity to Figma
+* Integrate a slider component for better UI/UX

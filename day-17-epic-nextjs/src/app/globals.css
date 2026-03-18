@@ -1,0 +1,73 @@
+@import "tailwindcss";
+
+@theme {
+  --color-header-bg: var(--bg-header);
+  --color-text-muted: var(--text-muted);
+  --color-text-active: var(--text-active);
+  --color-accent-blue: var(--accent-blue);
+  --color-btn-download-text: var(--btn-download-text);
+
+  --color-primary: var(--primary-color);
+  --color-search-bg: var(--search-bg);
+  --color-text-placeholder: var(--text-placeholder);
+  --color-list-active: var(--list-active);
+  --color-list-hover: var(--list-hover);
+  --color-banner-grad: var(--banner-grad);
+  --color-surface-dim: var(--surface-dim);
+  --color-discount-bg: var(--discount-bg);
+  --color-text-dim: var(--text-dim);
+  --color-free-games-bg: var(--free-games-bg);
+  --color-border-divider: var(--border-divider);
+  --color-footer-bg: var(--footer-bg);
+  --color-footer-link: var(--footer-link);
+
+  --font-poppins: "Poppins", sans-serif;
+}
+
+:root {
+  --bg-header: #ffffff;
+  --primary-color: #ffffff;
+  --text-muted: #666666;
+  --text-active: #000000;
+  --accent-blue: #007aff;
+  --btn-download-text: #ffffff;
+  --search-bg: #f4f4f4;
+  --text-placeholder: #a0a0a0;
+  --list-active: #e5e5e5;
+  --list-hover: #f0f0f0;
+  --banner-grad: #ffffff;
+  --surface-dim: #e5e5e5;
+  --discount-bg: #0074E4;
+  --text-dim: rgba(0, 0, 0, 0.6);
+  --free-games-bg: #f4f4f4;
+  --border-divider: rgba(0, 0, 0, 0.1);
+  --footer-bg: #e0e0e0;
+  --footer-link: #333333;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-header: #313131;
+    --primary-color: #121212;
+    --text-muted: #aaaaaa;
+    --text-active: #ffffff;
+    --accent-blue: #007aff;
+    --btn-download-text: #ffffff;
+    --search-bg: #202020;
+    --text-placeholder: #a0a0a0;
+    --list-active: #252525;
+    --list-hover: #202020;
+    --banner-grad: #0f1014;
+    --surface-dim: #333333;
+    --discount-bg: #0074E4;
+    --text-dim: rgba(255, 255, 255, 0.6);
+    --free-games-bg: #2a2a2a;
+    --border-divider: rgba(255, 255, 255, 0.1);
+    --footer-bg: #202020;
+    --footer-link: #e7e7e7;
+  }
+}
+
+body {
+  font-family: var(--font-poppins);
+}
