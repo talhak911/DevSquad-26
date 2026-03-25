@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import {
     Box, Card, TextField, Button, Typography, InputAdornment,
     IconButton, CircularProgress, Divider,
@@ -10,7 +10,11 @@ import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { staggerFadeUp, slideDown } from "../utils/gsapUtils";
+
+gsap.registerPlugin(useGSAP);
 
 const schema = yup.object({
     name: yup.string().min(2).max(50).required("Name is required"),
@@ -31,16 +35,17 @@ const Register: React.FC = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const containerRef = useRef<HTMLDivElement>(null);
     const fieldsRef = useRef<HTMLDivElement>(null);
     const logoRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
+    useGSAP(() => {
         if (logoRef.current) slideDown(logoRef.current, 0);
         if (fieldsRef.current) {
             const fields = fieldsRef.current.querySelectorAll(".form-field");
             staggerFadeUp(fields, 0.1, 0.2);
         }
-    }, []);
+    }, { scope: containerRef });
 
     const { register, handleSubmit, formState: { errors }, setError } = useForm<FormData>({
         resolver: yupResolver(schema),
@@ -68,6 +73,7 @@ const Register: React.FC = () => {
 
     return (
         <Box
+            ref={containerRef}
             sx={{
                 minHeight: "100vh",
                 display: "flex",
@@ -102,7 +108,7 @@ const Register: React.FC = () => {
                         Create account
                     </Typography>
                     <Typography sx={{ color: "var(--color-text-muted)", fontSize: "0.875rem", mt: 0.5 }}>
-                        Register as a Team Member
+                        Register your Company
                     </Typography>
                 </Box>
 
@@ -156,7 +162,7 @@ const Register: React.FC = () => {
                             "&:hover": { background: "var(--color-primary-hover)" },
                         }}
                     >
-                        {isLoading ? <CircularProgress size={20} color="inherit" /> : "Create account"}
+                        {isLoading ? <CircularProgress size={20} sx={{ color: "var(--color-text-on-primary)" }} /> : "Create account"}
                     </Button>
 
                     <Box className="form-field" sx={{ textAlign: "center" }}>

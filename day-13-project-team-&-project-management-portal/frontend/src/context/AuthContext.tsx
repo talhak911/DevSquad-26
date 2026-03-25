@@ -11,6 +11,7 @@ export interface AuthUser {
     avatar?: string;
     department?: string;
     createdAt: string;
+    createdBy?: { name: string; email: string };
 }
 
 interface AuthContextType {

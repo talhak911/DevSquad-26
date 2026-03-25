@@ -12,7 +12,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import toast from "react-hot-toast";
 import { membersApi } from "../services/api";
-import { pageEnter, staggerFadeUp, dialogEnter } from "../utils/gsapUtils";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { pageEnter, staggerFadeUp, dialogEnter, successNotification, rowLeave } from "../utils/gsapUtils";
+
+gsap.registerPlugin(useGSAP);
 
 interface Member {
     _id: string;
@@ -48,10 +52,12 @@ const Members: React.FC = () => {
     const [editMember, setEditMember] = useState<Member | null>(null);
     const [memberToDelete, setMemberToDelete] = useState<Member | null>(null);
     const [saving, setSaving] = useState(false);
+    const [addedMemberName, setAddedMemberName] = useState("");
 
     const pageRef = useRef<HTMLDivElement>(null);
     const dialogRef = useRef<HTMLDivElement>(null);
     const tableBodyRef = useRef<HTMLTableSectionElement>(null);
+    const noticeRef = useRef<HTMLDivElement>(null);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const createForm = useForm<CreateFormData>({ resolver: yupResolver(createSchema) as any });
@@ -69,17 +75,27 @@ const Members: React.FC = () => {
         }
     }, []);
 
+    const hasAnimatedInitial = useRef(false);
+
     useEffect(() => {
-        if (pageRef.current) pageEnter(pageRef.current);
         loadMembers();
     }, [loadMembers]);
 
-    useEffect(() => {
-        if (!loading && tableBodyRef.current) {
+    // 1. Page Entrance Animation
+    useGSAP(() => {
+        if (pageRef.current) pageEnter(pageRef.current);
+    }, { scope: pageRef });
+
+    // 2. Initial List Animation
+    useGSAP(() => {
+        if (!loading && tableBodyRef.current && !hasAnimatedInitial.current) {
             const rows = tableBodyRef.current.querySelectorAll("tr");
-            if (rows.length) staggerFadeUp(rows, 0.05, 0.1);
+            if (rows.length) {
+                staggerFadeUp(rows, 0.05, 0.1);
+                hasAnimatedInitial.current = true;
+            }
         }
-    }, [loading, members]);
+    }, { dependencies: [loading], scope: pageRef });
 
     const openCreate = () => {
         setEditMember(null);
@@ -99,8 +115,9 @@ const Members: React.FC = () => {
         setSaving(true);
         try {
             await membersApi.create(values);
-            toast.success("Team member added successfully");
+            setAddedMemberName(values.name);
             setDialogOpen(false);
+            if (noticeRef.current) successNotification(noticeRef.current);
             loadMembers();
         } catch (err: unknown) {
             const error = err as any;
@@ -141,10 +158,22 @@ const Members: React.FC = () => {
     const handleDelete = async () => {
         if (!memberToDelete) return;
         try {
-            await membersApi.delete(memberToDelete._id);
-            toast.success("Team member removed");
-            setDeleteDialogOpen(false);
-            loadMembers();
+            // Find row and animate
+            const rows = tableBodyRef.current?.querySelectorAll("tr");
+            const rowIdx = members.findIndex(m => m._id === memberToDelete._id);
+            if (rows && rowIdx !== -1) {
+                rowLeave(rows[rowIdx], async () => {
+                    await membersApi.delete(memberToDelete._id);
+                    toast.success("Team member removed");
+                    setDeleteDialogOpen(false);
+                    loadMembers();
+                });
+            } else {
+                await membersApi.delete(memberToDelete._id);
+                toast.success("Team member removed");
+                setDeleteDialogOpen(false);
+                loadMembers();
+            }
         } catch {
             toast.error("Failed to delete member");
         }
@@ -157,7 +186,28 @@ const Members: React.FC = () => {
     );
 
     return (
-        <Box ref={pageRef} className="page-container" sx={{ py: 4 }}>
+        <Box ref={pageRef} className="page-container" sx={{ py: 4, position: "relative" }}>
+            {/* GSAP Notification */}
+            <Box
+                ref={noticeRef}
+                sx={{
+                    position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)",
+                    zIndex: 9999, pointerEvents: "none", opacity: 0,
+                }}
+            >
+                <Paper
+                    sx={{
+                        px: 3, py: 1.5, borderRadius: "50px", bgcolor: "var(--color-surface)",
+                        border: "1px solid var(--color-success)", boxShadow: "var(--shadow-lg)",
+                        display: "flex", alignItems: "center", gap: 1.5
+                    }}
+                >
+                    <Avatar sx={{ width: 24, height: 24, bgcolor: "var(--color-success)", fontSize: "0.7rem", color: "#fff" }}>✓</Avatar>
+                    <Typography sx={{ fontWeight: 600, fontSize: "0.875rem", color: "var(--color-text-primary)" }}>
+                        {addedMemberName} added successfully!
+                    </Typography>
+                </Paper>
+            </Box>
             <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", mb: 3, flexWrap: "wrap", gap: 2 }}>
                 <Box>
                     <Typography variant="h5" sx={{ fontWeight: 700, color: "var(--color-text-primary)" }}>Team Members</Typography>
@@ -272,7 +322,7 @@ const Members: React.FC = () => {
                         <DialogActions sx={{ px: 3, pb: 2.5 }}>
                             <Button onClick={() => setDialogOpen(false)} sx={{ color: "var(--color-text-secondary)" }}>Cancel</Button>
                             <Button type="submit" variant="contained" disabled={saving} sx={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))", color: "#fff" }}>
-                                {saving ? <CircularProgress size={18} color="inherit" /> : "Add Member"}
+                                {saving ? <CircularProgress size={18} sx={{ color: "var(--color-text-on-primary)" }} /> : "Add Member"}
                             </Button>
                         </DialogActions>
                     </Box>
@@ -298,7 +348,7 @@ const Members: React.FC = () => {
                         <DialogActions sx={{ px: 3, pb: 2.5 }}>
                             <Button onClick={() => setDialogOpen(false)} sx={{ color: "var(--color-text-secondary)" }}>Cancel</Button>
                             <Button type="submit" variant="contained" disabled={saving} sx={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))", color: "#fff" }}>
-                                {saving ? <CircularProgress size={18} color="inherit" /> : "Save Changes"}
+                                {saving ? <CircularProgress size={18} sx={{ color: "var(--color-text-on-primary)" }} /> : "Save Changes"}
                             </Button>
                         </DialogActions>
                     </Box>

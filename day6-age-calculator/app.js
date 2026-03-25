@@ -228,7 +228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Get the number of days in the previous month
       const prevMonthDate = new Date(
         currentDate.getFullYear(),
-        currentDate.getMonth(),
+        currentDate.getMonth() -1,
         0,
       );
       ageDays += prevMonthDate.getDate();

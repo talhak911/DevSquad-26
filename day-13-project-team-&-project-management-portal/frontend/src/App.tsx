@@ -21,7 +21,7 @@ const AppLayout: React.FC<{ mode: "light" | "dark"; toggleMode: () => void }> = 
   return (
     <Box sx={{ minHeight: "100vh", bgcolor: "var(--color-bg)", display: "flex", flexDirection: "column" }}>
       {!isAuthPage && <Navbar mode={mode} toggleMode={toggleMode} />}
-      <Box sx={{ flex: 1 }}>
+      <Box sx={{ flex: 1, position: "relative" }}>
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
