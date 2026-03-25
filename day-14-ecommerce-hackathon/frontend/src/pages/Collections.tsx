@@ -163,6 +163,7 @@ const Collections: React.FC = () => {
     } else {
       setList([...list, value]);
     }
+    setPage(1);
   };
 
   const handleCategoryToggle = (slug: string) => {
@@ -175,6 +176,7 @@ const Collections: React.FC = () => {
       searchParams.append('category', slug);
     }
     setSearchParams(searchParams);
+    setPage(1);
   };
 
   const handleSortChange = (event: SelectChangeEvent) => {
@@ -292,7 +294,7 @@ const Collections: React.FC = () => {
                 </Typography>
                 <Switch
                   checked={isOrganic}
-                  onChange={(e) => setIsOrganic(e.target.checked)}
+                  onChange={(e) => { setIsOrganic(e.target.checked); setPage(1); }}
                   sx={{
                     width: 42, height: 26, p: 0,
                     '& .MuiSwitch-switchBase': {
@@ -314,7 +316,7 @@ const Collections: React.FC = () => {
                 </Typography>
                 <Switch
                   checked={isVegan}
-                  onChange={(e) => setIsVegan(e.target.checked)}
+                  onChange={(e) => { setIsVegan(e.target.checked); setPage(1); }}
                   sx={{
                     width: 42, height: 26, p: 0,
                     '& .MuiSwitch-switchBase': {
@@ -416,7 +418,7 @@ const Collections: React.FC = () => {
                       <Box sx={{
                         width: '100%',
                         aspectRatio: '1/1',
-                        backgroundImage: `url(${product.images?.[0] ? (product.images[0].startsWith('http') ? product.images[0] : `http://localhost:5000/${product.images[0]}`) : 'https://placehold.co/600x600?text=No+Image'})`,
+                        backgroundImage: `url(${product.images?.[0] ? (product.images[0].startsWith('http') ? product.images[0] : `${import.meta.env.VITE_API_URL || 'http://localhost:5000'}/${product.images[0]}`) : 'https://placehold.co/600x600?text=No+Image'})`,
                         backgroundSize: 'cover',
                         backgroundPosition: 'center',
                         mb: 2,

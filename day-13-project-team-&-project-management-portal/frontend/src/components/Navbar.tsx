@@ -138,6 +138,11 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                             {user?.role === "company" ? "Company" : "Team Member"}
                         </Typography>
                     </Box>
+                    {user?.role === "team_member" && user.createdBy && (
+                        <Typography sx={{ fontSize: "0.7rem", color: "var(--color-text-muted)", mt: 1 }}>
+                            Belongs to: <strong>{user.createdBy.name}</strong>
+                        </Typography>
+                    )}
                 </Box>
                 <Divider sx={{ borderColor: "var(--color-border)" }} />
                 <MenuItem onClick={handleLogout} sx={{ gap: 1.5, color: "var(--color-error)", fontSize: "0.875rem", py: 1.25 }}>

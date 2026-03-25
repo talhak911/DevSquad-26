@@ -45,6 +45,12 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
     sameSite: isProduction ? "none" : "lax", // 'none' allows cross-domain cookies, 'lax' is fine for localhost
   };
 
+  console.log("SENDING TOKEN RESPONSE FOR USER:", {
+    id: user._id,
+    role: user.role,
+    createdBy: user.createdBy,
+  });
+
   res
     .status(statusCode)
     .cookie("refresh_token", rawRefreshToken, cookieOptions)
@@ -60,6 +66,7 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
           avatar: user.avatar,
           department: user.department,
           createdAt: user.createdAt,
+          createdBy: user.createdBy,
         },
       },
       message,
@@ -102,7 +109,9 @@ const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ email })
+      .select("+password")
+      .populate("createdBy", "name email");
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({
         success: false,
@@ -124,6 +133,12 @@ const login = async (req, res, next) => {
  */
 const getMe = async (req, res, next) => {
   try {
+    console.log("GET ME USER:", {
+      id: req.user._id,
+      role: req.user.role,
+      createdBy: req.user.createdBy,
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -135,6 +150,7 @@ const getMe = async (req, res, next) => {
           avatar: req.user.avatar,
           department: req.user.department,
           createdAt: req.user.createdAt,
+          createdBy: req.user.createdBy,
         },
       },
       message: "User profile fetched successfully",
@@ -176,7 +192,10 @@ const refreshTokens = async (req, res, next) => {
     }
 
     // Find the user associated with this token
-    const user = await User.findById(tokenDoc.userId);
+    const user = await User.findById(tokenDoc.userId).populate(
+      "createdBy",
+      "name email",
+    );
     if (!user) {
       return res.status(404).json({
         success: false,

@@ -10,7 +10,11 @@ import * as yup from "yup";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { staggerFadeUp, slideDown } from "../utils/gsapUtils";
+
+gsap.registerPlugin(useGSAP);
 
 const schema = yup.object({
     email: yup.string().email("Invalid email").required("Email is required"),
@@ -35,13 +39,13 @@ const Login: React.FC = () => {
         if (isAuthenticated) navigate(from, { replace: true });
     }, [isAuthenticated, navigate, from]);
 
-    useEffect(() => {
+    useGSAP(() => {
         if (logoRef.current) slideDown(logoRef.current, 0);
         if (fieldsRef.current) {
             const fields = fieldsRef.current.querySelectorAll(".form-field");
             staggerFadeUp(fields, 0.1, 0.2);
         }
-    }, []);
+    }, { scope: containerRef });
 
     const { register, handleSubmit, formState: { errors }, setError } = useForm<FormData>({
         resolver: yupResolver(schema),
@@ -172,7 +176,7 @@ const Login: React.FC = () => {
                             "&:hover": { background: "var(--color-primary-hover)" },
                         }}
                     >
-                        {isLoading ? <CircularProgress size={20} color="inherit" /> : "Sign in"}
+                        {isLoading ? <CircularProgress size={20} sx={{ color: "var(--color-text-on-primary)" }} /> : "Sign in"}
                     </Button>
 
                     <Box className="form-field" sx={{ textAlign: "center" }}>

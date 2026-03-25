@@ -15,7 +15,11 @@ import * as yup from "yup";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContext";
 import { projectsApi, membersApi } from "../services/api";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { staggerScaleIn, pageEnter, dialogEnter } from "../utils/gsapUtils";
+
+gsap.registerPlugin(useGSAP);
 
 interface TeamMember {
     user: { _id: string; name: string; email: string; department?: string };
@@ -75,6 +79,10 @@ const Projects: React.FC = () => {
     const [assignPermission, setAssignPermission] = useState<"edit" | "view">("view");
     const [saving, setSaving] = useState(false);
 
+    // Member removal confirmation
+    const [removeMemberConfirmOpen, setRemoveMemberConfirmOpen] = useState(false);
+    const [memberToRemove, setMemberToRemove] = useState<{ projectId: string; userId: string; name: string } | null>(null);
+
     const pageRef = useRef<HTMLDivElement>(null);
     const dialogRef = useRef<HTMLDivElement>(null);
 
@@ -99,17 +107,27 @@ const Projects: React.FC = () => {
         }
     }, [isCompany]);
 
+    const hasAnimatedInitial = useRef(false);
+
     useEffect(() => {
-        if (pageRef.current) pageEnter(pageRef.current);
         loadProjects();
     }, [loadProjects]);
 
-    useEffect(() => {
-        if (!loading && projects.length > 0) {
+    // 1. Page Entrance
+    useGSAP(() => {
+        if (pageRef.current) pageEnter(pageRef.current);
+    }, { scope: pageRef });
+
+    // 2. Initial Grid Animation
+    useGSAP(() => {
+        if (!loading && projects.length > 0 && !hasAnimatedInitial.current) {
             const cards = document.querySelectorAll(".project-card");
-            if (cards.length) staggerScaleIn(cards, 0.07);
+            if (cards.length) {
+                staggerScaleIn(cards, 0.07);
+                hasAnimatedInitial.current = true;
+            }
         }
-    }, [loading, projects]);
+    }, { dependencies: [loading], scope: pageRef });
 
     const openCreate = () => {
         setEditProject(null);
@@ -228,8 +246,11 @@ const Projects: React.FC = () => {
         }
     };
 
-    const handleRemoveMember = async (projectId: string, userId: string) => {
+    const handleRemoveMember = async () => {
+        if (!memberToRemove) return;
+        const { projectId, userId } = memberToRemove;
         try {
+            setSaving(true);
             await projectsApi.removeMember(projectId, userId);
             toast.success("Member removed from project");
             // Also reflect in the assign dialog if it's open
@@ -237,9 +258,31 @@ const Projects: React.FC = () => {
                 if (!prev || prev._id !== projectId) return prev;
                 return { ...prev, teamMembers: prev.teamMembers.filter((m) => m.user._id !== userId) };
             });
+            setRemoveMemberConfirmOpen(false);
             loadProjects();
         } catch {
             toast.error("Failed to remove member");
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const openRemoveMemberConfirm = (projectId: string, userId: string, name: string) => {
+        setMemberToRemove({ projectId, userId, name });
+        setRemoveMemberConfirmOpen(true);
+    };
+
+    const handleUpdatePermission = async (projectId: string, userId: string, permission: "edit" | "view") => {
+        setSaving(true);
+        try {
+            const { data } = await projectsApi.assignMember(projectId, userId, permission);
+            toast.success(`Permission updated to ${permission}`);
+            setAssigningProject(data.data.project);
+            loadProjects();
+        } catch (err: any) {
+            toast.error(err.response?.data?.message || "Failed to update permission");
+        } finally {
+            setSaving(false);
         }
     };
 
@@ -396,7 +439,7 @@ const Projects: React.FC = () => {
                                                             avatar={<Avatar sx={{ bgcolor: tm.permission === "edit" ? "var(--color-success)" : "var(--color-text-muted)", fontSize: "0.65rem" }}>{tm.user.name.charAt(0)}</Avatar>}
                                                             label={`${tm.user.name.split(" ")[0]} · ${tm.permission}`}
                                                             size="small"
-                                                            onDelete={isCompany() ? () => handleRemoveMember(project._id, tm.user._id) : undefined}
+                                                            onDelete={isCompany() ? () => openRemoveMemberConfirm(project._id, tm.user._id, tm.user.name) : undefined}
                                                             deleteIcon={isCompany() ? <PersonRemove sx={{ fontSize: "14px !important" }} /> : undefined}
                                                             sx={{
                                                                 height: 24, fontSize: "11px",
@@ -470,8 +513,8 @@ const Projects: React.FC = () => {
                                 <TextField
                                     fullWidth label="Progress (%)" size="small" type="number"
                                     {...field}
-                                    onChange={(e) => field.onChange(e.target.value === "" ? 0 : Number(e.target.value))}
-                                    value={field.value ?? 0}
+                                    onChange={(e) => field.onChange(e.target.value === "" ? "" : Number(e.target.value))}
+                                    value={field.value ?? ""}
                                     inputProps={{ min: 0, max: 100 }}
                                     error={!!errors.progress}
                                     helperText={errors.progress?.message}
@@ -492,7 +535,7 @@ const Projects: React.FC = () => {
                     <DialogActions sx={{ px: 3, pb: 2.5 }}>
                         <Button onClick={() => setProjectDialogOpen(false)} sx={{ color: "var(--color-text-secondary)" }}>Cancel</Button>
                         <Button type="submit" variant="contained" disabled={saving} sx={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))", color: "#fff" }}>
-                            {saving ? <CircularProgress size={18} color="inherit" /> : editProject ? "Save Changes" : "Create Project"}
+                            {saving ? <CircularProgress size={18} sx={{ color: "var(--color-text-on-primary)" }} /> : editProject ? "Save Changes" : "Create Project"}
                         </Button>
                     </DialogActions>
                 </Box>
@@ -514,23 +557,37 @@ const Projects: React.FC = () => {
                     {/* Currently assigned */}
                     {assigningProject && assigningProject.teamMembers.length > 0 && (
                         <Box>
-                            <Typography sx={{ fontSize: "0.75rem", color: "var(--color-text-muted)", mb: 0.75, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
+                            <Typography sx={{ fontSize: "0.75rem", color: "var(--color-text-muted)", mb: 1, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.5px" }}>
                                 Already Assigned
                             </Typography>
-                            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                            <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                                 {assigningProject.teamMembers.map((tm) => (
-                                    <Chip
-                                        key={tm.user._id}
-                                        label={`${tm.user.name} · ${tm.permission}`}
-                                        size="small"
-                                        onDelete={() => handleRemoveMember(assigningProject._id, tm.user._id)}
-                                        deleteIcon={<PersonRemove sx={{ fontSize: "14px !important" }} />}
-                                        sx={{
-                                            bgcolor: tm.permission === "edit" ? "rgba(16,185,129,0.1)" : "var(--color-primary-light)",
-                                            color: tm.permission === "edit" ? "var(--color-success)" : "var(--color-primary)",
-                                            "& .MuiChip-deleteIcon": { color: "var(--color-error)" },
-                                        }}
-                                    />
+                                    <Box key={tm.user._id} sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", p: 1.25, borderRadius: "var(--radius-sm)", border: "1px solid var(--color-border)", bgcolor: "var(--color-bg-secondary)" }}>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                                            <Avatar sx={{ width: 32, height: 32, fontSize: "0.8rem", bgcolor: tm.permission === "edit" ? "var(--color-success)" : "var(--color-text-muted)" }}>
+                                                {tm.user.name.charAt(0)}
+                                            </Avatar>
+                                            <Box>
+                                                <Typography sx={{ fontSize: "0.875rem", fontWeight: 600 }}>{tm.user.name}</Typography>
+                                                <Typography sx={{ fontSize: "0.7rem", color: "var(--color-text-muted)" }}>{tm.user.email}</Typography>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                                            <Select
+                                                size="small"
+                                                value={tm.permission}
+                                                onChange={(e) => handleUpdatePermission(assigningProject._id, tm.user._id, e.target.value as "edit" | "view")}
+                                                disabled={saving}
+                                                sx={{ height: 32, fontSize: "0.75rem", minWidth: 90 }}
+                                            >
+                                                <MenuItem value="view">View</MenuItem>
+                                                <MenuItem value="edit">Edit</MenuItem>
+                                            </Select>
+                                            <IconButton size="small" color="error" onClick={() => openRemoveMemberConfirm(assigningProject._id, tm.user._id, tm.user.name)} disabled={saving}>
+                                                <PersonRemove sx={{ fontSize: 18 }} />
+                                            </IconButton>
+                                        </Box>
+                                    </Box>
                                 ))}
                             </Box>
                         </Box>
@@ -604,12 +661,11 @@ const Projects: React.FC = () => {
                         disabled={saving || pendingAssignments.length === 0}
                         sx={{ background: "linear-gradient(135deg, var(--color-primary), var(--color-primary-hover))", color: "#fff" }}
                     >
-                        {saving ? <CircularProgress size={18} color="inherit" /> : `Assign ${pendingAssignments.length || ""}`}
+                        {saving ? <CircularProgress size={18} sx={{ color: "var(--color-text-on-primary)" }} /> : `Assign ${pendingAssignments.length || ""}`}
                     </Button>
                 </DialogActions>
             </Dialog>
 
-            {/* Delete Confirm */}
             <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)} maxWidth="xs" fullWidth>
                 <DialogTitle sx={{ fontWeight: 700 }}>Delete Project?</DialogTitle>
                 <DialogContent>
@@ -620,6 +676,22 @@ const Projects: React.FC = () => {
                 <DialogActions sx={{ px: 3, pb: 2 }}>
                     <Button onClick={() => setDeleteDialogOpen(false)} sx={{ color: "var(--color-text-secondary)" }}>Cancel</Button>
                     <Button variant="contained" onClick={handleDelete} sx={{ bgcolor: "var(--color-error)", color: "#fff", "&:hover": { bgcolor: "var(--color-error)" } }}>Delete</Button>
+                </DialogActions>
+            </Dialog>
+
+            {/* Remove Member Confirm */}
+            <Dialog open={removeMemberConfirmOpen} onClose={() => setRemoveMemberConfirmOpen(false)} maxWidth="xs" fullWidth>
+                <DialogTitle sx={{ fontWeight: 700 }}>Remove Member from Project?</DialogTitle>
+                <DialogContent>
+                    <Typography sx={{ color: "var(--color-text-secondary)" }}>
+                        Remove <strong>{memberToRemove?.name}</strong> from this project?
+                    </Typography>
+                </DialogContent>
+                <DialogActions sx={{ px: 3, pb: 2 }}>
+                    <Button onClick={() => setRemoveMemberConfirmOpen(false)} sx={{ color: "var(--color-text-secondary)" }}>Cancel</Button>
+                    <Button variant="contained" onClick={handleRemoveMember} disabled={saving} sx={{ bgcolor: "var(--color-error)", color: "#fff", "&:hover": { bgcolor: "var(--color-error)" } }}>
+                        {saving ? <CircularProgress size={18} sx={{ color: "#fff" }} /> : "Remove"}
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>

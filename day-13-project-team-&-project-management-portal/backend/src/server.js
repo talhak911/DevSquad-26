@@ -15,7 +15,18 @@ connectDB();
 
 const app = express();
 
-// ─── Health Check (Top of list) ────────────────────────────────────────────────
+// ─── CORS & Body Parsing ───────────────────────────────────────────────────────
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",").map((o) => o.trim())
+      : true,
+    credentials: true,
+    optionsSuccessStatus: 200, // for legacy browsers (IE11, various SmartTVs)
+  }),
+);
+
+// ─── Health Check ─────────────────────────────────────────────────────────────
 app.get("/health", (_req, res) => {
   res.status(200).json({
     success: true,
@@ -24,15 +35,6 @@ app.get("/health", (_req, res) => {
   });
 });
 
-// ─── CORS & Body Parsing ───────────────────────────────────────────────────────
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGINS 
-      ? process.env.CORS_ORIGINS.split(",").map(o => o.trim()) 
-      : true,
-    credentials: true,
-  }),
-);
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: false }));

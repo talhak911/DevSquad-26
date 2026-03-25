@@ -16,7 +16,6 @@ const buildFilter = async (query) => {
       else slugs.push(c);
     });
 
-    const filterObj = {};
     if (ids.length > 0 && slugs.length > 0) {
       const catDocs = await Category.find({ slug: { $in: slugs } });
       const foundIds = catDocs.map(d => d._id);
@@ -46,16 +45,17 @@ const buildFilter = async (query) => {
     const values = Array.isArray(query.caffeine) ? query.caffeine : query.caffeine.split(",");
     filter.caffeine = { $in: values };
   }
-  if (query.isOrganic === "true") filter.isOrganic = true;
-  if (query.isVegan === "true") filter.isVegan = true;
+  if (query.isOrganic === "true" || query.isOrganic === true) filter.isOrganic = true;
+  if (query.isVegan === "true" || query.isVegan === true) filter.isVegan = true;
+  if (query.rating) filter.rating = { $gte: Number(query.rating) };
   if (query.allergens) {
     const allergens = Array.isArray(query.allergens) ? query.allergens : [query.allergens];
     filter.allergens = { $all: allergens };
   }
-  if (query.priceMin || query.priceMax) {
-    filter.basePrice = {};
-    if (query.priceMin) filter.basePrice.$gte = Number(query.priceMin);
-    if (query.priceMax) filter.basePrice.$lte = Number(query.priceMax);
+  if (query.priceMin !== undefined || query.priceMax !== undefined) {
+    filter.minPrice = {};
+    if (query.priceMin !== undefined) filter.minPrice.$gte = Number(query.priceMin);
+    if (query.priceMax !== undefined) filter.minPrice.$lte = Number(query.priceMax);
   }
   if (query.inStock === "true") filter["variants.stockQuantity"] = { $gt: 0 };
   if (query.tags) {
@@ -67,8 +67,8 @@ const buildFilter = async (query) => {
 
 const buildSort = (sortParam) => {
   const sorts = {
-    "price:asc": { basePrice: 1 },
-    "price:desc": { basePrice: -1 },
+    "price:asc": { minPrice: 1 },
+    "price:desc": { minPrice: -1 },
     "rating:desc": { rating: -1 },
     newest: { createdAt: -1 },
   };

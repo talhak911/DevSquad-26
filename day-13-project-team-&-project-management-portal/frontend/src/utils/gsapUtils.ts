@@ -175,5 +175,23 @@ export const rowLeave = (target: gsap.TweenTarget, onComplete?: () => void) =>
     onComplete,
   });
 
+export const successNotification = (target: gsap.TweenTarget) => {
+  const tl = gsap.timeline();
+  tl.fromTo(
+    target,
+    { y: -50, opacity: 0, scale: 0.8 },
+    { y: 0, opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.7)" },
+  )
+    .to(target, { opacity: 1, duration: 1.5 }) // delay
+    .to(target, {
+      y: -20,
+      opacity: 0,
+      scale: 0.9,
+      duration: 0.4,
+      ease: "power2.in",
+    });
+  return tl;
+};
+
 export { ScrollTrigger };
 export default gsap;

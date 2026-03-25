@@ -28,11 +28,19 @@ const productSchema = new mongoose.Schema(
     ingredients: [{ type: String }],
     tags: [{ type: String }],
     rating: { type: Number, default: 0, min: 0, max: 5 },
+    minPrice: { type: Number, index: true }, // Cached basePrice + variants[0].priceDelta
     isActive: { type: Boolean, default: true },
     variants: [variantSchema],
   },
   { timestamps: true }
 );
+
+// Pre-save hook to calculate minPrice (displayed price)
+productSchema.pre("save", function () {
+  const base = this.basePrice || 0;
+  const delta = (this.variants && this.variants[0]) ? (this.variants[0].priceDelta || 0) : 0;
+  this.minPrice = base + delta;
+});
 
 // Computed: any variant has stock?
 productSchema.virtual("inStock").get(function () {

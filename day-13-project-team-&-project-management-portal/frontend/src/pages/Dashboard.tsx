@@ -7,8 +7,12 @@ import {
 } from "@mui/icons-material";
 import { useAuth } from "../context/AuthContext";
 import { projectsApi, membersApi } from "../services/api";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { pageEnter, countUp, staggerFadeUp } from "../utils/gsapUtils";
 import toast from "react-hot-toast";
+
+gsap.registerPlugin(useGSAP);
 
 interface ProjectStats { total: number; active: number; completed: number; planning: number; on_hold: number; }
 
@@ -56,10 +60,29 @@ const Dashboard: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [recentProjects, setRecentProjects] = useState<Array<{ _id: string; title: string; status: string; progress: number; myPermission?: string }>>([]);
 
-    useEffect(() => {
+    useGSAP(() => {
         if (pageRef.current) pageEnter(pageRef.current);
-        if (heroRef.current) staggerFadeUp(heroRef.current.querySelectorAll(".hero-item"), 0.12, 0.05);
-    }, []);
+        
+        // Floating animation for the chip
+        gsap.to(".hero-chip", {
+            y: -6,
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+        });
+
+        // SVG Path animation
+        gsap.fromTo(".hero-svg-path",
+            { strokeDasharray: 1000, strokeDashoffset: 1000 },
+            { strokeDashoffset: 0, duration: 2, ease: "power2.inOut", delay: 0.5 }
+        );
+
+        // Hero items staggered entrance (handled by pageEnter mostly, but can be explicit)
+        const items = document.querySelectorAll(".hero-item");
+        if (items.length) staggerFadeUp(items, 0.12, 0.05);
+
+    }, { scope: pageRef });
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,6 +105,11 @@ const Dashboard: React.FC = () => {
                 toast.error("Failed to load dashboard");
             } finally {
                 setLoading(false);
+                // Stagger entrance for projects
+                setTimeout(() => {
+                    const cards = document.querySelectorAll(".recent-project-card");
+                    if (cards.length) staggerFadeUp(cards, 0.1, 0.1);
+                }, 100);
             }
         };
         fetchData();
@@ -126,11 +154,23 @@ const Dashboard: React.FC = () => {
                             : "View your assigned projects and track progress below."}
                     </Typography>
                     <Chip
-                        className="hero-item"
+                        className="hero-item hero-chip"
                         icon={isCompany() ? <span>🏢</span> : <span>👤</span>}
                         label={isCompany() ? "Company Account" : "Team Member"}
                         sx={{ bgcolor: "rgba(255,255,255,0.2)", color: "#fff", fontWeight: 600, backdropFilter: "blur(4px)" }}
                     />
+                </Box>
+                {/* Decorative SVG */}
+                <Box sx={{ position: "absolute", right: 20, bottom: -20, opacity: 0.2, pointerEvents: "none" }}>
+                    <svg width="200" height="200" viewBox="0 0 200 200">
+                        <path
+                            className="hero-svg-path"
+                            d="M20,100 Q60,20 100,100 T180,100"
+                            fill="none"
+                            stroke="white"
+                            strokeWidth="4"
+                        />
+                    </svg>
                 </Box>
             </Box>
 
@@ -152,14 +192,14 @@ const Dashboard: React.FC = () => {
                                 {isCompany() ? "Recent Projects" : "My Assigned Projects"}
                             </Typography>
                             <Grid container spacing={2}>
-                                {recentProjects.map((project, i) => (
+                                {recentProjects.map((project) => (
                                     <Grid size={{ xs: 12, sm: 6 }} key={project._id}>
                                         <Card
+                                            className="recent-project-card"
                                             sx={{
                                                 bgcolor: "var(--color-surface)", border: "1px solid var(--color-border)", borderRadius: "var(--radius-md)",
                                                 transition: "box-shadow 0.25s, transform 0.25s",
                                                 "&:hover": { boxShadow: "var(--shadow-md)", transform: "translateY(-2px)" },
-                                                animationDelay: `${i * 0.1}s`,
                                             }}
                                         >
                                             <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
