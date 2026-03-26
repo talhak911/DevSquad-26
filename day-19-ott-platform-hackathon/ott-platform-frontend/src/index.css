@@ -1,0 +1,43 @@
+@import "tailwindcss";
+
+@theme {
+  /* Colors */
+  --color-primary: #e50000;
+  --color-bg-custom: #0f0f0f;
+  --color-surface: #1a1a1a;
+  --color-border-custom: #1f1f1f;
+  --color-text-p: #ffffff;
+  --color-text-s: #bfbfbf;
+
+  /* Fonts */
+  --font-manrope: "Manrope", sans-serif;
+
+  /* Custom Breakpoints matching requirements */
+  --breakpoint-laptop: 1440px;
+  --breakpoint-desktop: 1920px;
+}
+
+body {
+  font-family: var(--font-manrope);
+  background-color: var(--color-bg-custom);
+  color: var(--color-text-p);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
