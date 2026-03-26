@@ -2,12 +2,17 @@
 
 @theme {
   /* Colors */
-  --color-primary: #e50000;
+  --color-primary: #e60000;
   --color-bg-custom: #0f0f0f;
+  --color-bg-darker: #0c0c0c;
+  --color-bg-lighter: #141414;
   --color-surface: #1a1a1a;
   --color-border-custom: #1f1f1f;
+  --color-border-darker: #262626;
   --color-text-p: #ffffff;
-  --color-text-s: #bfbfbf;
+  --color-text-s: #999999;
+  --color-text-xs: #bfbfbf;
+  --color-neutral-dark: #333333;
 
   /* Fonts */
   --font-manrope: "Manrope", sans-serif;
