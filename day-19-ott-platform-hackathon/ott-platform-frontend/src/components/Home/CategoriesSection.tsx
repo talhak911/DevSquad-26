@@ -12,14 +12,16 @@ const categories = [
 interface CategoriesSectionProps {
   title?: string;
   description?: string;
+  showContainer?: boolean;
 }
 
 const CategoriesSection: React.FC<CategoriesSectionProps> = ({
   title = "Explore our wide variety of categories",
   description = "Whether you're looking for a comedy to make you laugh, a drama to make you think, or a documentary to learn something new",
+  showContainer = true,
 }) => {
-  return (
-    <section className="w-full">
+  const content = (
+    <>
       {/* Header - gap: 100px between heading and nav from CSS */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-[50px] md:gap-[100px]">
         <div className="flex flex-col max-w-[1141px]">
@@ -51,11 +53,11 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
       </div>
 
       {/* Cards Grid - gap: 30px between cards from CSS */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-[30px] mt-[50px]">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-[15px] xl:gap-[30px] mt-[50px]">
         {categories.map((category, idx) => (
           <div
             key={idx}
-            className="bg-surface border border-border-darker rounded-[12px] p-[30px] flex flex-col cursor-pointer hover:border-primary transition-colors group"
+            className="bg-surface border border-border-darker rounded-[12px] p-[16px] xl:p-[30px] flex flex-col cursor-pointer hover:border-primary transition-colors group"
           >
             {/* Image Grid with Fade Out */}
             <div className="relative isolate">
@@ -63,7 +65,7 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
                 {[1, 2, 3, 4].map((item) => (
                   <div
                     key={item}
-                    className="w-full h-[80px] md:h-[100px] lg:h-[123.5px] bg-border-darker rounded-[10px] overflow-hidden"
+                    className="w-full aspect-[4/5] bg-border-darker rounded-[10px] overflow-hidden"
                   >
                     <img
                       src={`https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=300&auto=format&fit=crop`}
@@ -95,6 +97,18 @@ const CategoriesSection: React.FC<CategoriesSectionProps> = ({
           </div>
         ))}
       </div>
+    </>
+  );
+
+  return (
+    <section className={`w-full ${showContainer ? "mt-[100px] mb-[100px]" : ""}`}>
+      {showContainer ? (
+        <div className="w-full max-w-[1920px] mx-auto px-[15px] laptop:px-[80px] desktop:px-[162px]">
+          {content}
+        </div>
+      ) : (
+        content
+      )}
     </section>
   );
 };

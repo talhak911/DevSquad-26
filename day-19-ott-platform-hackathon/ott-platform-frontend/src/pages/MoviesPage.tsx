@@ -68,15 +68,15 @@ const MoviesPage: React.FC = () => {
 
       {/* Movies Content wrapper - left: 160px from CSS */}
       <div className="w-full max-w-[1920px] mx-auto relative mt-[180px] px-[15px] laptop:px-[80px] desktop:px-[160px]">
-        {/* Legend Button - cuts through border with negative margin */}
-        <div className="relative z-10 -mb-[30px] ml-0">
-          <span className="inline-flex items-center justify-center px-6 py-[10px] bg-primary text-text-p font-semibold text-[20px] rounded-[8px] h-[50px]">
-            Movies
-          </span>
-        </div>
         {/* Main container: padding: 50px, gap: 100px from CSS */}
-        <div className="border border-[#262626] rounded-[12px] p-[50px] flex flex-col gap-[100px]">
-          <CategoriesSection title="Our Genres" description="" />
+        <div className="border border-[#262626] rounded-[12px] p-[20px] lg:p-[50px] flex flex-col gap-[50px] lg:gap-[100px] relative mt-[30px]">
+          {/* Legend Button - cuts through border exactly at a 50px indent */}
+          <div className="absolute top-[0px] transform -translate-y-1/2 left-[30px] lg:left-[50px] z-10">
+            <span className="inline-flex items-center justify-center px-6 py-[10px] bg-primary text-text-p font-semibold text-[20px] rounded-[8px] h-[50px]">
+              Movies
+            </span>
+          </div>
+          <CategoriesSection title="Our Genres" description="" showContainer={false} />
           <ContentRow title="Popular Top 10 In Genres" movies={mockMovies} variant="top-10" />
           <ContentRow title="Trending Now" movies={mockMovies} variant="trending" />
           <ContentRow title="New Releases" movies={mockMovies} variant="new-release" />
@@ -86,15 +86,15 @@ const MoviesPage: React.FC = () => {
 
       {/* Shows Content wrapper */}
       <div className="w-full max-w-[1920px] mx-auto relative mt-[200px] px-[15px] laptop:px-[80px] desktop:px-[160px]">
-        {/* Legend Button - cuts through border with negative margin */}
-        <div className="relative z-10 -mb-[30px] ml-0">
-          <span className="inline-flex items-center justify-center px-6 py-[10px] bg-primary text-text-p font-semibold text-[20px] rounded-[8px] h-[50px]">
-            Shows
-          </span>
-        </div>
         {/* Main container: padding: 50px, gap: 100px from CSS */}
-        <div className="border border-[#262626] rounded-[12px] p-[50px] flex flex-col gap-[100px]">
-          <CategoriesSection title="Our Genres" description="" />
+        <div className="border border-[#262626] rounded-[12px] p-[20px] lg:p-[50px] flex flex-col gap-[50px] lg:gap-[100px] relative mt-[30px]">
+          {/* Legend Button - cuts through border exactly at a 50px indent */}
+          <div className="absolute top-[0px] transform -translate-y-1/2 left-[30px] lg:left-[50px] z-10">
+            <span className="inline-flex items-center justify-center px-6 py-[10px] bg-primary text-text-p font-semibold text-[20px] rounded-[8px] h-[50px]">
+              Shows
+            </span>
+          </div>
+          <CategoriesSection title="Our Genres" description="" showContainer={false} />
           <ContentRow title="Popular Top 10 In Genres" movies={mockMovies} variant="top-10" />
           <ContentRow title="Trending Now" movies={mockMovies} variant="trending" />
           <ContentRow title="New Releases" movies={mockMovies} variant="new-release" />
