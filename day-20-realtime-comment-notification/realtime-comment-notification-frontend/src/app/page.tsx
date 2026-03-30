@@ -31,7 +31,8 @@ type ToastItem = {
 };
 
 /* ─── Constants ─── */
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
+const SOCKET_URL =
+  process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:3001";
 
 const seedComments: CommentItem[] = [
   {
@@ -78,16 +79,27 @@ function initials(name: string) {
 
 /* ─── Sub-components ─── */
 
-function Avatar({ name, mine, size = "md" }: { name: string; mine?: boolean; size?: "sm" | "md" }) {
-  const sizeClass = size === "sm" ? "h-8 w-8 text-[11px]" : "h-10 w-10 text-[12px]";
+function Avatar({
+  name,
+  mine,
+  size = "md",
+}: {
+  name: string;
+  mine?: boolean;
+  size?: "sm" | "md";
+}) {
+  const sizeClass =
+    size === "sm" ? "h-8 w-8 text-[11px]" : "h-10 w-10 text-[12px]";
   return (
     <div
       className={cn(
         "grid shrink-0 place-items-center rounded-full border font-semibold tracking-wide select-none",
-        sizeClass
+        sizeClass,
       )}
       style={{
-        borderColor: mine ? "var(--border-avatar-mine)" : "var(--border-default)",
+        borderColor: mine
+          ? "var(--border-avatar-mine)"
+          : "var(--border-default)",
         background: mine ? "var(--bg-avatar-mine)" : "var(--bg-avatar)",
         color: mine ? "var(--text-avatar-mine)" : "var(--text-avatar)",
       }}
@@ -102,12 +114,20 @@ function StatusPill({ connected }: { connected: boolean }) {
     <span
       className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-medium"
       style={{
-        borderColor: connected ? "var(--border-pill-live)" : "var(--border-pill-offline)",
-        background: connected ? "var(--bg-pill-live)" : "var(--bg-pill-offline)",
+        borderColor: connected
+          ? "var(--border-pill-live)"
+          : "var(--border-pill-offline)",
+        background: connected
+          ? "var(--bg-pill-live)"
+          : "var(--bg-pill-offline)",
         color: connected ? "var(--text-pill-live)" : "var(--text-pill-offline)",
       }}
     >
-      {connected ? <Wifi className="h-3 w-3" /> : <WifiOff className="h-3 w-3" />}
+      {connected ? (
+        <Wifi className="h-3 w-3" />
+      ) : (
+        <WifiOff className="h-3 w-3" />
+      )}
       {connected ? "Live" : "Offline"}
     </span>
   );
@@ -152,7 +172,10 @@ function CommentCard({ comment }: { comment: CommentItem }) {
                 you
               </span>
             )}
-            <span className="text-[11px]" style={{ color: "var(--text-faint)" }}>
+            <span
+              className="text-[11px]"
+              style={{ color: "var(--text-faint)" }}
+            >
               · {timeAgo(comment.createdAt)}
             </span>
           </div>
@@ -215,28 +238,32 @@ export default function UI() {
       });
     });
 
-    socket.on("new_comment", (incoming: CommentItem & { socketId?: string }) => {
-      if (sentIdsRef.current.has(incoming.id)) {
-        sentIdsRef.current.delete(incoming.id);
-        return;
-      }
+    socket.on(
+      "new_comment",
+      (incoming: CommentItem & { socketId?: string }) => {
+        if (sentIdsRef.current.has(incoming.id)) {
+          sentIdsRef.current.delete(incoming.id);
+          return;
+        }
 
-      const isMine = incoming.socketId && incoming.socketId === mySocketIdRef.current;
-      const normalized: CommentItem = {
-        id: incoming.id || crypto.randomUUID(),
-        author: incoming.author || "Anonymous",
-        text: incoming.text || "",
-        createdAt: incoming.createdAt || new Date().toISOString(),
-        mine: isMine ? true : undefined,
-      };
+        const isMine =
+          incoming.socketId && incoming.socketId === mySocketIdRef.current;
+        const normalized: CommentItem = {
+          id: incoming.id || crypto.randomUUID(),
+          author: incoming.author || "Anonymous",
+          text: incoming.text || "",
+          createdAt: incoming.createdAt || new Date().toISOString(),
+          mine: isMine ? true : undefined,
+        };
 
-      setComments((prev) => [...prev, normalized]);
+        setComments((prev) => [...prev, normalized]);
 
-      if (!isMine) {
-        setUnreadCount((v) => v + 1);
-        showToast(normalized.author, normalized.text);
-      }
-    });
+        if (!isMine) {
+          setUnreadCount((v) => v + 1);
+          showToast(normalized.author, normalized.text);
+        }
+      },
+    );
 
     return () => {
       socket.disconnect();
@@ -254,7 +281,8 @@ export default function UI() {
     const el = listRef.current;
     if (!el) return;
     const threshold = 100;
-    const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
+    const atBottom =
+      el.scrollHeight - el.scrollTop - el.clientHeight < threshold;
     setIsAtBottom(atBottom);
     if (atBottom && unreadCount > 0) {
       setUnreadCount(0);
@@ -373,7 +401,10 @@ export default function UI() {
                   placeholder="Your name"
                 />
                 <button onClick={() => setShowNameEdit(false)}>
-                  <X className="h-3.5 w-3.5" style={{ color: "var(--text-faint)" }} />
+                  <X
+                    className="h-3.5 w-3.5"
+                    style={{ color: "var(--text-faint)" }}
+                  />
                 </button>
               </div>
             ) : (
@@ -387,7 +418,9 @@ export default function UI() {
                 }}
               >
                 <UserRound className="h-3.5 w-3.5" />
-                <span className="max-w-[80px] truncate font-medium sm:max-w-[120px]">{name || "Set name"}</span>
+                <span className="max-w-[80px] truncate font-medium sm:max-w-[120px]">
+                  {name || "Set name"}
+                </span>
               </button>
             )}
           </div>
@@ -435,7 +468,10 @@ export default function UI() {
                   <>
                     <span
                       className="grid h-5 w-5 place-items-center rounded-full text-[10px] font-bold"
-                      style={{ background: "var(--bg-button)", color: "var(--text-button)" }}
+                      style={{
+                        background: "var(--bg-button)",
+                        color: "var(--text-button)",
+                      }}
                     >
                       {unreadCount}
                     </span>
@@ -482,7 +518,8 @@ export default function UI() {
                   onChange={(e) => {
                     setMessage(e.target.value);
                     e.target.style.height = "auto";
-                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + "px";
+                    e.target.style.height =
+                      Math.min(e.target.scrollHeight, 120) + "px";
                   }}
                   onKeyDown={handleKeyDown}
                   rows={1}
@@ -496,8 +533,12 @@ export default function UI() {
                 disabled={!message.trim()}
                 className="grid h-10 w-10 shrink-0 place-items-center rounded-full transition active:scale-90 disabled:opacity-30"
                 style={{
-                  background: message.trim() ? "var(--bg-button)" : "var(--border-default)",
-                  color: message.trim() ? "var(--text-button)" : "var(--text-faint)",
+                  background: message.trim()
+                    ? "var(--bg-button)"
+                    : "var(--border-default)",
+                  color: message.trim()
+                    ? "var(--text-button)"
+                    : "var(--text-faint)",
                   boxShadow: message.trim() ? "var(--shadow-button)" : "none",
                 }}
               >
@@ -511,7 +552,8 @@ export default function UI() {
             className="mt-3 hidden text-center text-[10px] tracking-wide sm:block"
             style={{ color: "var(--text-hint)" }}
           >
-            Press <span className="font-semibold">Enter</span> to post · <span className="font-semibold">Shift+Enter</span> for new line
+            Press <span className="font-semibold">Enter</span> to post ·{" "}
+            <span className="font-semibold">Shift+Enter</span> for new line
           </p>
         </div>
       </footer>
@@ -545,7 +587,10 @@ export default function UI() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>
+                    <p
+                      className="text-sm font-semibold"
+                      style={{ color: "var(--text-primary)" }}
+                    >
                       {toastItem.title}
                     </p>
                     <span
