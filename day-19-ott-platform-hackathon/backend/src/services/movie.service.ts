@@ -41,7 +41,6 @@ export const createMovie = async (data: MovieCreateData) => {
     category: data.category || 'movie',
     tags: data.tags || [],
     isPremium: data.isPremium !== undefined ? data.isPremium : true,
-    isPremium: data.isPremium !== undefined ? data.isPremium : true,
     isPublished: data.isPublished !== undefined ? data.isPublished : false,
     language: data.language || ['English'],
     cast: data.cast || [],

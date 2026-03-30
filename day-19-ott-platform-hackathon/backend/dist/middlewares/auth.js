@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.softAuth = void 0;
 const passport_1 = __importDefault(require("passport"));
 const http_status_1 = __importDefault(require("http-status"));
 const ApiError_1 = __importDefault(require("../utils/ApiError"));
@@ -31,4 +32,17 @@ const auth = (...requiredRights) => async (req, res, next) => {
         .then(() => next())
         .catch((err) => next(err));
 };
+const softAuth = () => async (req, res, next) => {
+    return new Promise((resolve) => {
+        passport_1.default.authenticate('jwt', { session: false }, (err, user) => {
+            if (!err && user && !user.isBlocked) {
+                req.user = user;
+            }
+            resolve(null);
+        })(req, res, next);
+    })
+        .then(() => next())
+        .catch(() => next());
+};
+exports.softAuth = softAuth;
 exports.default = auth;
