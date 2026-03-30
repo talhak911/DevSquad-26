@@ -14,6 +14,14 @@ function App() {
   const dispatch = useAppDispatch();
   const { username, currentRoomId } = useAppSelector((s) => s.chat);
   const [showModal, setShowModal] = useState(!username);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(!currentRoomId);
+
+  // Auto-close sidebar on mobile when a room is selected
+  useEffect(() => {
+    if (currentRoomId && window.innerWidth <= 768) {
+      setIsSidebarOpen(false);
+    }
+  }, [currentRoomId]);
 
   useEffect(() => {
     if (username) {
@@ -68,9 +76,9 @@ function App() {
   return (
     <div className="app" data-theme="dark">
       {showModal && <UsernameModal onSubmit={() => setShowModal(false)} />}
-      <RoomList />
+      <RoomList isOpen={isSidebarOpen} onToggle={() => setIsSidebarOpen(!isSidebarOpen)} />
       <div className="main-area">
-        <ChatHeader />
+        <ChatHeader onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
         <ChatWindow />
       </div>
     </div>

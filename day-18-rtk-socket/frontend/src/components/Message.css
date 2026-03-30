@@ -73,3 +73,14 @@
   color: var(--color-text-muted);
   padding: 0 4px;
 }
+
+@media (max-width: 480px) {
+  .msg-content {
+    max-width: 85%;
+  }
+  
+  .msg-bubble {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}

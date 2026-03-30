@@ -4,7 +4,12 @@ import { useGetRoomsQuery } from "../store/chatApi";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import { setCurrentRoom, clearLiveMessages } from "../store/chatSlice";
 
-const RoomList: React.FC = () => {
+interface RoomListProps {
+  isOpen: boolean;
+  onToggle: () => void;
+}
+
+const RoomList: React.FC<RoomListProps> = ({ isOpen, onToggle }) => {
   const dispatch = useAppDispatch();
   const { currentRoomId, username } = useAppSelector((s) => s.chat);
   const { data: rooms, isLoading, isError } = useGetRoomsQuery();
@@ -16,7 +21,12 @@ const RoomList: React.FC = () => {
   };
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? "sidebar--open" : ""}`}>
+      {/* Mobile close button */}
+      <button className="sidebar-close-btn" onClick={onToggle}>
+        ✕
+      </button>
+
       {/* Header */}
       <div className="sidebar-header">
         <div className="sidebar-logo">💬</div>

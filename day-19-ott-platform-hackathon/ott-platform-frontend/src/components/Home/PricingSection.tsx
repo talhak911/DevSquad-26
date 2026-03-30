@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-
-const plans = [
-  { name: 'Basic Plan', desc: 'Enjoy an extensive library of movies and shows, featuring a range of content, including recently released titles.', price: 9.99 },
-  { name: 'Standard Plan', desc: 'Access to a wider selection of movies and shows, including most new releases and exclusive content.', price: 12.99 },
-  { name: 'Premium Plan', desc: 'Access to a widest selection of movies and shows, including all new releases and Offline Viewing.', price: 14.99 },
-];
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import api from '../../lib/axios';
 
 const PricingSection: React.FC = () => {
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
+
+  const { data: plans = [], isLoading } = useQuery({
+    queryKey: ['plans'],
+    queryFn: async () => {
+      const { data } = await api.get('/subscriptions/plans');
+      return data;
+    },
+  });
 
   return (
     <section className="w-full mt-[100px] md:mt-[150px]">
@@ -38,19 +44,39 @@ const PricingSection: React.FC = () => {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-[30px]">
-          {plans.map((plan, idx) => (
-            <div key={idx} className="bg-surface border border-border-custom rounded-[12px] p-8 lg:p-12 flex flex-col justify-between">
+          {isLoading ? (
+             [...Array(3)].map((_, i) => (
+                <div key={i} className="bg-surface border border-border-custom rounded-[12px] p-8 lg:p-12 min-h-[400px] animate-pulse">
+                  <div className="h-8 bg-border-custom rounded-md w-1/2 mb-4" />
+                  <div className="h-20 bg-border-custom rounded-md w-full mb-8" />
+                  <div className="h-12 bg-border-custom rounded-md w-2/3 mb-8" />
+                  <div className="flex gap-4">
+                    <div className="h-12 bg-border-custom rounded-md flex-1" />
+                    <div className="h-12 bg-border-custom rounded-md flex-1" />
+                  </div>
+                </div>
+             ))
+          ) : plans.map((plan: any, idx: number) => (
+            <div key={plan.id || idx} className="bg-surface border border-border-custom rounded-[12px] p-8 lg:p-12 flex flex-col justify-between">
               <div>
                 <h3 className="text-[24px] font-semibold text-text-p mb-4">{plan.name}</h3>
-                <p className="text-[16px] text-text-s font-normal mb-8 leading-[150%]">{plan.desc}</p>
+                <p className="text-[16px] text-text-s font-normal mb-8 leading-[150%] h-[100px] overflow-hidden">
+                  {plan.description || (plan.features && plan.features.join(' • ')) || 'Enjoy an extensive library of movies and shows.'}
+                </p>
                 <div className="text-[40px] font-bold text-text-p mb-8 border-t border-border-custom pt-8">
                   ${billingCycle === 'yearly' ? (plan.price * 10).toFixed(2) : plan.price}
                   <span className="text-[16px] text-text-s font-medium">/{billingCycle === 'yearly' ? 'year' : 'month'}</span>
                 </div>
               </div>
-              <div className="flex gap-4 w-full">
-                <button className="flex-1 px-4 py-4 bg-bg-custom border border-border-custom text-text-p rounded-[8px] font-semibold hover:bg-border-custom transition-colors">Start Free Trial</button>
-                <button className="flex-1 px-4 py-4 bg-primary text-text-p rounded-[8px] font-semibold hover:bg-red-700 transition-colors">Choose Plan</button>
+              <div className="flex flex-col sm:flex-row gap-4 w-full">
+                <button 
+                  onClick={() => navigate('/register')}
+                  className="flex-1 px-4 py-4 bg-bg-custom border border-border-custom text-text-p rounded-[8px] font-semibold hover:bg-border-custom transition-colors"
+                >Free Trial</button>
+                <button 
+                  onClick={() => navigate('/plans')}
+                  className="flex-1 px-4 py-4 bg-primary text-text-p rounded-[8px] font-semibold hover:bg-red-700 transition-colors"
+                >Choose Plan</button>
               </div>
             </div>
           ))}

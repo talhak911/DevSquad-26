@@ -1,5 +1,5 @@
-import React from 'react';
-import { ChevronRight } from 'lucide-react';
+import React from "react";
+import { ChevronRight } from "lucide-react";
 
 interface MovieCardProps {
   title: string;
@@ -15,23 +15,23 @@ const MovieCard: React.FC<MovieCardProps> = ({ title, tag, images }) => {
         {/* 2x2 Image Grid */}
         <div className="grid grid-cols-2 gap-[5px] lg:gap-[10px] h-full">
           {images.slice(0, 4).map((img, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="w-full h-full bg-bg-custom rounded-[4px] lg:rounded-[10px] overflow-hidden"
             >
               <img
                 src={img}
                 alt={`${title} ${idx + 1}`}
-                className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity"
+                className="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition-opacity select-none pointer-events-none"
               />
             </div>
           ))}
         </div>
-        
+
         {/* Fade Gradient Overlay */}
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-surface to-transparent pointer-events-none" />
       </div>
-      
+
       {/* Title and Arrow */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-1">
@@ -44,9 +44,9 @@ const MovieCard: React.FC<MovieCardProps> = ({ title, tag, images }) => {
             {title}
           </h3>
         </div>
-        <ChevronRight 
-          size={24} 
-          className="text-text-p opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0" 
+        <ChevronRight
+          size={24}
+          className="text-text-p opacity-50 group-hover:opacity-100 transition-opacity flex-shrink-0"
         />
       </div>
     </div>
