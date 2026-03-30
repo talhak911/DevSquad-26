@@ -3,7 +3,11 @@ import "./ChatHeader.css";
 import { useAppSelector } from "../hooks";
 import { useGetRoomsQuery } from "../store/chatApi";
 
-const ChatHeader: React.FC = () => {
+interface ChatHeaderProps {
+  onToggleSidebar: () => void;
+}
+
+const ChatHeader: React.FC<ChatHeaderProps> = ({ onToggleSidebar }) => {
   const { currentRoomId } = useAppSelector((s) => s.chat);
   const { data: rooms } = useGetRoomsQuery();
 
@@ -12,6 +16,9 @@ const ChatHeader: React.FC = () => {
   if (!currentRoomId || !currentRoom) {
     return (
       <div className="chat-header">
+        <button className="mobile-menu-btn" onClick={onToggleSidebar}>
+          ☰
+        </button>
         <span className="header-logo">💬</span>
         <div>
           <h2 className="header-title">DevChat</h2>
@@ -23,6 +30,9 @@ const ChatHeader: React.FC = () => {
 
   return (
     <div className="chat-header">
+      <button className="mobile-menu-btn" onClick={onToggleSidebar}>
+        ☰
+      </button>
       <span className="header-icon">{currentRoom.icon}</span>
       <div>
         <h2 className="header-title"># {currentRoom.name}</h2>

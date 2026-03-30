@@ -9,7 +9,7 @@ interface SidebarProps {
       imdb: number;
       streamvibe: number;
     };
-    genres: string[];
+    genres: { id?: string; _id?: string; name: string }[];
     director: {
       name: string;
       origin: string;
@@ -60,8 +60,12 @@ const Tag = ({ text }: { text: string }) => (
 
 const ProfileCard = ({ profile }: { profile: {name: string, origin: string, image: string} }) => (
   <div className="flex flex-row items-center gap-[10px] bg-bg-custom border border-border-darker p-[14px] rounded-[8px] w-full">
-    <div className="w-[50px] h-[50px] rounded-[8px] overflow-hidden flex-shrink-0">
-      <img src={profile.image} alt={profile.name} className="w-full h-full object-cover" />
+    <div className="w-[50px] h-[50px] rounded-[8px] overflow-hidden flex-shrink-0 bg-bg-darker flex items-center justify-center">
+      {profile.image ? (
+        <img src={profile.image} alt={profile.name} className="w-full h-full object-cover" />
+      ) : (
+        <span className="text-[20px]">👤</span>
+      )}
     </div>
     <div className="flex flex-col">
       <h4 className="text-text-p font-medium text-[16px] xl:text-[18px]">{profile.name}</h4>
@@ -117,8 +121,8 @@ const MovieInfoSidebar: React.FC<SidebarProps> = ({ movie }) => {
           <span className="font-medium text-[16px] xl:text-[18px]">Genres</span>
         </div>
         <div className="flex flex-row flex-wrap gap-[10px]">
-          {movie.genres.map(genre => (
-            <Tag key={genre} text={genre} />
+          {movie.genres.map((genre: any, idx: number) => (
+            <Tag key={genre.id || genre._id || idx} text={genre.name || genre} />
           ))}
         </div>
       </div>

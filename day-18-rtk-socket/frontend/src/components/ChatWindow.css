@@ -125,3 +125,18 @@
   color: var(--color-text-secondary);
   font-style: italic;
 }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .chat-messages {
+    padding: 16px 12px;
+  }
+  
+  .chat-empty-icon {
+    font-size: 3rem;
+  }
+  
+  .chat-empty-title {
+    font-size: 1.35rem;
+  }
+}

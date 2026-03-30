@@ -1,15 +1,38 @@
 import React from "react";
 import { Play, Plus, ThumbsUp, Volume2, ChevronRight, ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../lib/axios";
 
 const MovieHeroSection: React.FC = () => {
+  const navigate = useNavigate();
+
+  const { data: heroMovie, isLoading } = useQuery({
+    queryKey: ['heroMovie'],
+    queryFn: async () => {
+      const { data } = await api.get('/movies?limit=1&sortBy=newest');
+      return data.results[0];
+    },
+  });
+
+  if (isLoading) {
+    return <div className="w-full h-[500px] md:h-[700px] desktop:h-[835px] bg-surface animate-pulse rounded-[12px]" />;
+  }
+
+  // Fallback if no movie exists
+  const displayMovie = heroMovie || {
+    title: "No Content Available",
+    description: "Upload content from the admin panel to get started.",
+    posterUrl: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925&auto=format&fit=crop"
+  };
+
   return (
     <section className="relative w-full h-[500px] md:h-[700px] desktop:h-[835px] flex flex-col justify-end items-center overflow-hidden rounded-[12px]">
       {/* Background Image with Gradient */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=1925&auto=format&fit=crop)",
+          backgroundImage: `url(${displayMovie.posterUrl})`,
         }}
       />
 
@@ -40,13 +63,13 @@ const MovieHeroSection: React.FC = () => {
               xl:text-[30px] 
               desktop:text-[38px]
             ">
-              Avengers : Endgame
+              {displayMovie.title}
             </h1>
             <p className="hidden md:block font-medium text-center text-text-s leading-[150%] max-w-[1194px]
               xl:text-[16px]
               desktop:text-[18px]
             ">
-              With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos's actions and undo the chaos to the universe, no matter what consequences may be in store, and no matter who they face... Avenge the fallen.
+              {displayMovie.description}
             </p>
           </div>
 
@@ -56,7 +79,9 @@ const MovieHeroSection: React.FC = () => {
           ">
             
             {/* Play Button */}
-            <button className="flex items-center justify-center font-semibold text-text-p rounded-[8px] bg-primary hover:bg-red-700 transition-colors
+            <button 
+              onClick={() => displayMovie.id && navigate(`/movies/${displayMovie.id || displayMovie._id}`)}
+              className="flex items-center justify-center font-semibold text-text-p rounded-[8px] bg-primary hover:bg-red-700 transition-colors
               w-full md:w-auto
               h-[44px] px-[16px] gap-[4px] text-[16px]
               xl:h-[52px] xl:px-[20px]
