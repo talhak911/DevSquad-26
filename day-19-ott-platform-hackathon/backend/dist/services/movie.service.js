@@ -53,6 +53,7 @@ const createMovie = async (data) => {
         category: data.category || 'movie',
         tags: data.tags || [],
         isPremium: data.isPremium !== undefined ? data.isPremium : true,
+        isPublished: data.isPublished !== undefined ? data.isPublished : false,
         language: data.language || ['English'],
         cast: data.cast || [],
         director: data.director,
@@ -195,7 +196,22 @@ const updateMovie = async (id, updateData) => {
         }
     }
     // Update scalar fields
-    const scalarFields = ['title', 'description', 'genres', 'releaseYear', 'category', 'tags', 'isPremium', 'language', 'isPublished', 'cast', 'director', 'music', 'imdbRating', 'streamvibeRating'];
+    const scalarFields = [
+        'title',
+        'description',
+        'genres',
+        'releaseYear',
+        'category',
+        'tags',
+        'isPremium',
+        'isPublished',
+        'language',
+        'cast',
+        'director',
+        'music',
+        'imdbRating',
+        'streamvibeRating',
+    ];
     scalarFields.forEach((field) => {
         if (updateData[field] !== undefined) {
             movie[field] = updateData[field];

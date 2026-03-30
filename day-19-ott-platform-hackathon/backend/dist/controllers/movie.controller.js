@@ -49,13 +49,18 @@ exports.playMovie = (0, catchAsync_1.default)(async (req, res) => {
         return res.status(http_status_1.default.SERVICE_UNAVAILABLE).json({ message: 'Video not ready for streaming yet' });
     }
     const user = req.user;
-    // Blocked user check
-    if (user.isBlocked) {
-        return res.status(http_status_1.default.FORBIDDEN).json({ message: 'Your account has been blocked' });
-    }
     // Access check if premium content
     if (movie.isPremium) {
-        const hasAccess = await services_1.subscriptionService.hasActiveAccess(user.id);
+        if (!user) {
+            return res.status(http_status_1.default.UNAUTHORIZED).json({
+                message: 'Login and subscription required to watch this premium content',
+                requiresLogin: true
+            });
+        }
+        if (user.isBlocked) {
+            return res.status(http_status_1.default.FORBIDDEN).json({ message: 'Your account has been blocked' });
+        }
+        const hasAccess = user.role === 'admin' || await services_1.subscriptionService.hasActiveAccess(user.id);
         if (!hasAccess) {
             return res.status(http_status_1.default.PAYMENT_REQUIRED).json({
                 message: 'Subscription required to watch this content',

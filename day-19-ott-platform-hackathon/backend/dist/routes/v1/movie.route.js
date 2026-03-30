@@ -39,12 +39,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const movieController = __importStar(require("../../controllers/movie.controller"));
 const category_controller_1 = __importDefault(require("../../controllers/category.controller"));
-const auth_1 = __importDefault(require("../../middlewares/auth"));
+const auth_1 = require("../../middlewares/auth");
 const router = express_1.default.Router();
 // Public
 router.get('/', movieController.listMovies);
 router.get('/categories', category_controller_1.default.getCategories);
 router.get('/:movieId', movieController.getMovie);
-// Protected: requires login
-router.get('/:movieId/play', (0, auth_1.default)(), movieController.playMovie);
+// Protected/Public: returns stream URL based on premium status
+router.get('/:movieId/play', (0, auth_1.softAuth)(), movieController.playMovie);
 exports.default = router;
