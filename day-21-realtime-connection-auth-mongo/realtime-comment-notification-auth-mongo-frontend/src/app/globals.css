@@ -150,6 +150,8 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--bg-page-mid);
+  color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

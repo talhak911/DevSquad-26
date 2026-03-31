@@ -6,7 +6,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const resolvedParams = await params;
   
   return (
-    <main className="min-h-screen bg-[var(--bg-page-mid)] text-[var(--text-primary)]">
+    <main className="min-h-screen text-[var(--text-primary)]">
       <Navbar />
       <div className="pt-20">
         <ProfileView username={resolvedParams.username} />
