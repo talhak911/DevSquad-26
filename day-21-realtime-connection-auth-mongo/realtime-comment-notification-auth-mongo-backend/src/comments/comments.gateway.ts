@@ -7,16 +7,7 @@ import {
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
-import { ConfigService } from '@nestjs/config';
 import { Server, Socket } from 'socket.io';
-
-interface CommentPayload {
-  id: string;
-  author: string;
-  text: string;
-  createdAt: string;
-  socketId?: string;
-}
 
 @WebSocketGateway({
   cors: {
@@ -30,16 +21,11 @@ export class CommentsGateway
   @WebSocketServer()
   server: Server;
 
-  private comments: CommentPayload[] = [];
-
-  constructor(private configService: ConfigService) {}
-
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
-
-    // Send existing comment history to the newly connected client
-    if (this.comments.length > 0) {
-      client.emit('comment_history', this.comments);
+    const userId = client.handshake.query.userId as string;
+    if (userId) {
+      client.join(userId);
+      console.log(`Client ${client.id} joined room ${userId}`);
     }
   }
 
@@ -47,30 +33,15 @@ export class CommentsGateway
     console.log(`Client disconnected: ${client.id}`);
   }
 
-  @SubscribeMessage('add_comment')
-  handleAddComment(
-    @MessageBody() data: CommentPayload,
+  @SubscribeMessage('join_user_room')
+  handleJoinUserRoom(
+    @MessageBody() userId: string,
     @ConnectedSocket() client: Socket,
   ) {
-    const comment: CommentPayload = {
-      id: data.id || Date.now().toString(),
-      author: data.author || 'Anonymous',
-      text: data.text || '',
-      createdAt: data.createdAt || new Date().toISOString(),
-      socketId: client.id,
-    };
-
-    // Store in memory
-    this.comments.push(comment);
-
-    // Keep only the last 100 comments in memory
-    if (this.comments.length > 100) {
-      this.comments = this.comments.slice(-100);
+    if (userId) {
+      client.join(userId);
+      console.log(`Client ${client.id} explicitly joined room ${userId}`);
+      return { success: true, room: userId };
     }
-
-    // Broadcast to ALL connected clients (including sender)
-    this.server.emit('new_comment', comment);
-
-    return { success: true, comment };
   }
 }
