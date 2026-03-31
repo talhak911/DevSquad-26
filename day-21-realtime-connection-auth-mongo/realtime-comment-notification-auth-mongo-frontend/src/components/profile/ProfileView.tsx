@@ -166,8 +166,8 @@ export function ProfileView({ username }: { username: string }) {
                 disabled={followLoading}
                 className={`w-full md:w-auto px-6 py-2.5 font-semibold rounded-xl transition-all shadow-sm ${
                   isFollowing 
-                    ? 'bg-[var(--bg-page)] text-[var(--text-primary)] border border-[var(--border-default)] hover:border-red-500 hover:text-red-500' 
-                    : 'bg-[var(--text-primary)] text-[var(--bg-page)] hover:opacity-90'
+                    ? 'bg-[var(--bg-page-mid)] text-[var(--text-primary)] border border-[var(--border-default)] hover:border-red-500 hover:text-red-500' 
+                    : 'bg-[var(--text-primary)] text-[var(--text-button)] hover:opacity-90'
                 }`}
               >
                 {followLoading ? 'Wait...' : isFollowing ? 'Unfollow' : 'Follow'}
