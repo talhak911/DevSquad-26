@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/* ─── Light Theme (default) ─── */
+:root {
+  /* Backgrounds */
+  --bg-page-start: #f7efe6;
+  --bg-page-mid: #f4eadf;
+  --bg-page-end: #f6efe7;
+  --bg-surface: rgba(255, 251, 246, 0.88);
+  --bg-card: white;
+  --bg-card-mine: #f8efe6;
+  --bg-input: white;
+  --bg-toast: rgba(255, 250, 244, 0.95);
+  --bg-avatar: white;
+  --bg-avatar-mine: #e8d8ca;
+  --bg-pill: white;
+  --bg-pill-live: #edf6ec;
+  --bg-pill-offline: #fbefef;
+  --bg-note-icon: #f0e3d7;
+  --bg-kbd: #fcf8f3;
+  --bg-button: #4f3b30;
+  --bg-button-hover: #3f2f26;
+
+  /* Borders */
+  --border-default: #eadfd4;
+  --border-mine: #dcc4ad;
+  --border-input: #e6d9cc;
+  --border-input-focus: #cdb298;
+  --border-ring: rgba(233, 216, 199, 0.6);
+  --border-divider: #eee3d8;
+  --border-subtle: #f0e6dc;
+  --border-pill-live: #c8d9c8;
+  --border-pill-offline: #edd3d3;
+  --border-kbd: #eadfd4;
+  --border-toast: #e1d5c8;
+  --border-avatar-mine: #d2b79f;
+
+  /* Text */
+  --text-primary: #3f2f26;
+  --text-body: #4e3c31;
+  --text-secondary: #5b4638;
+  --text-muted: #7b6456;
+  --text-subtle: #8a7263;
+  --text-faint: #a08979;
+  --text-input-placeholder: #baa898;
+  --text-icon: #a68d7d;
+  --text-label: #6c5848;
+  --text-pill: #6c5848;
+  --text-pill-live: #436149;
+  --text-pill-offline: #8a5353;
+  --text-badge: #6a5446;
+  --text-note-icon: #5e483b;
+  --text-kbd: #7c6557;
+  --text-hint: #9a8575;
+  --text-button: #fffaf5;
+  --text-note-body: #806858;
+  --text-toast-badge: #8d7362;
+  --text-avatar-mine: #5b4638;
+  --text-avatar: #6b5648;
+  --text-author: #3f2f26;
+
+  /* Accent / Status */
+  --color-success: #7fa27b;
+
+  /* Shadows */
+  --shadow-surface: 0 20px 60px rgba(70, 46, 28, 0.06);
+  --shadow-button: 0 10px 24px rgba(79, 59, 48, 0.16);
+  --shadow-toast: 0 18px 50px rgba(63, 47, 38, 0.14);
+
+  /* Misc */
+  --bg-radial-top: rgba(255, 255, 255, 0.88);
+}
+
+/* ─── Dark Theme ─── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-page-start: #1a1410;
+    --bg-page-mid: #16110d;
+    --bg-page-end: #1a1510;
+    --bg-surface: rgba(30, 24, 18, 0.92);
+    --bg-card: #1e1812;
+    --bg-card-mine: #2a2018;
+    --bg-input: #1e1812;
+    --bg-toast: rgba(30, 24, 18, 0.95);
+    --bg-avatar: #2a2018;
+    --bg-avatar-mine: #3d2e22;
+    --bg-pill: #2a2018;
+    --bg-pill-live: #1a2a1a;
+    --bg-pill-offline: #2a1a1a;
+    --bg-note-icon: #2a2018;
+    --bg-kbd: #2a2018;
+    --bg-button: #d4b89a;
+    --bg-button-hover: #e8d0b6;
+
+    --border-default: #3d3028;
+    --border-mine: #4a3828;
+    --border-input: #3d3028;
+    --border-input-focus: #5a4432;
+    --border-ring: rgba(90, 68, 50, 0.4);
+    --border-divider: #3d3028;
+    --border-subtle: #2a2018;
+    --border-pill-live: #2a3a2a;
+    --border-pill-offline: #3a2222;
+    --border-kbd: #3d3028;
+    --border-toast: #3d3028;
+    --border-avatar-mine: #5a4432;
+
+    --text-primary: #e8d8ca;
+    --text-body: #d4c0b0;
+    --text-secondary: #c4a898;
+    --text-muted: #9a8070;
+    --text-subtle: #8a7060;
+    --text-faint: #6a5848;
+    --text-input-placeholder: #5a4838;
+    --text-icon: #6a5848;
+    --text-label: #9a8676;
+    --text-pill: #9a8676;
+    --text-pill-live: #7ab87a;
+    --text-pill-offline: #c06060;
+    --text-badge: #9a8676;
+    --text-note-icon: #c4a898;
+    --text-kbd: #9a8676;
+    --text-hint: #7a6858;
+    --text-button: #1a1410;
+    --text-note-body: #8a7060;
+    --text-toast-badge: #8a7060;
+    --text-avatar-mine: #e8d8ca;
+    --text-avatar: #c4a898;
+    --text-author: #e8d8ca;
+
+    --color-success: #6a986a;
+
+    --shadow-surface: 0 20px 60px rgba(0, 0, 0, 0.3);
+    --shadow-button: 0 10px 24px rgba(0, 0, 0, 0.3);
+    --shadow-toast: 0 18px 50px rgba(0, 0, 0, 0.4);
+
+    --bg-radial-top: rgba(40, 30, 22, 0.5);
+  }
+}
+
+/* ─── Global Resets & Utilities ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Minimal scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-faint);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-default) transparent;
+}
+
+/* Textarea placeholder */
+textarea::placeholder,
+input::placeholder {
+  color: var(--text-input-placeholder);
+}
