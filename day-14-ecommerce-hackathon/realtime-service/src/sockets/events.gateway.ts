@@ -3,6 +3,7 @@ import {
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  SubscribeMessage,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
@@ -55,5 +56,19 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   // Method to broadcast to everyone
   broadcast(event: string, data: any) {
     this.server.emit(event, data);
+  }
+
+  @SubscribeMessage('joinProductRoom')
+  handleJoinProductRoom(client: Socket, productId: string) {
+    client.join(`product:${productId}`);
+  }
+
+  @SubscribeMessage('leaveProductRoom')
+  handleLeaveProductRoom(client: Socket, productId: string) {
+    client.leave(`product:${productId}`);
+  }
+
+  broadcastToProduct(productId: string, event: string, data: any) {
+    this.server.to(`product:${productId}`).emit(event, data);
   }
 }

@@ -30,6 +30,7 @@ export class ReviewLikedEvent {
     public readonly actorId: Types.ObjectId,
     public readonly actorName: string,
     public readonly reviewOwnerId: Types.ObjectId,
+    public readonly productId: Types.ObjectId,
     public readonly productSlug?: string,
   ) {}
 }

@@ -47,15 +47,23 @@ export class ReviewsService {
     return saved.populate('userId', 'name avatar');
   }
 
-  async findByProduct(productId: string): Promise<Review[]> {
-    return this.reviewModel
+  async findByProduct(productId: string): Promise<any[]> {
+    const reviews = await this.reviewModel
       .find({
         productId: new Types.ObjectId(productId),
         isActive: true,
       })
       .populate('userId', 'name avatar')
       .sort({ createdAt: -1 })
+      .lean()
       .exec();
+      
+    return Promise.all(
+      reviews.map(async (review: any) => {
+        const likesCount = await this.voteModel.countDocuments({ reviewId: review._id });
+        return { ...review, likes: likesCount };
+      })
+    ) as Promise<any[]>;
   }
 
   async findById(id: string): Promise<Review> {
@@ -94,6 +102,7 @@ export class ReviewsService {
         user._id as Types.ObjectId,
         user.name,
         review.userId as Types.ObjectId,
+        product?._id as Types.ObjectId,
         product?.slug,
       ),
     );

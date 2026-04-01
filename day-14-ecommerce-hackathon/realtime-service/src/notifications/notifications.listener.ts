@@ -36,6 +36,9 @@ export class NotificationsListener {
       link: `/product/${event.productSlug}#reviews`,
       notification, // Pass the fully populated notification
     });
+    
+    // UI update trigger
+    this.eventsGateway.broadcastToProduct(event.productId.toString(), 'review:updated', {});
   }
 
   @OnEvent('reply.added')
@@ -55,6 +58,7 @@ export class NotificationsListener {
     });
 
     this.eventsGateway.sendToUser(event.reviewOwnerId.toString(), 'notification:new', notification);
+    this.eventsGateway.broadcastToProduct(event.productId.toString(), 'review:updated', {});
   }
 
   @OnEvent('review.liked')
@@ -74,6 +78,7 @@ export class NotificationsListener {
     });
 
     this.eventsGateway.sendToUser(event.reviewOwnerId.toString(), 'notification:new', notification);
+    this.eventsGateway.broadcastToProduct(event.productId.toString(), 'review:updated', {});
   }
 
   @OnEvent('review.deleted')
@@ -91,5 +96,6 @@ export class NotificationsListener {
     });
 
     this.eventsGateway.sendToUser(event.reviewOwnerId.toString(), 'notification:new', notification);
+    this.eventsGateway.broadcastToProduct(event.productId.toString(), 'review:updated', {});
   }
 }
