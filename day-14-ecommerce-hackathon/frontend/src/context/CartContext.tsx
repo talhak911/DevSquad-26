@@ -38,21 +38,20 @@ interface CartContextValue {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
-  const isCustomer = user?.role === "user";
-
-  const { data: cartRes, isLoading: loading, refetch: refreshCart } = useQuery<ApiResponse<Cart>>({
-    queryKey: ["cart"],
+  const { data: cartRes, isLoading, isFetching, refetch: refreshCart } = useQuery<ApiResponse<Cart>>({
+    queryKey: ["cart", user?.id],
     queryFn: async () => {
       const { data } = await cartApi.getCart();
       return data;
     },
-    enabled: isCustomer,
+    enabled: isAuthenticated,
   });
 
   const cart = cartRes?.data || null;
+  const loading = isLoading || isFetching;
 
   const addItemMutation = useMutation({
     mutationFn: ({ productId, variantId, quantity }: { productId: string; variantId: string; quantity: number }) => 
@@ -92,7 +91,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await removeItemMutation.mutateAsync(itemId);
   };
 
-  const cartCount = cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+  const cartCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <CartContext.Provider value={{ 
