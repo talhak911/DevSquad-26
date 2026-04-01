@@ -5,6 +5,8 @@ import theme from "./theme";
 import Navbar from "./components/Navbar";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { SocketProvider } from "./context/SocketContext";
+import { NotificationProvider } from "./context/NotificationContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
@@ -103,11 +105,15 @@ const AppContent: React.FC = () => {
 function App() {
   return (
     <AuthProvider>
-      <CartProvider>
-        <BrowserRouter>
-          <AppContent />
-        </BrowserRouter>
-      </CartProvider>
+      <SocketProvider>
+        <NotificationProvider>
+          <CartProvider>
+            <BrowserRouter>
+              <AppContent />
+            </BrowserRouter>
+          </CartProvider>
+        </NotificationProvider>
+      </SocketProvider>
     </AuthProvider>
   );
 }

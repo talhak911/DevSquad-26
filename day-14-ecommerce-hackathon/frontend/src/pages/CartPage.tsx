@@ -49,16 +49,22 @@ const CartPage: React.FC = () => {
 
         {(!cart || cart.items.length === 0) ? (
           <Box sx={{ textAlign: 'center', py: 10 }}>
-            <ShoppingBagOutlined sx={{ fontSize: 80, color: 'var(--color-outline)', mb: 3 }} />
-            <Typography variant="h4" sx={{ fontFamily: 'Montserrat', mb: 2 }}>Your bag is empty</Typography>
-            <Typography sx={{ fontFamily: 'Montserrat', color: 'text.secondary', mb: 4 }}>Looks like you haven't added any tea to your bag yet.</Typography>
-            <Button variant="contained" color="primary" component={Link} to="/collections" 
-              sx={{ height: 56, px: 6, borderRadius: 0, fontFamily: 'Montserrat', '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
-              START SHOPPING
-            </Button>
+            {loading && !cart ? (
+               <CircularProgress />
+            ) : (
+              <>
+                <ShoppingBagOutlined sx={{ fontSize: 80, color: 'var(--color-outline)', mb: 3 }} />
+                <Typography variant="h4" sx={{ fontFamily: 'Montserrat', mb: 2 }}>Your bag is empty</Typography>
+                <Typography sx={{ fontFamily: 'Montserrat', color: 'text.secondary', mb: 4 }}>Looks like you haven't added any tea to your bag yet.</Typography>
+                <Button variant="contained" color="primary" component={Link} to="/collections" 
+                  sx={{ height: 56, px: 6, borderRadius: 0, fontFamily: 'Montserrat', '&:hover': { bgcolor: 'primary.main', color: 'primary.contrastText' } }}>
+                  START SHOPPING
+                </Button>
+              </>
+            )}
           </Box>
         ) : (
-          <Grid container spacing={12}>
+          <Grid container spacing={12} sx={{ opacity: loading ? 0.7 : 1 }}>
             {/* Cart Contents */}
             <Grid size={{ xs: 12, md: 7 }}>
               <List disablePadding>
@@ -66,7 +72,7 @@ const CartPage: React.FC = () => {
                   <ListItem key={item._id} sx={{ px: 0, py: 4, alignItems: 'flex-start', borderBottom: '1px solid var(--color-outline)' }}>
                     <Box sx={{ 
                       width: 100, height: 100, 
-                      backgroundImage: `url(${item.productImage})`,
+                      backgroundImage: `url(${item.productImage ? (item.productImage.startsWith('http') ? item.productImage : `${import.meta.env.VITE_API_URL}/${item.productImage}`) : 'https://placehold.co/100x100?text=No+Image'})`,
                       backgroundSize: 'cover', backgroundPosition: 'center',
                       mr: 3, flexShrink: 0, bgcolor: 'var(--color-bg-variant)'
                     }} />

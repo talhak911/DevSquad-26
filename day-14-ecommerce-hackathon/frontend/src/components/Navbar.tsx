@@ -9,6 +9,7 @@ import {
 } from "@mui/icons-material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import CartDrawer from "./CartDrawer";
+import NotificationBell from "./NotificationBell";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
@@ -182,6 +183,7 @@ const Navbar: React.FC<NavbarProps> = ({ mode, toggleMode }) => {
                             </Box>
                         )}
 
+                        <NotificationBell />
                         {isAuthenticated ? (
                             <Box sx={{ display: "flex", alignItems: "center" }}>
                                 <IconButton onClick={handleProfileMenuOpen} sx={{ p: 0.5 }}>

@@ -9,6 +9,7 @@ import {
 } from '@mui/icons-material';
 import { Link, useParams } from 'react-router-dom';
 import Footer from '../components/Footer';
+import ReviewSection from '../components/ReviewSection';
 import { useProductBySlug } from '../hooks/useProducts';
 import { useCart } from '../context/CartContext';
 
@@ -204,6 +205,13 @@ const ProductDetail: React.FC = () => {
                 </Grid>
             </Grid>
         </Box>
+
+        {/* Review Section */}
+        {product && (
+          <Box id="reviews" sx={{ mt: 10, pt: 10, borderTop: '1px solid var(--color-outline)' }}>
+             <ReviewSection productId={product._id} />
+          </Box>
+        )}
       </Container>
       <Snackbar open={showSuccess} autoHideDuration={3000} onClose={() => setShowSuccess(false)} message="Added to bag!" />
       <Footer />
