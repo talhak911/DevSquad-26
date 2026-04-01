@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useCallback, useState } from 'react';
+import Hls from 'hls.js';
 import {
   Play, Pause, Volume2, VolumeX, Volume1,
   Maximize, Minimize, ChevronLeft, RotateCcw, RotateCw,
@@ -220,6 +221,34 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, title, onBack })
   };
 
   useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !src) return;
+
+    // If it's an HLS source (.m3u8)
+    if (src.includes('.m3u8')) {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.loadSource(src);
+        hls.attachMedia(video);
+        hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          if (isPlaying) video.play().catch(() => {});
+        });
+        
+        return () => {
+          hls.destroy();
+        };
+      } 
+      // Native HLS support (Safari)
+      else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+        video.src = src;
+      }
+    } else {
+      // Standard MP4 or other direct source
+      video.src = src;
+    }
+  }, [src]);
+
+  useEffect(() => {
     return () => { if (controlsTimeoutRef.current) clearTimeout(controlsTimeoutRef.current); };
   }, []);
 
@@ -237,7 +266,6 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({ src, poster, title, onBack })
     >
       <video
         ref={videoRef}
-        src={src}
         poster={poster}
         className="w-full h-full object-contain"
         onTimeUpdate={handleTimeUpdate}

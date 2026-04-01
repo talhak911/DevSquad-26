@@ -122,7 +122,7 @@ const MovieOpenPage: React.FC = () => {
               </div>
             ) : playData ? (
               <VideoPlayer 
-                src={playData.mp4Url || playData.streamUrl || movie.videoUrl} 
+                src={playData.hlsUrl || playData.streamUrl || playData.mp4Url || movie.videoUrl} 
                 poster={movie.posterUrl} 
                 title={movie.title} 
                 onBack={() => setIsPlaying(false)} 
