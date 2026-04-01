@@ -13,9 +13,10 @@ import {
   Tooltip,
   Alert,
 } from '@mui/material';
-import { Favorite, FavoriteBorder, Reply as ReplyIcon } from '@mui/icons-material';
+import { Favorite, FavoriteBorder, Reply as ReplyIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import api from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { formatDistanceToNow } from 'date-fns';
 
 interface User {
@@ -41,12 +42,13 @@ interface Reply {
 }
 
 const ReviewSection: React.FC<{ productId: string }> = ({ productId }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [reviews, setReviews] = useState<Review[]>([]);
   const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
   const [replies, setReplies] = useState<{ [reviewId: string]: Reply[] }>({});
   const [replyInputs, setReplyInputs] = useState<{ [reviewId: string]: string }>({});
   const [likes, setLikes] = useState<{ [reviewId: string]: boolean }>({});
+  const { socket, isConnected } = useSocket();
 
   const API_URL = import.meta.env.VITE_REALTIME_URL || 'http://localhost:5006';
 
@@ -100,6 +102,17 @@ const ReviewSection: React.FC<{ productId: string }> = ({ productId }) => {
     }
   };
 
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!isAdmin()) return;
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+    try {
+      await api.delete(`/api/v1/reviews/${reviewId}`, { baseURL: API_URL });
+      fetchReviews();
+    } catch (err) {
+      console.error('Failed to delete review', err);
+    }
+  };
+
   const handleSubmitReply = async (reviewId: string) => {
     if (!isAuthenticated || !replyInputs[reviewId]) return;
     try {
@@ -118,6 +131,23 @@ const ReviewSection: React.FC<{ productId: string }> = ({ productId }) => {
   useEffect(() => {
     fetchReviews();
   }, [productId]);
+
+  useEffect(() => {
+    if (!socket || !isConnected) return;
+    
+    socket.emit('joinProductRoom', productId);
+
+    const onUpdate = () => {
+      fetchReviews();
+    };
+
+    socket.on('review:updated', onUpdate);
+
+    return () => {
+      socket.emit('leaveProductRoom', productId);
+      socket.off('review:updated', onUpdate);
+    };
+  }, [socket, isConnected, productId]);
 
   return (
     <Box sx={{ mt: 10 }}>
@@ -183,6 +213,16 @@ const ReviewSection: React.FC<{ productId: string }> = ({ productId }) => {
                     {likes[review._id] ? <Favorite fontSize="small" /> : <FavoriteBorder fontSize="small" />}
                   </IconButton>
                 </Tooltip>
+                <Typography variant="body2" sx={{ ml: 0.5, mr: 2, display: 'flex', alignItems: 'center' }}>
+                  {review.likes || 0}
+                </Typography>
+                {isAdmin && isAdmin() && (
+                  <Tooltip title="Delete Review">
+                    <IconButton size="small" onClick={() => handleDeleteReview(review._id)} color="error">
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                )}
                 {/* Reply logic... */}
               </Stack>
 

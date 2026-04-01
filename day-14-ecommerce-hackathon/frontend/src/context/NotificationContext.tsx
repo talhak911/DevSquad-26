@@ -40,15 +40,15 @@ const NotificationContext = createContext<NotificationContextData>({
   markAllAsRead: async () => {},
 });
 
-const GUEST_READ_KEY = 'guest_read_notifications';
+const LOCAL_READ_KEY = 'local_read_notifications';
 
 export const useNotifications = () => useContext(NotificationContext);
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [dbUnreadCount, setDbUnreadCount] = useState(0);
-  const [guestReadIds, setGuestReadIds] = useState<string[]>(() => {
-    const stored = localStorage.getItem(GUEST_READ_KEY);
+  const [localReadIds, setLocalReadIds] = useState<string[]>(() => {
+    const stored = localStorage.getItem(LOCAL_READ_KEY);
     return stored ? JSON.parse(stored) : [];
   });
   const [loading, setLoading] = useState(false);
@@ -109,7 +109,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     const handleNewNotification = (notification: Notification) => {
       setNotifications((prev) => [notification, ...prev]);
-      if (isAuthenticated) {
+      if (isAuthenticated && notification.recipientId !== null) {
         setDbUnreadCount((prev) => prev + 1);
       }
       toast.success(notification.title, { icon: '🔔' });
@@ -133,9 +133,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
        // Handle updating the notification list in real-time
        if (data.notification) {
          setNotifications((prev) => [data.notification, ...prev]);
-         if (isAuthenticated) {
-           setDbUnreadCount((prev) => prev + 1);
-         }
        }
     };
 
@@ -149,12 +146,25 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   }, [socket, isAuthenticated]);
 
   const unreadCount = useMemo(() => {
-    if (isAuthenticated) return dbUnreadCount;
-    // For Guests: Count notifications that are not in local guestReadIds
-    return notifications.filter(n => n.recipientId === null && !guestReadIds.includes(n._id)).length;
-  }, [isAuthenticated, dbUnreadCount, notifications, guestReadIds]);
+    const localUnreadGlobal = notifications.filter(n => n.recipientId === null && !localReadIds.includes(n._id)).length;
+    if (isAuthenticated) return dbUnreadCount + localUnreadGlobal;
+    return localUnreadGlobal;
+  }, [isAuthenticated, dbUnreadCount, notifications, localReadIds]);
 
   const markAsRead = async (id: string) => {
+    const notification = notifications.find(n => n._id === id);
+    if (!notification) return;
+
+    if (notification.recipientId === null) {
+      const newReadIds = [...localReadIds, id];
+      setLocalReadIds(newReadIds);
+      localStorage.setItem(LOCAL_READ_KEY, JSON.stringify(newReadIds));
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+      );
+      return;
+    }
+
     if (isAuthenticated) {
       try {
         await api.patch(`/api/v1/notifications/${id}/read`, {}, {
@@ -168,10 +178,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         console.error('Error marking notification as read:', error);
       }
     } else {
-      // Guest local read
-      const newReadIds = [...guestReadIds, id];
-      setGuestReadIds(newReadIds);
-      localStorage.setItem(GUEST_READ_KEY, JSON.stringify(newReadIds));
+      const newReadIds = [...localReadIds, id];
+      setLocalReadIds(newReadIds);
+      localStorage.setItem(LOCAL_READ_KEY, JSON.stringify(newReadIds));
       setNotifications((prev) =>
         prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
       );
@@ -179,23 +188,22 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
   };
 
   const markAllAsRead = async () => {
+    const globalIds = notifications.filter(n => n.recipientId === null).map(n => n._id);
+    const newReadIds = Array.from(new Set([...localReadIds, ...globalIds]));
+    setLocalReadIds(newReadIds);
+    localStorage.setItem(LOCAL_READ_KEY, JSON.stringify(newReadIds));
+
     if (isAuthenticated) {
       try {
         await api.post('/api/v1/notifications/read-all', {}, {
           baseURL: import.meta.env.VITE_REALTIME_URL || 'http://localhost:5006',
         });
-        setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
         setDbUnreadCount(0);
       } catch (error) {
         console.error('Error marking all notifications as read:', error);
       }
-    } else {
-      const allIds = notifications.filter(n => n.recipientId === null).map(n => n._id);
-      const newReadIds = Array.from(new Set([...guestReadIds, ...allIds]));
-      setGuestReadIds(newReadIds);
-      localStorage.setItem(GUEST_READ_KEY, JSON.stringify(newReadIds));
-      setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
     }
+    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
   };
 
   return (
@@ -203,7 +211,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
       value={{ 
         notifications: notifications.map(n => ({
           ...n,
-          isRead: isAuthenticated ? n.isRead : guestReadIds.includes(n._id)
+          isRead: n.recipientId === null ? localReadIds.includes(n._id) : (isAuthenticated ? n.isRead : localReadIds.includes(n._id))
         })), 
         unreadCount, 
         loading, 
