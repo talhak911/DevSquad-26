@@ -69,6 +69,7 @@ const AdminUploadMoviePage: React.FC = () => {
 
       return api.post('/admin/movies', {
         ...data,
+        isPublished: true, // Auto-publish on upload
         // Coerce string values from <select> to booleans
         isPremium: data.isPremium === 'true',
         // Normalize cast (strip Mongoose subdoc _id if any)
@@ -84,7 +85,7 @@ const AdminUploadMoviePage: React.FC = () => {
     onSuccess: (response) => {
       const newMovie = response.data;
       setUploadProgress(100);
-      showToast('Movie uploaded successfully! Saved as Draft.', 'success');
+      showToast('Movie uploaded and published successfully!', 'success');
       // Navigate to edit page instead of list
       navigate(`/admin/movies/${newMovie.id || newMovie._id}/edit`);
     },
