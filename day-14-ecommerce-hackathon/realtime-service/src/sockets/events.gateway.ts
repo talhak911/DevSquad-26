@@ -11,7 +11,21 @@ import * as jwt from 'jsonwebtoken';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // In production, restrict this to your actual frontend origins
+    origin: (origin: string, callback: (err: Error | null, allow?: boolean) => void) => {
+      // In development or if CORS_ORIGINS is not set, allow all
+      const corsOrigins = process.env.CORS_ORIGINS;
+      if (!corsOrigins || corsOrigins === '*') {
+        return callback(null, true);
+      }
+      
+      const allowedOrigins = corsOrigins.split(',');
+      if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
   },
 })
 export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
