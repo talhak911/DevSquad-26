@@ -12,7 +12,18 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: 'http://localhost:3000',
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        process.env.FRONTEND_URL,
+      ].filter(Boolean);
+      
+      if (!origin || allowedOrigins.some(o => origin.startsWith(o!)) || /.vercel\.app$/.test(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   },
 })
