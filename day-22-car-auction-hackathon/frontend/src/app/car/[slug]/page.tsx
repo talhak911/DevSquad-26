@@ -11,6 +11,7 @@ import { useCountdown } from "@/hooks/use-countdown";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Thumbs, FreeMode, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { ChevronDown, Expand } from "lucide-react";
 
 // Import Swiper styles
 import 'swiper/css';
@@ -32,6 +33,64 @@ export default function CarAuctionDetailPage() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null);
+    const [activeImageIndex, setActiveImageIndex] = useState(0);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+    // Lightbox Component
+    const Lightbox = () => {
+        if (!isLightboxOpen) return null;
+        const images = car.images?.length > 0 ? car.images : ["/placeholder-car.webp"];
+        
+        return (
+            <div className="fixed inset-0 z-[100] bg-black/95 flex flex-col items-center justify-center p-4 md:p-10 backdrop-blur-sm animate-in fade-in duration-300">
+                <button 
+                    onClick={() => setIsLightboxOpen(false)}
+                    className="absolute top-6 right-6 text-white hover:text-[#F4C23D] transition-colors p-2"
+                >
+                    <Plus size={40} className="rotate-45" />
+                </button>
+                
+                <div className="relative w-full max-w-6xl aspect-[16/9] lg:aspect-video flex items-center justify-center">
+                    <button 
+                        onClick={() => setActiveImageIndex(prev => (prev - 1 + images.length) % images.length)}
+                        className="absolute left-0 text-white/50 hover:text-white transition-all p-4 z-10"
+                    >
+                        <ChevronDown size={48} className="rotate-90" />
+                    </button>
+                    
+                    <div className="relative w-full h-full">
+                        <Image
+                            src={images[activeImageIndex]}
+                            alt="Full View"
+                            fill
+                            className="object-contain"
+                            priority
+                        />
+                    </div>
+
+                    <button 
+                        onClick={() => setActiveImageIndex(prev => (prev + 1) % images.length)}
+                        className="absolute right-0 text-white/50 hover:text-white transition-all p-4 z-10"
+                    >
+                        <ChevronDown size={48} className="-rotate-90" />
+                    </button>
+                </div>
+
+                {/* Lightbox Thumbnails */}
+                <div className="mt-8 flex gap-3 overflow-x-auto pb-4 max-w-full px-4 custom-scrollbar">
+                    {images.map((img: string, i: number) => (
+                        <div 
+                            key={i}
+                            onClick={() => setActiveImageIndex(i)}
+                            className={`relative w-20 h-20 flex-shrink-0 cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${i === activeImageIndex ? 'border-[#F4C23D] scale-110' : 'border-white/20 opacity-50'}`}
+                        >
+                            <Image src={img} alt="Thumb" fill className="object-cover" />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -59,8 +118,8 @@ export default function CarAuctionDetailPage() {
 
             socket.on('newBid', (newBid: any) => {
                 setBids(prev => [newBid, ...prev]);
-                setCar((prev: any) => ({ 
-                    ...prev, 
+                setCar((prev: any) => ({
+                    ...prev,
                     currentBid: newBid.amount,
                     bidCount: (prev?.bidCount || 0) + 1
                 }));
@@ -118,6 +177,12 @@ export default function CarAuctionDetailPage() {
 
     if (!car) return <div className="p-20 text-center text-2xl font-bold">Car not found.</div>;
 
+    const isOwner = user && car && (
+        (typeof car.uploadedBy === 'string' && car.uploadedBy === (user._id || user.id)) ||
+        (car.uploadedBy?._id === (user._id || user.id)) ||
+        (car.uploadedBy?.id === (user._id || user.id))
+    );
+
     const formatCurrency = (val: number) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val);
     };
@@ -149,70 +214,107 @@ export default function CarAuctionDetailPage() {
 
                 {/* Main Content Area */}
                 <div className="bg-white rounded-b-[10px] p-6 lg:p-10 shadow-xl flex flex-col gap-10">
-                    
-                    {/* Image Gallery Section */}
-                    <div className="flex flex-col gap-6 lg:w-[65%]">
-                        {/* Main Swiper */}
-                        <div className="relative aspect-[16/9] rounded-[10px] overflow-hidden bg-gray-50 border border-[#EAECF3] shadow-lg">
-                            {car.status === 'live' && (
-                                <div className="absolute left-6 top-6 z-20 bg-[#EF233C] text-white px-4 py-2 rounded-[5px] flex items-center gap-2 shadow-lg scale-90 md:scale-100">
-                                    <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                                    <span className="text-[14px] font-bold uppercase tracking-wider">Live Now</span>
-                                </div>
-                            )}
-                            
-                            <Swiper
-                                modules={[Navigation, Thumbs, Autoplay]}
-                                navigation={{
-                                    nextEl: '.swiper-button-next-custom',
-                                    prevEl: '.swiper-button-prev-custom',
-                                }}
-                                thumbs={{ swiper: thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null }}
-                                spaceBetween={10}
-                                className="w-full h-full group"
+
+                    {/* Image Gallery Section: 1+6 Grid & Lightbox */}
+                    <div className="flex flex-col gap-6">
+                        <Lightbox />
+
+                        {/* Desktop: 1+6 Grid */}
+                        <div className="hidden lg:flex gap-4 h-[550px]">
+                            {/* Featured View (Left) */}
+                            <div 
+                                className="relative flex-[2] bg-gray-50 rounded-[10px] overflow-hidden border border-[#EAECF3] cursor-zoom-in group shadow-lg"
+                                onClick={() => setIsLightboxOpen(true)}
                             >
-                                {(car.images?.length > 0 ? car.images : ["/placeholder-car.webp"]).map((img: string, i: number) => (
-                                    <SwiperSlide key={i}>
+                                {car.status === 'live' && (
+                                    <div className="absolute left-6 top-6 z-20 bg-[#EF233C] text-white px-4 py-2 rounded-[5px] flex items-center gap-2 shadow-lg scale-90 md:scale-100">
+                                        <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                                        <span className="text-[14px] font-bold uppercase tracking-wider">Live Now</span>
+                                    </div>
+                                )}
+                                
+                                <Image
+                                    src={car.images?.[activeImageIndex] || "/placeholder-car.webp"}
+                                    alt={car.title}
+                                    fill
+                                    className="object-contain p-4 group-hover:scale-105 transition-transform duration-700"
+                                    priority
+                                />
+                                
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                    <div className="bg-white/90 p-4 rounded-full shadow-2xl">
+                                        <Expand size={24} className="text-[#2E3D83]" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Thumbnail Grid (Right - 2 columns x 3 rows) */}
+                            <div className="flex-1 grid grid-cols-2 grid-rows-3 gap-4">
+                                {(car.images?.slice(0, 6) || []).map((img: string, i: number) => (
+                                    <div 
+                                        key={i}
+                                        onClick={() => setActiveImageIndex(i)}
+                                        className={`relative rounded-[8px] overflow-hidden cursor-pointer border-2 transition-all group ${i === activeImageIndex ? 'border-[#2E3D83]' : 'border-transparent hover:border-[#EAECF3]'}`}
+                                    >
                                         <Image
                                             src={img}
-                                            alt={`${car.title} view ${i + 1}`}
+                                            alt={`Thumbnail ${i}`}
                                             fill
-                                            className="object-contain p-2"
-                                            priority={i === 0}
+                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
                                         />
-                                    </SwiperSlide>
+                                        {i === 5 && car.images?.length > 6 && (
+                                            <div 
+                                                className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center text-white z-10"
+                                                onClick={(e) => { e.stopPropagation(); setIsLightboxOpen(true); }}
+                                            >
+                                                <span className="text-[20px] font-bold">+{car.images.length - 6}</span>
+                                                <span className="text-[10px] uppercase font-medium tracking-wider">More Views</span>
+                                            </div>
+                                        )}
+                                    </div>
                                 ))}
-                            </Swiper>
+                                {/* Fill empty slots if less than 6 images */}
+                                {car.images?.length < 6 && [...Array(Math.max(0, 6 - (car.images?.length || 0)))].map((_, i) => (
+                                    <div key={`empty-${i}`} className="bg-gray-50 rounded-[8px] border-2 border-dashed border-[#EAECF3] flex items-center justify-center">
+                                        <Image src="/placeholder-car.webp" alt="Empty" width={40} height={40} className="opacity-10" />
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
-                        {/* Thumbs Swiper */}
-                        <div className="h-24 md:h-32 w-full">
-                            <Swiper
-                                onSwiper={setThumbsSwiper}
-                                spaceBetween={12}
-                                slidesPerView={4}
-                                freeMode={true}
-                                watchSlidesProgress={true}
-                                modules={[FreeMode, Navigation, Thumbs]}
-                                breakpoints={{
-                                    640: { slidesPerView: 5 },
-                                    1024: { slidesPerView: 6 }
-                                }}
-                                className="h-full thumbs-swiper"
-                            >
-                                {(car.images?.length > 0 ? car.images : ["/placeholder-car.webp"]).map((img: string, i: number) => (
-                                    <SwiperSlide key={i} className="cursor-pointer border-2 border-transparent rounded-[8px] overflow-hidden transition-all swiper-slide-thumb-active:border-[#2E3D83]">
-                                        <div className="relative w-full h-full bg-gray-50">
-                                            <Image
-                                                src={img}
-                                                alt={`Thumbnail ${i + 1}`}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    </SwiperSlide>
-                                ))}
-                            </Swiper>
+                        {/* Mobile/Tablet: Swiper Slider */}
+                        <div className="lg:hidden flex flex-col gap-4">
+                            <div className="relative aspect-[16/9] rounded-[10px] overflow-hidden bg-gray-50 border border-[#EAECF3]">
+                                <Swiper
+                                    modules={[Navigation, Thumbs, Autoplay]}
+                                    spaceBetween={10}
+                                    onSlideChange={(s) => setActiveImageIndex(s.activeIndex)}
+                                    className="w-full h-full"
+                                >
+                                    {(car.images?.length > 0 ? car.images : ["/placeholder-car.webp"]).map((img: string, i: number) => (
+                                        <SwiperSlide key={i} onClick={() => setIsLightboxOpen(true)}>
+                                            <Image src={img} alt="Car View" fill className="object-contain p-2" />
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            </div>
+                            
+                            <div className="h-20 w-full">
+                                <Swiper
+                                    spaceBetween={10}
+                                    slidesPerView={4}
+                                    freeMode={true}
+                                    watchSlidesProgress={true}
+                                    modules={[FreeMode, Thumbs]}
+                                    className="h-full"
+                                >
+                                    {(car.images?.length > 0 ? car.images : []).map((img: string, i: number) => (
+                                        <SwiperSlide key={i} onClick={() => setActiveImageIndex(i)} className={`cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${i === activeImageIndex ? 'border-[#2E3D83]' : 'border-transparent'}`}>
+                                            <Image src={img} alt="Thumb" fill className="object-cover" />
+                                        </SwiperSlide>
+                                    ))}
+                                </Swiper>
+                            </div>
                         </div>
                     </div>
 
@@ -285,7 +387,7 @@ export default function CarAuctionDetailPage() {
                                 <div className="text-[#545677] text-[16px] leading-relaxed font-medium mt-4">
                                     {car.description || "No detailed description provided for this vehicle."}
                                     <p className="mt-4">
-                                        Experience sheer driving pleasure with this meticulously maintained {car.title}. 
+                                        Experience sheer driving pleasure with this meticulously maintained {car.title}.
                                         Combining luxury with performance, it offers an unparalleled journey every time you sit behind the wheel.
                                     </p>
                                 </div>
@@ -368,11 +470,11 @@ export default function CarAuctionDetailPage() {
 
                                 {/* Bidding Progress Slider */}
                                 <div className="relative h-2 bg-white rounded-full mb-8 shadow-inner border border-gray-100">
-                                    <div 
-                                        className="absolute h-full bg-[#F4C23D] rounded-full transition-all duration-500" 
+                                    <div
+                                        className="absolute h-full bg-[#F4C23D] rounded-full transition-all duration-500"
                                         style={{ width: `${Math.min(((car.currentBid - car.startingBid) / car.startingBid) * 100 + 10, 100)}%` }}
                                     />
-                                    <div 
+                                    <div
                                         className="absolute top-1/2 -translate-y-1/2 w-6 h-6 bg-[#2E3D83] rounded-full border-4 border-white shadow-md flex items-center justify-center transition-all duration-500"
                                         style={{ left: `calc(${Math.min(((car.currentBid - car.startingBid) / car.startingBid) * 100 + 10, 100)}% - 12px)` }}
                                     >
@@ -383,45 +485,65 @@ export default function CarAuctionDetailPage() {
                                 <div className="flex flex-col gap-6">
                                     {car.status === 'live' ? (
                                         <>
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex flex-col">
-                                                    <span className="text-[18px] font-bold text-[#2E3D83]">{car.bidCount || 0}</span>
-                                                    <span className="text-[10px] text-[#A0A0A0] uppercase font-bold">Bids Placed</span>
-                                                </div>
-                                                <div className="flex items-center gap-3 bg-white border border-[#EAECF3] p-1 rounded-[5px] shadow-sm">
-                                                    <button 
-                                                        onClick={() => setBidAmount(prev => Math.max(car.currentBid + car.minIncrement, prev - car.minIncrement))}
-                                                        className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
-                                                    >
-                                                        <Minus size={16} />
-                                                    </button>
-                                                    <span className="text-[14px] font-bold text-[#2E3D83] min-w-[80px] text-center">
-                                                        {formatCurrency(bidAmount)}
-                                                    </span>
-                                                    <button 
-                                                        onClick={() => setBidAmount(prev => prev + (car.minIncrement || 100))}
-                                                        className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
-                                                    >
-                                                        <Plus size={16} />
-                                                    </button>
-                                                </div>
-                                            </div>
+                                            {!isOwner ? (
+                                                <>
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="flex flex-col">
+                                                            <span className="text-[18px] font-bold text-[#2E3D83]">{car.bidCount || 0}</span>
+                                                            <span className="text-[10px] text-[#A0A0A0] uppercase font-bold">Bids Placed</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-3 bg-white border border-[#EAECF3] p-1 rounded-[5px] shadow-sm">
+                                                            <button
+                                                                onClick={() => setBidAmount(prev => Math.max(car.currentBid + car.minIncrement, prev - car.minIncrement))}
+                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
+                                                            >
+                                                                <Minus size={16} />
+                                                            </button>
+                                                            <span className="text-[14px] font-bold text-[#2E3D83] min-w-[80px] text-center">
+                                                                {formatCurrency(bidAmount)}
+                                                            </span>
+                                                            <button
+                                                                onClick={() => setBidAmount(prev => prev + (car.minIncrement || 100))}
+                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
+                                                            >
+                                                                <Plus size={16} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
 
-                                            {error && <p className="text-red-500 text-xs text-center -mb-4 animate-shake">{error}</p>}
+                                                    {error && <p className="text-red-500 text-xs text-center -mb-4 animate-shake">{error}</p>}
 
-                                            <button
-                                                disabled={isSubmitting}
-                                                onClick={handlePlaceBid}
-                                                className="w-full h-[55px] bg-[#2E3D83] text-white text-[16px] font-bold rounded-[5px] hover:bg-opacity-95 transition-all shadow-lg active:scale-[0.98] uppercase tracking-wider"
-                                            >
-                                                {isSubmitting ? "Processing..." : "Submit A Bid"}
-                                            </button>
+                                                    <button
+                                                        disabled={isSubmitting}
+                                                        onClick={handlePlaceBid}
+                                                        className="w-full h-[55px] bg-[#2E3D83] text-white text-[16px] font-bold rounded-[5px] hover:bg-opacity-95 transition-all shadow-lg active:scale-[0.98] uppercase tracking-wider"
+                                                    >
+                                                        {isSubmitting ? "Processing..." : "Submit A Bid"}
+                                                    </button>
+                                                </>
+                                            ) : (
+                                                <div className="bg-[#2E3D83]/5 border-2 border-dashed border-[#2E3D83]/20 rounded-[8px] p-6 text-center">
+                                                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                                                        <UserIcon size={20} className="text-[#2E3D83]" />
+                                                    </div>
+                                                    <h4 className="text-[16px] font-bold text-[#2E3D83] uppercase tracking-tight mb-2">Seller Control</h4>
+                                                    <p className="text-[12px] text-[#545677] font-medium leading-relaxed">
+                                                        You are the owner of this vehicle. Monitor the bid activity below and manage your listing from the dashboard.
+                                                    </p>
+                                                    <button 
+                                                        onClick={() => router.push('/my-profile?tab=my-cars')}
+                                                        className="mt-4 text-[12px] font-bold text-[#2E3D83] hover:underline uppercase tracking-wider"
+                                                    >
+                                                        My Dashboard →
+                                                    </button>
+                                                </div>
+                                            )}
                                         </>
                                     ) : (
                                         <div className="bg-[#2E3D83]/5 border border-[#2E3D83]/20 rounded-[8px] p-6 text-center">
                                             <h4 className="text-[18px] font-bold text-[#2E3D83] uppercase tracking-tight mb-2">Auction Ended</h4>
                                             <p className="text-[14px] text-[#545677] font-medium leading-tight">
-                                                This vehicle has been sold or the listing has expired. No further bids can be accepted.
+                                                This vehicle has been sold or the listing has expired.
                                             </p>
                                         </div>
                                     )}

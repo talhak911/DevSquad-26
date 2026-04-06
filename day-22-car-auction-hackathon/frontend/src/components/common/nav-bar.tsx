@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Star, Bell, ChevronDown, Menu, X, Car, User, LogOut } from "lucide-react";
+import { Star, Bell, ChevronDown, Menu, X, Car, User, LogOut, Hammer } from "lucide-react";
 import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
@@ -96,10 +96,22 @@ export default function Navbar() {
                             {showProfileMenu && (
                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 text-[#2e3d83]">
                                     <button 
-                                        onClick={() => { router.push("/my-profile"); setShowProfileMenu(false); }}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2"
+                                        onClick={() => { router.push("/my-profile?tab=personal"); setShowProfileMenu(false); }}
+                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
                                     >
                                         <User size={16} /> My Profile
+                                    </button>
+                                    <button 
+                                        onClick={() => { router.push("/my-profile?tab=my-bids"); setShowProfileMenu(false); }}
+                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
+                                    >
+                                        <Hammer size={16} /> My Bids
+                                    </button>
+                                    <button 
+                                        onClick={() => { router.push("/my-profile?tab=my-cars"); setShowProfileMenu(false); }}
+                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
+                                    >
+                                        <Car size={16} /> My Cars
                                     </button>
                                     <button 
                                         onClick={handleLogout}

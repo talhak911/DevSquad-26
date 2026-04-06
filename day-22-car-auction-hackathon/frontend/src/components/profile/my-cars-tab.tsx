@@ -91,7 +91,7 @@ export default function MyCarsTab() {
                                         <span className="text-[11px] text-[#939393] uppercase font-medium">Winning Bid</span>
                                     </div>
                                     <div className="flex flex-col gap-1 text-right">
-                                        <span className="text-[14px] font-bold text-[#2E3D83] leading-none">130</span>
+                                        <span className="text-[14px] font-bold text-[#2E3D83] leading-none">{car.bidCount || 0}</span>
                                         <span className="text-[10px] text-[#939393] uppercase font-medium">Total Bids</span>
                                     </div>
                                 </div>
