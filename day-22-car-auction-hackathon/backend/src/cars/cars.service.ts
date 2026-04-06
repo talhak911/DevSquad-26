@@ -11,6 +11,7 @@ export interface CarFilters {
   model?: string;
   year?: number;
   category?: string;
+  paint?: string;
   minPrice?: number;
   maxPrice?: number;
   status?: string;
@@ -49,10 +50,12 @@ export class CarsService {
 
   async findAll(filters: CarFilters = {}): Promise<CarDocument[]> {
     const query: Record<string, any> = {};
-    if (filters.make) query.make = new RegExp(filters.make, 'i');
-    if (filters.model) query.model = new RegExp(filters.model, 'i');
+    if (filters.make) query.make = new RegExp(`^${filters.make}$`, 'i');
+    if (filters.model) query.model = new RegExp(`^${filters.model}$`, 'i');
     if (filters.year) query.year = filters.year;
-    if (filters.category) query.category = new RegExp(filters.category, 'i');
+    if (filters.category) query.category = new RegExp(`^${filters.category}$`, 'i');
+    if (filters.paint) query.paint = new RegExp(`^${filters.paint}$`, 'i');
+    
     if (filters.status) {
       query.status = filters.status;
     } else {
