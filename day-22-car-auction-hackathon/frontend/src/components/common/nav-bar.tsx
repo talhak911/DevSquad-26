@@ -1,10 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { Star, Bell, ChevronDown, Menu, X, Car, User, LogOut, Hammer } from "lucide-react";
+import { Star, ChevronDown, Menu, X, Car, User, LogOut, Hammer } from "lucide-react";
 import Image from "next/image";
 import { useAppSelector, useAppDispatch } from "@/store/hooks";
 import { logout } from "@/store/slices/authSlice";
+import NotificationDropdown from "./notification-dropdown";
 
 const navLinks = [
     { label: "Home", href: "/" },
@@ -37,7 +38,7 @@ export default function Navbar() {
 
     return (
         <nav className={`${isTransparent ? "bg-transparent absolute top-10 left-0 right-0" : "bg-[#e8edfa] relative"} w-full z-50 transition-all duration-300`}>
-            <div className="max-w-[1440px] mx-auto px-[118px] max-lg:px-8 max-sm:px-5 h-[82px] flex items-center justify-between gap-6">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[118px] h-[82px] flex items-center justify-between gap-6">
                 {/* Logo */}
                 <a href="/" className="flex items-center gap-2 shrink-0">
                     <Image src="/logo.png" alt="Logo" width={165} height={55} style={{ height: "auto" }} />
@@ -66,12 +67,12 @@ export default function Navbar() {
                     })}
                 </ul>
 
-                {/* Actions */}
-                <div className={`hidden md:flex items-center gap-3 ${isTransparent ? "text-white" : "text-[#2e3d83]"} min-w-[150px] justify-end`}>
+                {/* Actions (Desktop & Mobile) */}
+                <div className={`flex items-center gap-2 sm:gap-4 ${isTransparent ? "text-white" : "text-[#2e3d83]"} shrink-0`}>
                     {!mounted ? (
-                        <div className="h-10 w-24 bg-white/5 animate-pulse rounded-[5px]" />
+                        <div className="hidden md:block h-10 w-24 bg-white/5 animate-pulse rounded-[5px]" />
                     ) : !isAuthenticated ? (
-                        <>
+                        <div className="hidden md:flex items-center gap-3">
                             <p className="mr-2 h-full flex items-center">
                                 <button onClick={() => router.push("/login")} className="text-sm font-medium mr-1 text-[#898989] hover:text-[#2e3d83]">Sign in</button>
                                 <span className="text-sm font-medium text-[#898989]">or</span>
@@ -82,56 +83,59 @@ export default function Navbar() {
                             >
                                 Register now
                             </button>
-                        </>
+                        </div>
                     ) : (
-                        <div className="relative">
-                            <button 
-                                onClick={() => setShowProfileMenu(!showProfileMenu)}
-                                className="flex items-center gap-2 font-medium bg-white/10 px-3 py-2 rounded-full hover:bg-white/20 transition-all"
-                            >
-                                <User size={20} />
-                                <span>{user?.firstName}</span>
-                                <ChevronDown size={16} />
-                            </button>
-                            {showProfileMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 text-[#2e3d83]">
-                                    <button 
-                                        onClick={() => { router.push("/my-profile?tab=personal"); setShowProfileMenu(false); }}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
-                                    >
-                                        <User size={16} /> My Profile
-                                    </button>
-                                    <button 
-                                        onClick={() => { router.push("/my-profile?tab=my-bids"); setShowProfileMenu(false); }}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
-                                    >
-                                        <Hammer size={16} /> My Bids
-                                    </button>
-                                    <button 
-                                        onClick={() => { router.push("/my-profile?tab=my-cars"); setShowProfileMenu(false); }}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 border-b border-gray-50"
-                                    >
-                                        <Car size={16} /> My Cars
-                                    </button>
-                                    <button 
-                                        onClick={handleLogout}
-                                        className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600"
-                                    >
-                                        <LogOut size={16} /> Logout
-                                    </button>
-                                </div>
-                            )}
+                        <div className="flex items-center gap-2 sm:gap-4">
+                            <NotificationDropdown />
+                            <div className="relative">
+                                <button 
+                                    onClick={() => setShowProfileMenu(!showProfileMenu)}
+                                    className="flex items-center gap-2 font-medium bg-white/10 px-2 sm:px-3 py-2 rounded-full hover:bg-white/20 transition-all border border-[#2e3d83]/10"
+                                >
+                                    <User size={20} />
+                                    <span className="hidden sm:inline-block max-w-[100px] truncate">{user?.firstName}</span>
+                                    <ChevronDown size={14} className={`transition-transform ${showProfileMenu ? 'rotate-180' : ''}`} />
+                                </button>
+                                {showProfileMenu && (
+                                    <div className="absolute right-0 mt-3 w-48 bg-white rounded-xl shadow-2xl py-2 z-[60] text-[#2e3d83] border border-gray-100 animate-in fade-in slide-in-from-top-2 duration-200">
+                                        <button 
+                                            onClick={() => { router.push("/my-profile?tab=personal"); setShowProfileMenu(false); }}
+                                            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-sm font-medium border-b border-gray-50"
+                                        >
+                                            <User size={16} className="text-[#545677]" /> My Profile
+                                        </button>
+                                        <button 
+                                            onClick={() => { router.push("/my-profile?tab=my-bids"); setShowProfileMenu(false); }}
+                                            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-sm font-medium border-b border-gray-50"
+                                        >
+                                            <Hammer size={16} className="text-[#545677]" /> My Bids
+                                        </button>
+                                        <button 
+                                            onClick={() => { router.push("/my-profile?tab=my-cars"); setShowProfileMenu(false); }}
+                                            className="w-full text-left px-4 py-2.5 hover:bg-gray-50 flex items-center gap-3 text-sm font-medium border-b border-gray-50"
+                                        >
+                                            <Car size={16} className="text-[#545677]" /> My Cars
+                                        </button>
+                                        <button 
+                                            onClick={handleLogout}
+                                            className="w-full text-left px-4 py-2.5 hover:bg-red-50 flex items-center gap-3 text-sm font-bold text-red-600"
+                                        >
+                                            <LogOut size={16} /> Logout
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     )}
-                </div>
 
-                {/* Mobile hamburger */}
-                <button
-                    className={`md:hidden ${isTransparent ? "text-white" : "text-[#2e3d83]"}`}
-                    onClick={() => setOpen(!open)}
-                >
-                    {open ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                    {/* Mobile hamburger */}
+                    <button
+                        className={`md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors ${isTransparent ? "text-white" : "text-[#2e3d83]"}`}
+                        onClick={() => setOpen(!open)}
+                    >
+                        {open ? <X size={24} /> : <Menu size={24} />}
+                    </button>
+                </div>
             </div>
 
             {/* Mobile menu */}
@@ -160,12 +164,41 @@ export default function Navbar() {
                             Login / Register
                         </button>
                     ) : (
-                        <button 
-                            onClick={handleLogout}
-                            className="bg-red-600 text-white py-3 rounded-md font-bold mt-2"
-                        >
-                            Logout
-                        </button>
+                        <div className="flex flex-col gap-1 mt-2">
+                            <div className="bg-white/50 p-4 rounded-xl flex items-center gap-3 mb-2">
+                                <div className="w-10 h-10 bg-[#2e3d83] rounded-full flex items-center justify-center text-white">
+                                    <User size={20} />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="font-bold text-[#2e3d83]">{user?.firstName} {user?.lastName}</span>
+                                    <span className="text-xs text-[#545677] truncate max-w-[180px]">{user?.email}</span>
+                                </div>
+                            </div>
+                            <button 
+                                onClick={() => { router.push("/my-profile?tab=personal"); setOpen(false); }}
+                                className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-white text-[#545677] font-medium transition-colors"
+                            >
+                                <User size={18} /> My Profile
+                            </button>
+                            <button 
+                                onClick={() => { router.push("/my-profile?tab=my-bids"); setOpen(false); }}
+                                className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-white text-[#545677] font-medium transition-colors"
+                            >
+                                <Hammer size={18} /> My Bids
+                            </button>
+                            <button 
+                                onClick={() => { router.push("/my-profile?tab=my-cars"); setOpen(false); }}
+                                className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-white text-[#545677] font-medium transition-colors"
+                            >
+                                <Car size={18} /> My Cars
+                            </button>
+                            <button 
+                                onClick={handleLogout}
+                                className="flex items-center gap-3 py-3 px-4 rounded-lg hover:bg-red-50 text-red-600 font-bold transition-colors mt-2"
+                            >
+                                <LogOut size={18} /> Logout
+                            </button>
+                        </div>
                     )}
                 </div>
             )}

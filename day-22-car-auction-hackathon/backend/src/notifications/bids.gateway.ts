@@ -1,14 +1,8 @@
-import {
-  WebSocketGateway,
-  WebSocketServer,
-  SubscribeMessage,
-  MessageBody,
-  ConnectedSocket,
-  OnGatewayConnection,
-  OnGatewayDisconnect,
-} from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Controller, Get, Patch, Body, UseGuards, Request, Param } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import { NotificationsService } from './notifications.service';
+import { NotificationType } from './schemas/notification.schema';
 
 @WebSocketGateway({
   cors: {
@@ -28,6 +22,8 @@ import { Server, Socket } from 'socket.io';
   },
 })
 export class BidsGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  constructor(private notificationsService: NotificationsService) {}
+
   @WebSocketServer()
   server: Server;
 
@@ -63,7 +59,16 @@ export class BidsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   // Global Notifications
-  notifyNewAuction(car: any) {
+  async notifyNewAuction(car: any) {
+    // Save persistent global notification
+    await this.notificationsService.create({
+      userId: null,
+      title: 'New Auction Live! 📢',
+      message: `${car.title} is now open for bidding.`,
+      type: NotificationType.INFO,
+      link: `/car/${car._id || car.id}`
+    });
+
     this.server.emit('newAuction', {
       title: car.title,
       id: car._id,
@@ -71,27 +76,49 @@ export class BidsGateway implements OnGatewayConnection, OnGatewayDisconnect {
     });
   }
 
-  notifyGlobalBid(bid: any) {
-    this.server.emit('globalBid', {
+  async notifyGlobalBid(bid: any) {
+    // Save persistent global notification
+    await this.notificationsService.create({
+      userId: null,
+      title: 'New Bid Alert 💰',
+      message: `${bid.user?.firstName || 'Someone'} bid $${bid.amount} on ${bid.car?.title || 'a car'}`,
+      type: NotificationType.INFO,
+      link: `/car/${bid.car?._id || bid.car}`
+    });
+
+    const data = {
       carTitle: bid.car?.title || 'a car',
       userName: `${bid.user?.firstName || 'Someone'}`,
       amount: bid.amount,
       carId: bid.car?._id || bid.car,
       userId: bid.user?._id || bid.user
-    });
+    };
+    this.server.emit('globalBid', data);
   }
 
-  notifyAuctionWinner(bid: any) {
+  async notifyAuctionWinner(bid: any) {
+    const winnerId = bid.user?._id || bid.user;
+    const carId = bid.car?._id || bid.car;
+    
+    // Save persistent notification for winner
+    await this.notificationsService.create({
+      userId: winnerId,
+      title: 'Auction Won! 🎉',
+      message: `Congratulations! You won the auction for ${bid.car?.title || 'a car'} with a bid of $${bid.amount}.`,
+      type: NotificationType.SUCCESS,
+      link: `/car/${bid.car?.slug || carId}`
+    });
+
     this.server.emit('auctionWinner', {
       carTitle: bid.car?.title || 'a car',
       userName: `${bid.user?.firstName || 'Someone'}`,
       amount: bid.amount,
-      carId: bid.car?._id || bid.car,
-      userId: bid.user?._id || bid.user
+      carId: carId,
+      userId: winnerId
     });
   }
 
-  notifyAuctionClosed(car: any) {
+  async notifyAuctionClosed(car: any) {
     this.server.emit('auctionClosed', {
       title: car.title,
       id: car._id

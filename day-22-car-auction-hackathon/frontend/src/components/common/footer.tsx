@@ -7,7 +7,7 @@ const auctionLinks = ["Help Center", "FAQ", "My Account", "My Account"];
 export default function Footer() {
     return (
         <footer className="bg-[#2e3d83] w-full pt-[60px]">
-            <div className="max-w-[1440px] mx-auto px-[118px] max-lg:px-8 max-sm:px-5 grid grid-cols-[2fr_1fr_1fr_1.6fr] max-lg:grid-cols-2 max-sm:grid-cols-1 gap-10">
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-8 lg:px-[118px] grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
                 {/* Brand */}
                 <div>
                     <a href="/" className="flex items-center gap-2 mb-4">

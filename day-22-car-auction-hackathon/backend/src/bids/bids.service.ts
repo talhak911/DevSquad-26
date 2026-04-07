@@ -26,6 +26,20 @@ export class BidsService {
       throw new BadRequestException('Auction is not live');
     }
 
+    // Lazy Closing: Check if auction has expired but not yet marked as SOLD
+    if (car.auctionEndDate && new Date() > new Date(car.auctionEndDate)) {
+      await this.carsService.markAsCompleted(dto.carId);
+      // We also need to fetch the highest bid to notify winner
+      const bids = await this.findByCar(dto.carId);
+      if (bids.length > 0) {
+        const topBid = bids[0];
+        this.bidsGateway.broadcastAuctionEnded(dto.carId, topBid);
+        this.bidsGateway.notifyAuctionWinner(topBid);
+      }
+      this.bidsGateway.notifyAuctionClosed(car);
+      throw new BadRequestException('Auction has ended');
+    }
+
     if (dto.amount <= car.currentBid || dto.amount < car.startingBid) {
       throw new BadRequestException('Bid must be higher than current bid and starting bid');
     }
