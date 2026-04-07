@@ -117,13 +117,19 @@ export default function CarAuctionDetailPage() {
             joinCar(carId);
 
             socket.on('newBid', (newBid: any) => {
-                setBids(prev => [newBid, ...prev]);
-                setCar((prev: any) => ({
-                    ...prev,
-                    currentBid: newBid.amount,
-                    bidCount: (prev?.bidCount || 0) + 1
-                }));
-                setBidAmount(newBid.amount + 100);
+                setBids(prev => {
+                    if (prev.some(b => b._id === newBid._id)) return prev;
+                    return [newBid, ...prev];
+                });
+                setCar((prevCar: any) => {
+                    const updatedCar = {
+                        ...prevCar,
+                        currentBid: newBid.amount,
+                        bidCount: (prevCar?.bidCount || 0) + 1
+                    };
+                    setBidAmount(newBid.amount + (updatedCar.minIncrement || 100));
+                    return updatedCar;
+                });
             });
 
             socket.on('auctionEnded', (data: any) => {
@@ -149,8 +155,9 @@ export default function CarAuctionDetailPage() {
             return;
         }
 
-        if (bidAmount <= car.currentBid) {
-            setError(`Bid must be higher than current bid ($${car.currentBid})`);
+        const minRequired = car.currentBid + (car.minIncrement || 100);
+        if (bidAmount < minRequired) {
+            setError(`Bid must be at least ${formatCurrency(minRequired)} (Current + Min Increment)`);
             return;
         }
 
@@ -492,19 +499,26 @@ export default function CarAuctionDetailPage() {
                                                             <span className="text-[18px] font-bold text-[#2E3D83]">{car.bidCount || 0}</span>
                                                             <span className="text-[10px] text-[#A0A0A0] uppercase font-bold">Bids Placed</span>
                                                         </div>
-                                                        <div className="flex items-center gap-3 bg-white border border-[#EAECF3] p-1 rounded-[5px] shadow-sm">
+                                                        <div className="flex items-center gap-2 bg-white border border-[#EAECF3] p-1 rounded-[5px] shadow-sm">
                                                             <button
-                                                                onClick={() => setBidAmount(prev => Math.max(car.currentBid + car.minIncrement, prev - car.minIncrement))}
-                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
+                                                                onClick={() => setBidAmount(prev => Math.max(car.currentBid + (car.minIncrement || 100), prev - (car.minIncrement || 100)))}
+                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors shrink-0"
                                                             >
                                                                 <Minus size={16} />
                                                             </button>
-                                                            <span className="text-[14px] font-bold text-[#2E3D83] min-w-[80px] text-center">
-                                                                {formatCurrency(bidAmount)}
-                                                            </span>
+                                                            <div className="flex items-center gap-1 text-[14px] font-bold text-[#2E3D83] min-w-[100px]">
+                                                                <span className="text-[#A0A0A0] font-medium">$</span>
+                                                                <input 
+                                                                    type="number"
+                                                                    value={bidAmount || ''}
+                                                                    onChange={(e) => setBidAmount(e.target.value === '' ? 0 : Number(e.target.value))}
+                                                                    placeholder="0"
+                                                                    className="w-full text-center bg-transparent focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                                                                />
+                                                            </div>
                                                             <button
                                                                 onClick={() => setBidAmount(prev => prev + (car.minIncrement || 100))}
-                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors"
+                                                                className="w-8 h-8 flex items-center justify-center text-[#2E3D83] hover:bg-gray-100 rounded transition-colors shrink-0"
                                                             >
                                                                 <Plus size={16} />
                                                             </button>
@@ -560,7 +574,7 @@ export default function CarAuctionDetailPage() {
                                         <div className="p-8 text-center text-[#A0A0A0] italic text-sm">No bids yet. Start the auction!</div>
                                     ) : (
                                         bids.map((bid, i) => (
-                                            <div key={bid._id} className="p-4 flex items-center justify-between hover:bg-[#F1F2FF] transition-colors rounded-lg group">
+                                            <div key={`${bid._id}-${i}`} className="p-4 flex items-center justify-between hover:bg-[#F1F2FF] transition-colors rounded-lg group">
                                                 <div className="flex flex-col">
                                                     <span className={`text-[14px] font-bold ${i === 0 ? "text-[#2E3D83]" : "text-[#545677]"}`}>
                                                         {bid.user ? `${bid.user.firstName} ${bid.user.lastName}` : `Bidder ${i + 1}`}
