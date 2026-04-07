@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { setWishlist } from '@/store/slices/wishlistSlice';
+import { addNotification, setNotifications } from '@/store/slices/notificationSlice';
 import api from '@/lib/axios';
 
 interface SocketContextType {
@@ -49,6 +50,15 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         // Global Listeners for Notifications
         socket.on('newAuction', (car) => {
+            dispatch(addNotification({
+                _id: Math.random().toString(36).substr(2, 9),
+                title: 'New Auction Live!',
+                message: `${car.title} is now open for bidding.`,
+                type: 'info',
+                isRead: false,
+                link: `/car/${car.id}`,
+                createdAt: new Date().toISOString()
+            }));
             toast((t) => (
                 <div className="flex items-center gap-4 min-w-[280px]">
                     {car.image && (
@@ -72,6 +82,15 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
 
         socket.on('globalBid', (bid) => {
+            dispatch(addNotification({
+                _id: Math.random().toString(36).substr(2, 9),
+                title: 'New Price Alert 💰',
+                message: `${bid.userName} bid $${bid.amount.toLocaleString()} on ${bid.carTitle}`,
+                type: 'info',
+                isRead: false,
+                link: `/car/${bid.carId}`,
+                createdAt: new Date().toISOString()
+            }));
             toast((t) => (
                 <div className="flex flex-col gap-3 min-w-[280px]">
                     <div className="flex items-start gap-4">
@@ -106,6 +125,15 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         });
 
         socket.on('auctionWinner', (bid) => {
+            dispatch(addNotification({
+                _id: Math.random().toString(36).substr(2, 9),
+                title: 'Auction Result! 🏆',
+                message: `${bid.userName} won the ${bid.carTitle} for $${bid.amount.toLocaleString()}`,
+                type: 'success',
+                isRead: false,
+                link: `/car/${bid.carId}`,
+                createdAt: new Date().toISOString()
+            }));
             toast((t) => (
                 <div className="flex flex-col gap-4 min-w-[320px] bg-[#F9C146]/5 p-2">
                     <div className="text-center">
@@ -148,26 +176,34 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, []);
 
-    // Initial Wishlist Sync
+    // Initial Sync (Wishlist & Notifications)
     useEffect(() => {
-        const syncWishlist = async () => {
+        const syncData = async () => {
             if (user && !isAuthPage) {
                 try {
-                    const { data } = await api.get('/wishlist');
-                    // data is array of wishlist objects { _id, user, car: { ... } }
-                    const carIds = data.map((item: any) => item.car._id);
+                    // Sync Wishlist
+                    const { data: wishlistData } = await api.get('/wishlist');
+                    const carIds = wishlistData.map((item: any) => item.car._id);
                     dispatch(setWishlist(carIds));
+
+                    // Sync Notifications (Wait until backend is ready)
+                    try {
+                        const { data: notificationData } = await api.get('/notifications');
+                        dispatch(setNotifications(notificationData));
+                    } catch (err) {
+                        console.warn('Failed to sync notifications (Backend might not be ready yet)');
+                    }
                 } catch (err: any) {
-                    // Don't log 401s as errors during background sync to avoid console noise
                     if (err.response?.status !== 401) {
-                        console.error('Failed to sync wishlist:', err);
+                        console.error('Failed to sync data:', err);
                     }
                 }
             } else if (!user) {
                 dispatch(setWishlist([]));
+                dispatch(setNotifications([]));
             }
         };
-        syncWishlist();
+        syncData();
     }, [user, dispatch, isAuthPage]);
 
     const joinCar = (carId: string) => {

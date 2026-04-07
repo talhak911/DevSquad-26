@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Car, CarDocument, CarStatus } from './car.schema';
+import { Bid, BidDocument } from '../bids/bid.schema';
 import { CreateCarDto } from './dto/create-car.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { BidsGateway } from '../notifications/bids.gateway';
@@ -21,6 +22,7 @@ export interface CarFilters {
 export class CarsService {
   constructor(
     @InjectModel(Car.name) private carModel: Model<CarDocument>,
+    @InjectModel(Bid.name) private bidModel: Model<BidDocument>,
     private cloudinary: CloudinaryService,
     private bidsGateway: BidsGateway,
   ) {}
@@ -101,6 +103,19 @@ export class CarsService {
 
     car.status = CarStatus.SOLD;
     const updated = await car.save();
+
+    // Notify Winner
+    const topBid = await this.bidModel
+      .findOne({ car: new Types.ObjectId(carId) })
+      .sort({ amount: -1 })
+      .populate('user', 'firstName lastName email')
+      .populate('car', 'title slug');
+
+    if (topBid) {
+      this.bidsGateway.broadcastAuctionEnded(carId, topBid);
+      this.bidsGateway.notifyAuctionWinner(topBid);
+    }
+    
     this.bidsGateway.notifyAuctionClosed(updated);
     return updated;
   }

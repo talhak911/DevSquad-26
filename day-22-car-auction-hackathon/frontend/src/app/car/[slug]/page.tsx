@@ -225,6 +225,29 @@ export default function CarAuctionDetailPage() {
                     {/* Image Gallery Section: 1+6 Grid & Lightbox */}
                     <div className="flex flex-col gap-6">
                         <Lightbox />
+                        
+                        {/* Winner Banner */}
+                        {car.status === 'sold' && (
+                            <div className="w-full bg-[#F9C146]/10 border-2 border-[#F9C146] rounded-[10px] p-6 flex flex-col md:flex-row items-center justify-between gap-6 animate-in zoom-in duration-500 shadow-lg">
+                                <div className="flex items-center gap-6">
+                                    <div className="w-20 h-20 bg-[#F9C146] rounded-full flex items-center justify-center text-4xl shadow-inner border-4 border-white shrink-0">
+                                        🏆
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <h3 className="text-[22px] font-black text-[#2E3D83] uppercase tracking-tighter leading-none">
+                                            Auction Winner Announced!
+                                        </h3>
+                                        <p className="text-[#545677] font-medium mt-1">
+                                            Congratulations to <span className="font-bold text-[#2E3D83] underline">{topBid?.user?.firstName} {topBid?.user?.lastName}</span> for winning this auction.
+                                        </p>
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center md:items-end">
+                                    <span className="text-[12px] font-bold text-[#2E3D83] uppercase tracking-widest opacity-60">Final Sale Price</span>
+                                    <span className="text-[32px] font-black text-[#2E3D83] leading-none">{formatCurrency(car.currentBid)}</span>
+                                </div>
+                            </div>
+                        )}
 
                         {/* Desktop: 1+6 Grid */}
                         <div className="hidden lg:flex gap-4 h-[550px]">
@@ -326,7 +349,7 @@ export default function CarAuctionDetailPage() {
                     </div>
 
                     {/* Horizontal Stats Bar */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-px bg-[#EAECF3] border border-[#EAECF3] rounded-[10px] overflow-hidden shadow-sm">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-px bg-[#EAECF3] border border-[#EAECF3] rounded-[10px] overflow-hidden shadow-sm">
                         <div className="bg-white p-4 flex flex-col items-center justify-center gap-1">
                             <div className="flex items-center gap-2 text-[#2E3D83]">
                                 <Clock size={16} />
@@ -554,11 +577,25 @@ export default function CarAuctionDetailPage() {
                                             )}
                                         </>
                                     ) : (
-                                        <div className="bg-[#2E3D83]/5 border border-[#2E3D83]/20 rounded-[8px] p-6 text-center">
-                                            <h4 className="text-[18px] font-bold text-[#2E3D83] uppercase tracking-tight mb-2">Auction Ended</h4>
-                                            <p className="text-[14px] text-[#545677] font-medium leading-tight">
-                                                This vehicle has been sold or the listing has expired.
+                                        <div className="bg-[#2E3D83] border border-[#2E3D83] rounded-[8px] p-8 text-center shadow-lg relative overflow-hidden">
+                                            {/* Decorative background icon */}
+                                            <div className="absolute -right-4 -bottom-4 opacity-10 rotate-12">
+                                                <Hammer size={120} className="text-white" />
+                                            </div>
+                                            
+                                            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/30">
+                                                <Clock size={32} className="text-white" />
+                                            </div>
+                                            <h4 className="text-[20px] font-black text-white uppercase tracking-tight mb-2 relative z-10">Listing Closed</h4>
+                                            <p className="text-[13px] text-white/80 font-medium leading-relaxed mb-6 relative z-10">
+                                                This car has been successfully sold. Bidding is no longer active for this listing.
                                             </p>
+                                            <button 
+                                                onClick={() => router.push('/auction')}
+                                                className="w-full py-3 bg-white text-[#2E3D83] text-[12px] font-bold uppercase tracking-widest rounded-[5px] hover:bg-[#F4C23D] transition-colors relative z-10"
+                                            >
+                                                Explore More Auctions
+                                            </button>
                                         </div>
                                     )}
                                 </div>
