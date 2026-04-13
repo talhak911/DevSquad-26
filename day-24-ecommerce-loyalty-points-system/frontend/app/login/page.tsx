@@ -41,7 +41,9 @@ function LoginForm() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    window.location.href = `http://localhost:4000/auth/${provider}`;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
+    const redirectParam = callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : '';
+    window.location.href = `${apiUrl}/auth/${provider}${redirectParam}`;
   };
 
   return (
