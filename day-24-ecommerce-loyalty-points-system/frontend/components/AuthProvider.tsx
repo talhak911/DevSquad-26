@@ -6,17 +6,21 @@ import api from '@/lib/api';
 
 interface User {
   id: string;
+  _id?: string;
   email: string;
   role: string;
   name?: string;
   points?: number;
+  avatar?: string | null;
+  loginActivity?: { method: string; timestamp: string }[];
+  authIdentities?: { provider: string; providerId: string }[];
 }
 
 interface AuthContextType {
   user: User | null;
   token: string | null;
   refreshToken: string | null;
-  login: (token: string, refreshToken: string, user: User) => void;
+  login: (user: User) => void;
   logout: () => void;
   updateTokens: (token: string, refreshToken: string) => void;
   refreshUser: () => Promise<void>;
@@ -28,28 +32,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedRefreshToken = localStorage.getItem('refreshToken');
     const storedUser = localStorage.getItem('user');
-    if (storedToken && storedUser) {
-      setToken(storedToken);
+    if (storedUser) {
       setUser(JSON.parse(storedUser));
-      // Proactively refresh user data to get latest points
-      api.get('/auth/profile').then(res => {
-        localStorage.setItem('user', JSON.stringify(res.data));
-        setUser(res.data);
-      }).catch(() => {});
     }
-    if (storedRefreshToken) {
-      setRefreshToken(storedRefreshToken);
-    }
-    setIsLoading(false);
+    
+    // Proactively refresh user data, validating cookies
+    api.get('/auth/profile').then(res => {
+      localStorage.setItem('user', JSON.stringify(res.data));
+      setUser(res.data);
+    }).catch(() => {
+      // If profile fails, it means cookies are invalid or missing
+      localStorage.removeItem('user');
+      setUser(null);
+    }).finally(() => {
+      setIsLoading(false);
+    });
   }, []);
 
   const refreshUser = async () => {
@@ -63,29 +65,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = (newToken: string, newRefreshToken: string, newUser: User) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('refreshToken', newRefreshToken);
+  const login = (newUser: User) => {
     localStorage.setItem('user', JSON.stringify(newUser));
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
     setUser(newUser);
   };
 
-  const updateTokens = (newToken: string, newRefreshToken: string) => {
-    localStorage.setItem('token', newToken);
-    localStorage.setItem('refreshToken', newRefreshToken);
-    setToken(newToken);
-    setRefreshToken(newRefreshToken);
-  };
-
-  const logout = () => {
+  const logout = async () => {
     const role = user?.role;
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
+    try {
+      await api.post('/auth/logout');
+    } catch(e) {
+      console.error(e);
+    }
     localStorage.removeItem('user');
-    setToken(null);
-    setRefreshToken(null);
     setUser(null);
     if (role === 'admin' || role === 'super_admin') {
       router.push('/admin/login');
@@ -95,7 +87,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, refreshToken, login, logout, updateTokens, refreshUser, isLoading }}>
+    <AuthContext.Provider value={{ user, token: null, refreshToken: null, login, logout, updateTokens: () => {}, refreshUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

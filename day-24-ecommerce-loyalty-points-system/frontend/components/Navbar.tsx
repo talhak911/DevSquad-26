@@ -205,14 +205,27 @@ export default function Navbar() {
               {user ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="p-2 hover:bg-gray-100 rounded-xl">
-                      <User className="w-6 h-6" />
+                    <Button variant="ghost" className="p-2 hover:bg-gray-100 rounded-xl relative overflow-hidden h-10 w-10">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name || 'User'} className="w-full h-full object-cover rounded-full" />
+                      ) : (
+                        <User className="w-6 h-6" />
+                      )}
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-56 rounded-2xl p-2 shadow-2xl border-gray-100">
-                    <div className="px-3 py-2 border-b border-gray-50 mb-1">
-                      <p className="text-xs font-black uppercase tracking-widest">{user.name}</p>
-                      <p className="text-[10px] text-gray-400 truncate mt-1">{user.email}</p>
+                  <DropdownMenuContent align="end" className="w-64 rounded-2xl p-2 shadow-2xl border-gray-100">
+                    <div className="px-3 py-3 border-b border-gray-50 mb-1 flex items-center gap-3">
+                      {user.avatar ? (
+                        <img src={user.avatar} alt={user.name || 'User'} className="w-10 h-10 rounded-full border border-gray-100 shadow-sm" />
+                      ) : (
+                        <div className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-100">
+                          <User className="w-5 h-5 text-gray-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-black uppercase tracking-widest truncate">{user.name}</p>
+                        <p className="text-[10px] text-gray-400 truncate mt-1">{user.email}</p>
+                      </div>
                     </div>
                     <DropdownMenuItem asChild className="rounded-xl cursor-pointer py-3 transition-all hover:translate-x-1">
                       <Link href="/profile" className="w-full font-bold text-xs uppercase tracking-widest">My Profile</Link>
