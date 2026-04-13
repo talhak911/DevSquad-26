@@ -20,7 +20,7 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   refreshToken: string | null;
-  login: (user: User) => void;
+  login: (data: { user: User; access_token: string; refresh_token: string }) => void;
   logout: () => void;
   updateTokens: (token: string, refreshToken: string) => void;
   refreshUser: () => Promise<void>;
@@ -36,18 +36,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    // Optimistic UI: load cached user immediately
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    // Proactively refresh user data on mount if tokens exist
+    const token = localStorage.getItem('access_token');
     
-    // Proactively refresh user data, validating cookies
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+
     api.get('/auth/profile').then(res => {
       localStorage.setItem('user', JSON.stringify(res.data));
       setUser(res.data);
     }).catch(() => {
-      // If profile fails, it means cookies are invalid or missing
+      // If profile fails, clean up
       localStorage.removeItem('user');
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
       setUser(null);
     }).finally(() => {
       setIsLoading(false);
@@ -65,9 +75,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = (newUser: User) => {
-    localStorage.setItem('user', JSON.stringify(newUser));
-    setUser(newUser);
+  const login = (data: { user: User; access_token: string; refresh_token: string }) => {
+    localStorage.setItem('user', JSON.stringify(data.user));
+    localStorage.setItem('access_token', data.access_token);
+    localStorage.setItem('refresh_token', data.refresh_token);
+    setUser(data.user);
   };
 
   const logout = async () => {
@@ -78,6 +90,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       console.error(e);
     }
     localStorage.removeItem('user');
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     setUser(null);
     if (role === 'admin' || role === 'super_admin') {
       router.push('/admin/login');

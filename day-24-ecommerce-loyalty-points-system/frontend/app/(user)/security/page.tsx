@@ -135,8 +135,7 @@ export default function SecurityPage() {
                 ) : (
                   <button
                     onClick={() => {
-                      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-                      window.location.href = `${apiUrl}/auth/${provider.id}`;
+                      window.location.href = `/api/backend/auth/${provider.id}`;
                     }}
                     className="text-[10px] font-black uppercase tracking-widest text-black bg-white border-2 border-black hover:bg-black hover:text-white px-4 py-2 rounded-full transition-colors"
                   >
