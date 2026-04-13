@@ -7,7 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
   app.enableCors({
-    origin: 'http://localhost:3000', // Update this based on the frontend URL in production
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true, // Crucial for receiving cookies
   });
 
