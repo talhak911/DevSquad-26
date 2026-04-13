@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
         setError('Unauthorized. Only admins can log in here.');
         return;
       }
-      login(data.user);
+      login(data);
       router.push('/admin');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed');

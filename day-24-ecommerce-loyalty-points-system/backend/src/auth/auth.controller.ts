@@ -42,19 +42,19 @@ export class AuthController {
   async register(@Body() registerDto: RegisterDto, @Res({ passthrough: true }) res: Response) {
     const tokens = await this.authService.register(registerDto);
     this.setAuthCookies(res, tokens);
-    return { user: tokens.user }; // Return user data, but omit tokens from body
+    return tokens; // Return everything (user + tokens)
   }
 
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const tokens = await this.authService.login(loginDto);
     this.setAuthCookies(res, tokens);
-    return { user: tokens.user };
+    return tokens; // Return everything (user + tokens)
   }
 
   @Post('refresh')
-  async refresh(@Request() req: any, @Res({ passthrough: true }) res: Response) {
-    const refreshToken = req.cookies?.refresh_token;
+  async refresh(@Request() req: any, @Body('refreshToken') bodyToken: string, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies?.refresh_token || bodyToken;
     if (!refreshToken) {
       throw new UnauthorizedException('Refresh token required');
     }
@@ -62,7 +62,7 @@ export class AuthController {
       const payload = this.jwtService.verify(refreshToken);
       const tokens = await this.authService.refreshTokens(payload.sub, refreshToken);
       this.setAuthCookies(res, tokens);
-      return { success: true };
+      return tokens; // Return new tokens
     } catch {
       this.clearAuthCookies(res);
       throw new UnauthorizedException('Invalid or expired refresh token');
@@ -96,7 +96,7 @@ export class AuthController {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
     const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return res.redirect(`${frontendUrl}/auth/callback?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}`);
   }
 
   @Get('github')
@@ -109,7 +109,7 @@ export class AuthController {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
     const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return res.redirect(`${frontendUrl}/auth/callback?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}`);
   }
 
   @Get('discord')
@@ -122,8 +122,9 @@ export class AuthController {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
     const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return res.redirect(`${frontendUrl}/auth/callback?access_token=${tokens.access_token}&refresh_token=${tokens.refresh_token}`);
   }
 }
+
 
 

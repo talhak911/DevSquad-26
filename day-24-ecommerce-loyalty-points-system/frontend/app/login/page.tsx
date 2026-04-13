@@ -32,7 +32,7 @@ function LoginForm() {
         return;
       }
 
-      login(data.user);
+      login(data);
       router.push(callbackUrl);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Invalid email or password');
@@ -41,8 +41,7 @@ function LoginForm() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    window.location.href = `${apiUrl}/auth/${provider}`;
+    window.location.href = `/api/backend/auth/${provider}`;
   };
 
   return (
