@@ -1,5 +1,4 @@
 import { Controller, Post, Body, Get, UseGuards, Request, Res, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -7,6 +6,8 @@ import { LoginDto } from './dto/login.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { GoogleOAuthGuard, GithubOAuthGuard, DiscordOAuthGuard } from './oauth.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -34,6 +35,18 @@ export class AuthController {
   private clearAuthCookies(res: Response) {
     res.clearCookie('access_token');
     res.clearCookie('refresh_token');
+  }
+
+  private handleRedirect(req: any, res: Response) {
+    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
+    const callbackUrl = req.session?.callbackUrl || '/shop';
+    
+    // Clear the specific session redirect after use
+    if (req.session) {
+      delete req.session.callbackUrl;
+    }
+
+    return res.redirect(`${frontendUrl}${callbackUrl}`);
   }
 
   @Post('register')
@@ -85,7 +98,7 @@ export class AuthController {
   // --- OAuth 2.0 Routes ---
 
   @Get('google')
-  @UseGuards(AuthGuard('google'))
+  @UseGuards(GoogleOAuthGuard)
   async googleAuth() {}
 
   @Get('google/callback')
@@ -93,12 +106,11 @@ export class AuthController {
   async googleAuthRedirect(@Request() req: any, @Res() res: Response) {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return this.handleRedirect(req, res);
   }
 
   @Get('github')
-  @UseGuards(AuthGuard('github'))
+  @UseGuards(GithubOAuthGuard)
   async githubAuth() {}
 
   @Get('github/callback')
@@ -106,12 +118,11 @@ export class AuthController {
   async githubAuthRedirect(@Request() req: any, @Res() res: Response) {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return this.handleRedirect(req, res);
   }
 
   @Get('discord')
-  @UseGuards(AuthGuard('discord'))
+  @UseGuards(DiscordOAuthGuard)
   async discordAuth() {}
 
   @Get('discord/callback')
@@ -119,8 +130,7 @@ export class AuthController {
   async discordAuthRedirect(@Request() req: any, @Res() res: Response) {
     const tokens = await this.authService.validateOAuthLogin(req.user);
     this.setAuthCookies(res, tokens);
-    const frontendUrl = this.configService.get<string>('FRONTEND_URL', 'http://localhost:3000');
-    return res.redirect(`${frontendUrl}/shop`);
+    return this.handleRedirect(req, res);
   }
 }
 
