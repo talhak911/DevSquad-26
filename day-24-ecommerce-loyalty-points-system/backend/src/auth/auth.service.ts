@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../users/users.service';
@@ -14,12 +14,26 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto) {
-    const user = await this.usersService.create({
-      name: registerDto.name,
-      email: registerDto.email,
-      passwordHash: registerDto.password,
-      role: Role.USER, // Enforce USER role
-    });
+    // Check if user exists
+    const existingUser = await this.usersService.findByEmail(registerDto.email);
+    
+    let user;
+    if (existingUser) {
+      // If user exists but has no password (likely from OAuth), allow setting one
+      if (!existingUser.passwordHash) {
+        user = await this.usersService.setPassword(existingUser._id.toString(), registerDto.password);
+      } else {
+        throw new ConflictException('User with this email already exists');
+      }
+    } else {
+      // New user creation
+      user = await this.usersService.create({
+        name: registerDto.name,
+        email: registerDto.email,
+        passwordHash: registerDto.password,
+        role: Role.USER,
+      });
+    }
     
     await this.usersService.recordLogin(user._id.toString(), 'email');
     
@@ -33,6 +47,10 @@ export class AuthService {
     const user = await this.usersService.findByEmail(loginDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials'); // User exists but has no password (social account)
     }
 
     const isPasswordValid = await bcrypt.compare(loginDto.password, user.passwordHash);
