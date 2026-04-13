@@ -26,7 +26,7 @@ function RegisterForm() {
 
     try {
       const { data } = await api.post('/auth/register', { name, email, password });
-      login(data.access_token, data.refresh_token, data.user);
+      login(data.user);
       router.push(callbackUrl);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Registration failed');

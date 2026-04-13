@@ -21,6 +21,8 @@ export class AuthService {
       role: Role.USER, // Enforce USER role
     });
     
+    await this.usersService.recordLogin(user._id.toString(), 'email');
+    
     const tokens = await this.generateTokens(user._id.toString(), user.email, user.role);
     await this.updateRefreshToken(user._id.toString(), tokens.refresh_token);
     return tokens;
@@ -37,6 +39,8 @@ export class AuthService {
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    await this.usersService.recordLogin(user._id.toString(), 'email');
 
     const tokens = await this.generateTokens(user._id.toString(), user.email, user.role);
     await this.updateRefreshToken(user._id.toString(), tokens.refresh_token);
@@ -85,7 +89,10 @@ export class AuthService {
       name: user.name,
       email: user.email,
       role: user.role,
-      points: user.points || 0
+      points: user.points || 0,
+      avatar: user.avatar,
+      loginActivity: user.loginActivity,
+      authIdentities: user.authIdentities
     };
   }
 
@@ -102,10 +109,55 @@ export class AuthService {
       refresh_token: refreshToken,
       user: {
         id: userId,
+        name: user?.name,
         email,
         role,
-        points: user?.points || 0
+        points: user?.points || 0,
+        avatar: user?.avatar,
+        loginActivity: user?.loginActivity,
+        authIdentities: user?.authIdentities
       }
     };
+  }
+
+  async validateOAuthLogin(profile: any) {
+    const { provider, providerId, email, name, avatar } = profile;
+
+    // 1. Try to find user by provider ID
+    let user = await this.usersService.findByProviderId(provider, providerId);
+
+    if (user) {
+      await this.usersService.recordLogin(user._id.toString(), provider);
+      return this.issueOAuthTokens(user);
+    }
+
+    // 2. If email exists, link the account
+    if (email) {
+      user = await this.usersService.findByEmail(email);
+      if (user) {
+        await this.usersService.addAuthIdentity(user._id.toString(), provider, providerId);
+        await this.usersService.recordLogin(user._id.toString(), provider);
+        return this.issueOAuthTokens(user);
+      }
+    }
+
+    // 3. Otherwise create a new user safely without a password
+    user = await this.usersService.create({
+      provider,
+      providerId,
+      email: email || `${providerId}@${provider}.local`, // Safe fallback if provider doesn't give email
+      name: name || 'User',
+      avatar,
+      role: Role.USER
+    });
+
+    await this.usersService.recordLogin(user._id.toString(), provider);
+    return this.issueOAuthTokens(user);
+  }
+
+  private async issueOAuthTokens(user: any) {
+    const tokens = await this.generateTokens(user._id.toString(), user.email, user.role);
+    await this.updateRefreshToken(user._id.toString(), tokens.refresh_token);
+    return tokens;
   }
 }

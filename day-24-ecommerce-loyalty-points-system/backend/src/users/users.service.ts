@@ -25,8 +25,13 @@ export class UsersService implements OnModuleInit {
   }
 
   async create(userData: Partial<User>): Promise<UserDocument> {
-    if (!userData.email || !userData.passwordHash) {
-        throw new ConflictException('Email and password are required');
+    if (!userData.email) {
+        throw new ConflictException('Email is required');
+    }
+
+    const isLocal = !userData.provider || userData.provider === 'local';
+    if (isLocal && !userData.passwordHash) {
+        throw new ConflictException('Password is required for local accounts');
     }
 
     const existing = await this.findByEmail(userData.email);
@@ -34,15 +39,51 @@ export class UsersService implements OnModuleInit {
       throw new ConflictException('User with this email already exists');
     }
     
-    // Hash password
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(userData.passwordHash, salt);
+    // Hash password if provided
+    let hashedPassword = userData.passwordHash;
+    if (isLocal && userData.passwordHash) {
+      const salt = await bcrypt.genSalt();
+      hashedPassword = await bcrypt.hash(userData.passwordHash, salt);
+    }
 
     const createdUser = new this.userModel({
       ...userData,
       passwordHash: hashedPassword,
+      provider: userData.provider || 'local',
+      authIdentities: userData.provider && userData.provider !== 'local' && userData.providerId 
+        ? [{ provider: userData.provider, providerId: userData.providerId }] 
+        : []
     });
     return createdUser.save();
+  }
+
+  async findByProviderId(provider: string, providerId: string): Promise<UserDocument | null> {
+    return this.userModel.findOne({
+      $or: [
+        { provider, providerId },
+        { authIdentities: { $elemMatch: { provider, providerId } } }
+      ]
+    }).exec();
+  }
+
+  async addAuthIdentity(userId: string, provider: string, providerId: string): Promise<UserDocument | null> {
+    return this.userModel.findByIdAndUpdate(
+      userId,
+      { $addToSet: { authIdentities: { provider, providerId } } },
+      { new: true }
+    ).exec();
+  }
+
+  async recordLogin(userId: string, method: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(userId, {
+      lastLoginAt: new Date(),
+      $push: {
+        loginActivity: {
+          $each: [{ timestamp: new Date(), method }],
+          $slice: -10 // Keep last 10 logins
+        }
+      }
+    }).exec();
   }
 
 
