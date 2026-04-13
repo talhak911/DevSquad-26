@@ -112,6 +112,12 @@ export class UsersService implements OnModuleInit {
     return this.userModel.findByIdAndUpdate(userId, update, { new: true, session }).exec();
   }
 
+  async setPassword(userId: string, passwordHash: string): Promise<UserDocument | null> {
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(passwordHash, salt);
+    return this.userModel.findByIdAndUpdate(userId, { passwordHash: hash }, { new: true }).exec();
+  }
+
   async updateRefreshToken(userId: string, refreshToken: string | null): Promise<void> {
     let hashedToken: string | null = null;
     if (refreshToken) {

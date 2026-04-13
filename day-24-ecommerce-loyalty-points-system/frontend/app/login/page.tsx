@@ -12,7 +12,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const { login } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -25,7 +25,7 @@ function LoginForm() {
 
     try {
       const { data } = await api.post('/auth/login', { email, password });
-      
+
       if (data.user.role === 'admin' || data.user.role === 'super_admin') {
         setError('Admins must log in via the Admin Portal.');
         setLoading(false);
@@ -42,8 +42,7 @@ function LoginForm() {
 
   const handleSocialLogin = (provider: string) => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
-    const redirectParam = callbackUrl ? `?callbackUrl=${encodeURIComponent(callbackUrl)}` : '';
-    window.location.href = `${apiUrl}/auth/${provider}${redirectParam}`;
+    window.location.href = `${apiUrl}/auth/${provider}`;
   };
 
   return (
@@ -51,7 +50,7 @@ function LoginForm() {
       <div className="bg-white rounded-[3rem] p-10 shadow-2xl shadow-gray-200/50 border border-gray-50 relative overflow-hidden group">
         {/* Decorative elements */}
         <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:bg-black/5 transition-colors" />
-        
+
         <div className="relative z-10 text-center mb-10">
           <h1 className="text-5xl font-black uppercase italic tracking-tighter mb-2 italic">Welcome Back</h1>
           <p className="text-gray-400 font-bold uppercase tracking-[0.2em] text-[10px]">Enter your credentials to continue</p>
@@ -141,7 +140,7 @@ function LoginForm() {
 
         <div className="mt-10 pt-8 border-t border-gray-50 text-center">
           <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest">
-            New here? 
+            New here?
             <Link href={`/register?callbackUrl=${callbackUrl}`} className="text-black ml-2 hover:underline">
               Create an account
             </Link>
