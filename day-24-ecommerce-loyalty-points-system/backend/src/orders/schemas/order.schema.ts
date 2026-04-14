@@ -63,6 +63,12 @@ export class Order {
   @Prop({ required: true })
   paymentMethod: string;
 
+  @Prop()
+  stripeSessionId?: string;
+
+  @Prop()
+  stripePaymentIntentId?: string;
+
   @Prop({
     type: {
       address: String,

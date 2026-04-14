@@ -37,62 +37,63 @@ function CartPageContent() {
       return;
     }
 
-    if (!address.trim()) {
-      toast.error('Please enter a delivery address');
-      return;
-    }
+    if (!address.trim()) { toast.error('Please enter a delivery address'); return; }
+    if (!city.trim()) { toast.error('Please enter your city'); return; }
 
-    if (!city.trim()) {
-      toast.error('Please enter your city');
-      return;
-    }
-
-    // Basic phone validation (at least 7 digits)
     const phoneRegex = /^[+]?[(]?[0-9]{3}[)]?[-\s.]?[0-9]{3}[-\s.]?[0-9]{4,6}$/im;
-    if (!phoneRegex.test(phone)) {
-      toast.error('Please enter a valid phone number');
-      return;
-    }
-
-    if (cart.length === 0) {
-      toast.error('Your cart is empty');
-      return;
-    }
+    if (!phoneRegex.test(phone)) { toast.error('Please enter a valid phone number'); return; }
+    if (cart.length === 0) { toast.error('Your cart is empty'); return; }
 
     setLoading(true);
     try {
-      const orderData = {
-        items: cart.map(item => ({
-          productId: item.productId,
-          color: item.selectedColor,
-          size: item.selectedSize,
-          quantity: item.quantity,
-          usePoints: item.usePoints
-        })),
-        paymentMethod: 'cod',
-        shippingAddress: {
-          address: address.trim(),
-          city: city.trim(),
-          phone: phone.trim()
-        }
-      };
+      const shippingAddress = { address: address.trim(), city: city.trim(), phone: phone.trim() };
+      const items = cart.map(item => ({
+        productId: item.productId,
+        color: item.selectedColor,
+        size: item.selectedSize,
+        quantity: item.quantity,
+        usePoints: item.usePoints,
+      }));
 
-      await api.post('/orders', orderData);
+      // --- STRIPE FLOW: any money items in cart ---
+      if (totalAmount > 0) {
+        // 1. Create a pending order first
+        const orderRes = await api.post('/orders', {
+          items,
+          paymentMethod: 'stripe',
+          shippingAddress,
+        });
+        const orderId = orderRes.data._id;
+
+        const sessionRes = await api.post('/stripe/create-checkout-session', {
+          orderId,
+        });
+
+        // 3. Update the order with the stripe session id
+        await api.post('/orders', {
+          items,
+          paymentMethod: 'stripe',
+          shippingAddress,
+          stripeSessionId: sessionRes.data.sessionId,
+        }).catch(() => {}); // best-effort — order already created
+
+        // 4. Redirect to Stripe Hosted Checkout
+        clearCart();
+        window.location.href = sessionRes.data.url;
+        return;
+      }
+
+      // --- POINTS-ONLY FLOW ---
+      await api.post('/orders', { items, paymentMethod: 'points', shippingAddress });
       toast.success('Order placed successfully!');
       clearCart();
       await refreshUser();
       router.push('/orders');
     } catch (error: any) {
-      console.error('Checkout error:', error);
-
       const serverMessage = error.response?.data?.message;
-      if (Array.isArray(serverMessage)) {
-        toast.error(serverMessage[0]); // Take the first validation error if multiple
-      } else if (serverMessage) {
-        toast.error(serverMessage);
-      } else {
-        toast.error('Failed to place order. Please try again.');
-      }
+      if (Array.isArray(serverMessage)) toast.error(serverMessage[0]);
+      else if (serverMessage) toast.error(serverMessage);
+      else toast.error('Failed to place order. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -304,7 +305,7 @@ function CartPageContent() {
                   <div className="flex items-center justify-center gap-3 opacity-30">
                     <div className="flex items-center gap-2">
                       <CreditCard className="w-4 h-4" />
-                      <span className="text-[10px] font-bold uppercase tracking-widest">Cash on Delivery</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest">Stripe Checkout</span>
                     </div>
                     <div className="w-1 h-1 bg-gray-500 rounded-full" />
                     <div className="flex items-center gap-2">

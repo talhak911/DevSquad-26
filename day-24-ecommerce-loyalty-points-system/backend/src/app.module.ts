@@ -12,6 +12,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { OrdersModule } from './orders/orders.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     OrdersModule,
     CloudinaryModule,
     ReviewsModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

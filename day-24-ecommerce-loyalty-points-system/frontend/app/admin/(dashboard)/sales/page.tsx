@@ -88,7 +88,7 @@ export default function SalesPage() {
     </div>,
     <div key={s._id}>
       <span className="font-bold text-gray-900">
-        {s.discountType === 'percentage' ? `${s.discountValue}%` : `PKR ${s.discountValue}`}
+        {s.discountType === 'percentage' ? `${s.discountValue}%` : `$${s.discountValue}`}
       </span>
       <span className="text-xs text-gray-500 block">OFF</span>
     </div>,

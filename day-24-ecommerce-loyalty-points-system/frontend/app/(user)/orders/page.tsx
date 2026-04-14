@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/components/AuthProvider';
 import api from '@/lib/api';
-import { ShoppingBag, Package, Calendar, Clock, ChevronRight, CheckCircle2, Truck, AlertCircle, Wallet } from 'lucide-react';
+import { ShoppingBag, Package, Calendar, Clock, ChevronRight, CheckCircle2, Truck, AlertCircle, Wallet, CreditCard, Coins } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -14,6 +14,19 @@ const statusConfig: any = {
   shipped: { color: 'bg-purple-50 text-purple-600 border-purple-100', icon: Truck, label: 'Shipped' },
   delivered: { color: 'bg-green-50 text-green-600 border-green-100', icon: CheckCircle2, label: 'Delivered' },
   cancelled: { color: 'bg-red-50 text-red-600 border-red-100', icon: AlertCircle, label: 'Cancelled' },
+};
+
+const paymentMethodConfig: any = {
+  stripe: { color: 'bg-violet-50 text-violet-600 border-violet-100', label: '💳 Stripe' },
+  points: { color: 'bg-amber-50 text-amber-600 border-amber-100', label: '⭐ Points' },
+  cod: { color: 'bg-gray-50 text-gray-600 border-gray-100', label: '💵 Cash on Delivery' },
+};
+
+const paymentStatusConfig: any = {
+  paid: { color: 'bg-green-50 text-green-600 border-green-100', label: 'Paid' },
+  pending: { color: 'bg-orange-50 text-orange-500 border-orange-100', label: 'Pending' },
+  failed: { color: 'bg-red-50 text-red-600 border-red-100', label: 'Failed' },
+  refunded: { color: 'bg-blue-50 text-blue-600 border-blue-100', label: 'Refunded' },
 };
 
 export default function OrdersPage() {
@@ -97,11 +110,22 @@ export default function OrdersPage() {
                     <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total Amount</p>
                     <p className="font-black text-lg tracking-tighter">${order.totalAmount.toFixed(2)}</p>
                   </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Payment</p>
+                    <span className={`px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${paymentMethodConfig[order.paymentMethod]?.color || 'bg-gray-50 text-gray-600 border-gray-100'}`}>
+                      {paymentMethodConfig[order.paymentMethod]?.label || order.paymentMethod}
+                    </span>
+                  </div>
                 </div>
 
-                <div className={`px-4 py-2 rounded-full border ${status.color} flex items-center gap-2 text-[10px] font-black uppercase tracking-widest`}>
-                  <StatusIcon className="w-4 h-4" />
-                  {status.label}
+                <div className="flex items-center gap-3">
+                  <div className={`px-4 py-2 rounded-full border ${status.color} flex items-center gap-2 text-[10px] font-black uppercase tracking-widest`}>
+                    <StatusIcon className="w-4 h-4" />
+                    {status.label}
+                  </div>
+                  <div className={`px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest ${paymentStatusConfig[order.paymentStatus]?.color || 'bg-gray-50 text-gray-600 border-gray-100'}`}>
+                    {paymentStatusConfig[order.paymentStatus]?.label || order.paymentStatus}
+                  </div>
                 </div>
               </div>
 

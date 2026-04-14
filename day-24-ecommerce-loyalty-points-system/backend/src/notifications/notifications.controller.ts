@@ -9,21 +9,21 @@ export class NotificationsController {
 
   @Get()
   findAll(@Request() req: any) {
-    return this.notificationsService.findAllForUser(req.user.userId);
+    return this.notificationsService.findAllForUser(req.user.id);
   }
 
   @Get('unread-count')
   getUnreadCount(@Request() req: any) {
-    return this.notificationsService.getUnreadCount(req.user.userId);
+    return this.notificationsService.getUnreadCount(req.user.id);
   }
 
   @Patch(':id/read')
   markAsRead(@Param('id') id: string, @Request() req: any) {
-    return this.notificationsService.markAsRead(id, req.user.userId);
+    return this.notificationsService.markAsRead(id, req.user.id);
   }
 
   @Patch('read-all')
   markAllAsRead(@Request() req: any) {
-    return this.notificationsService.markAllAsRead(req.user.userId);
+    return this.notificationsService.markAllAsRead(req.user.id);
   }
 }

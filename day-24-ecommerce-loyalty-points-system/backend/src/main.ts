@@ -5,7 +5,9 @@ import session from 'express-session';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true, // Required for Stripe webhook signature verification
+  });
   
   // Required for Railway/Render/Vercel/Heroku proxies to correctly handle HTTPS and cookies
   app.set('trust proxy', 1);
