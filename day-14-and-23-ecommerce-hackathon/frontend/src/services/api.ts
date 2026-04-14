@@ -50,9 +50,14 @@ api.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
       } catch (refreshError) {
+        console.error("Token refresh failed:", refreshError);
         processQueue(refreshError, null);
         localStorage.removeItem("access_token");
-        window.location.href = "/login";
+        // Only redirect to login if we explicitly failed a refresh attempt on a non-background task
+        // This prevents accidental logouts if Render is just temporarily down
+        if (!originalRequest.url.includes("/unread-count")) {
+           window.location.href = "/login";
+        }
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

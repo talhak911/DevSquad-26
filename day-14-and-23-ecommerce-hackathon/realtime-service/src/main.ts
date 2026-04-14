@@ -22,9 +22,19 @@ async function bootstrap() {
   }));
 
   // Enable CORS
-  const corsOrigins = configService.get<string>('CORS_ORIGINS');
   app.enableCors({
-    origin: corsOrigins ? corsOrigins.split(',') : '*',
+    origin: (origin, callback) => {
+      const originsConfig = configService.get<string>('CORS_ORIGINS');
+      const allowedOrigins = originsConfig
+        ? originsConfig.split(',').map(o => o.trim().replace(/\/$/, ''))
+        : ['http://localhost:5173', 'http://localhost:3000'];
+      
+      if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ''))) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   });
 

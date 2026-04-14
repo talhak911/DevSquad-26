@@ -28,9 +28,19 @@ app.get("/health", (_req, res) => {
 
 // ─── CORS & Body Parsing ──────────────────────────────────────────────────────
 app.use(cors({
-  origin: process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(",").map(o => o.trim())
-    : ["http://localhost:5173", "http://localhost:3000"],
+  origin: (origin, callback) => {
+    // 1. Get allowed origins from environment variable
+    const allowedOrigins = process.env.CORS_ORIGINS
+      ? process.env.CORS_ORIGINS.split(",").map(o => o.trim().replace(/\/$/, "")) // Strip trailing slash
+      : ["http://localhost:5173", "http://localhost:3000"];
+
+    // 2. Allow if origin is in the list, or if it is a local dev request (undefined origin from Postman/Server)
+    if (!origin || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
 }));
 app.use(express.json());
