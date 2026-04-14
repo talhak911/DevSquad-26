@@ -11,6 +11,9 @@ export class DiscordStrategy extends PassportStrategy(Strategy, 'discord') {
       clientSecret: configService.get<string>('DISCORD_CLIENT_SECRET') || 'placeholder_client_secret',
       callbackURL: configService.get<string>('DISCORD_CALLBACK_URL') || 'http://localhost:4000/auth/discord/callback',
       scope: ['identify', 'email'],
+      customHeaders: {
+        'User-Agent': 'EcommerceApp (https://my-ecommerce.com, 1.0.0)',
+      },
     });
   }
 
