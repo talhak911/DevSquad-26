@@ -190,11 +190,11 @@ export default function OrderDetailPage() {
                     </div>
                     <div className="mt-2 flex items-center justify-between">
                       <div className="text-sm text-gray-600">
-                        {item.quantity} x {item.priceAtPurchase > 0 ? `PKR ${item.priceAtPurchase.toLocaleString()}` : `${item.pointsAtPurchase} points`}
+                        {item.quantity} x {item.priceAtPurchase > 0 ? `$${item.priceAtPurchase.toLocaleString()}` : `${item.pointsAtPurchase} points`}
                       </div>
                       <div className="font-bold text-gray-900">
                         {item.priceAtPurchase > 0
-                          ? `PKR ${(item.priceAtPurchase * item.quantity).toLocaleString()}`
+                          ? `$${(item.priceAtPurchase * item.quantity).toLocaleString()}`
                           : `${item.pointsAtPurchase * item.quantity} pts`}
                       </div>
                     </div>
@@ -206,7 +206,7 @@ export default function OrderDetailPage() {
               <div className="w-64 space-y-2">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
-                  <span>PKR {order.totalAmount.toLocaleString()}</span>
+                  <span>${order.totalAmount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Points Used</span>
@@ -214,7 +214,7 @@ export default function OrderDetailPage() {
                 </div>
                 <div className="flex justify-between text-lg font-bold text-gray-900 pt-2 border-t border-gray-200">
                   <span>Grand Total</span>
-                  <span>PKR {order.totalAmount.toLocaleString()}</span>
+                  <span>${order.totalAmount.toLocaleString()}</span>
                 </div>
               </div>
             </div>

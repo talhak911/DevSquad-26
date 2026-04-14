@@ -29,8 +29,10 @@ interface Order {
   items: OrderItem[];
   totalAmount: number;
   totalPoints: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
+  paymentMethod: string;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'refunded';
+  stripePaymentIntentId?: string;
+  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
   createdAt: string;
 }
 
@@ -56,6 +58,7 @@ export default function OrdersPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [paymentFilter, setPaymentFilter] = useState('all');
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -90,11 +93,12 @@ export default function OrdersPage() {
         o.userId.name.toLowerCase().includes(search.toLowerCase()) || 
         o._id.toLowerCase().includes(search.toLowerCase());
       const matchesStatus = statusFilter === 'all' || o.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      const matchesPayment = paymentFilter === 'all' || o.paymentMethod === paymentFilter;
+      return matchesSearch && matchesStatus && matchesPayment;
     });
-  }, [orders, search, statusFilter]);
+  }, [orders, search, statusFilter, paymentFilter]);
 
-  const headers = ['ORDER ID', 'CUSTOMER', 'DATE', 'TOTAL', 'STATUS', 'PAYMENT', 'ACTIONS'];
+  const headers = ['ORDER ID', 'CUSTOMER', 'DATE', 'TOTAL', 'STATUS', 'PAYMENT METHOD & STATUS', 'ACTIONS'];
 
   const rows = filteredOrders.map((o) => {
     const StatusIcon = statusIcons[o.status] || Clock;
@@ -110,7 +114,7 @@ export default function OrdersPage() {
         {new Date(o.createdAt).toLocaleDateString()}
       </div>,
       <div key={o._id}>
-        <div className="font-bold text-gray-900">PKR {o.totalAmount.toLocaleString()}</div>
+        <div className="font-bold text-gray-900">${o.totalAmount.toLocaleString()}</div>
         {o.totalPoints > 0 && <div className="text-xs text-orange-600">+{o.totalPoints} pts</div>}
       </div>,
       <div key={o._id}>
@@ -119,10 +123,26 @@ export default function OrdersPage() {
           {o.status.charAt(0).toUpperCase() + o.status.slice(1)}
         </span>
       </div>,
-      <div key={o._id}>
-        <span className={`text-xs font-medium ${o.paymentStatus === 'paid' ? 'text-green-600' : 'text-yellow-600'}`}>
-          {o.paymentStatus.toUpperCase()}
+      <div key={o._id} className="space-y-1">
+        <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${
+          o.paymentMethod === 'stripe' ? 'bg-violet-100 text-violet-700' :
+          o.paymentMethod === 'points' ? 'bg-amber-100 text-amber-700' :
+          'bg-gray-100 text-gray-700'
+        }`}>
+          {o.paymentMethod === 'stripe' ? '💳 Stripe' : o.paymentMethod === 'points' ? '⭐ Points' : '💵 COD'}
         </span>
+        <div className={`text-xs font-semibold ${
+          o.paymentStatus === 'paid' ? 'text-green-600' :
+          o.paymentStatus === 'failed' ? 'text-red-600' :
+          'text-yellow-600'
+        }`}>
+          {o.paymentStatus.toUpperCase()}
+        </div>
+        {o.stripePaymentIntentId && (
+          <div className="text-[10px] text-gray-400 font-mono truncate max-w-[120px]" title={o.stripePaymentIntentId}>
+            {o.stripePaymentIntentId.slice(-12)}
+          </div>
+        )}
       </div>,
       <div key={o._id} className="flex gap-2">
         <button 
@@ -206,6 +226,16 @@ export default function OrdersPage() {
             <option value="shipped">Shipped</option>
             <option value="delivered">Delivered</option>
             <option value="cancelled">Cancelled</option>
+          </select>
+          <select 
+            value={paymentFilter}
+            onChange={(e) => setPaymentFilter(e.target.value)}
+            className="bg-gray-50 border border-gray-200 rounded-lg text-sm px-3 py-2 focus:outline-none"
+          >
+            <option value="all">All Payments</option>
+            <option value="stripe">Stripe</option>
+            <option value="points">Points</option>
+            <option value="cod">Cash on Delivery</option>
           </select>
         </div>
       </div>

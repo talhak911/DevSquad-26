@@ -41,7 +41,7 @@ export default function Dashboard() {
   }
 
   const statCards = [
-    { label: 'Total Revenue', value: `PKR ${stats.totalRevenue.toLocaleString()}`, change: '+12.5%', icon: '💰' },
+    { label: 'Total Revenue', value: `$${stats.totalRevenue.toLocaleString()}`, change: '+12.5%', icon: '💰' },
     { label: 'Total Orders', value: stats.totalOrders.toString(), change: '+5.2%', icon: '📦' },
     { label: 'Pending Orders', value: stats.pendingOrders.toString(), change: '-2.1%', icon: '🔄' },
     { label: 'Completed Orders', value: stats.completedOrders.toString(), change: '+8.4%', icon: '✅' },
@@ -65,7 +65,7 @@ export default function Dashboard() {
       {order.userId?.name || 'Guest'}
     </div>,
     <StatusBadge key={order._id} status={order.status.charAt(0).toUpperCase() + order.status.slice(1)} />,
-    <span className="font-black">PKR {order.totalAmount.toLocaleString()}</span>
+    <span className="font-black">${order.totalAmount.toLocaleString()}</span>
   ]);
 
   return (
@@ -129,7 +129,7 @@ export default function Dashboard() {
               <div key={i} className="flex-1 flex flex-col items-center gap-4 group">
                 <div className="flex flex-col items-center w-full">
                   <div className="text-[8px] font-black text-gray-400 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    PKR {Math.ceil(data.value).toLocaleString()}
+                    ${Math.ceil(data.value).toLocaleString()}
                   </div>
                   <div
                     className="w-full max-w-[40px] bg-black rounded-t-xl transition-all group-hover:bg-blue-600 shadow-lg shadow-black/5"
@@ -168,11 +168,11 @@ export default function Dashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="font-black text-sm uppercase tracking-tight truncate">{seller.name}</p>
-                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">PKR {seller.totalRevenue.toLocaleString()} volume</p>
+                      <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">${seller.totalRevenue.toLocaleString()} volume</p>
                     </div>
                   </div>
                   <div className="flex justify-between items-center pl-16">
-                    <span className="font-black text-xs">PKR {seller.price.toLocaleString()}</span>
+                    <span className="font-black text-xs">${seller.price.toLocaleString()}</span>
                     <span className="bg-black text-white px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest">{seller.totalSales} SOLD</span>
                   </div>
                 </div>

@@ -90,40 +90,135 @@ export class OrdersService {
         paymentMethod: createOrderDto.paymentMethod,
         shippingAddress: createOrderDto.shippingAddress,
         status: 'pending',
-        paymentStatus: createOrderDto.paymentMethod === 'cod' ? 'pending' : 'paid',
+        // For Stripe, stay pending until webhook confirms. For COD/points, mark based on method.
+        paymentStatus: createOrderDto.paymentMethod === 'stripe' ? 'pending' : 
+                       createOrderDto.paymentMethod === 'cod' ? 'pending' : 'paid',
+        ...(createOrderDto.stripeSessionId ? { stripeSessionId: createOrderDto.stripeSessionId } : {}),
       });
 
       const savedOrder = await order.save({ session });
 
       // Update user points: ONLY deduct spent points at creation. 
       // Do NOT award points yet (user wants points only on delivery).
-      if (totalPointsToDeduct > 0) {
+      if (totalPointsToDeduct > 0 && createOrderDto.paymentMethod !== 'stripe') {
         await this.usersService.updatePoints(userId, -totalPointsToDeduct, session);
       }
       
-      // Save notification for user
-      await this.notificationsService.create({
-        userId: userId,
-        title: 'Order Placed!',
-        message: `Your order #${savedOrder._id.toString().slice(-8).toUpperCase()} has been placed successfully.`,
-        type: 'order_placed',
-        link: `/orders/${savedOrder._id}`
-      });
+      if (createOrderDto.paymentMethod !== 'stripe') {
+        // Save notification for user
+        await this.notificationsService.create({
+          userId: userId,
+          title: 'Order Placed!',
+          message: `Your order #${savedOrder._id.toString().slice(-8).toUpperCase()} has been placed successfully.`,
+          type: 'order_placed',
+          link: `/orders/${savedOrder._id}`
+        });
 
-      // Save notifications for admins
-      const admins = await this.usersService.findAdmins();
-      for (const admin of admins) {
-         await this.notificationsService.create({
-           userId: admin._id.toString(),
-           title: 'New Order Received',
-           message: `A new order #${savedOrder._id.toString().slice(-8).toUpperCase()} has been placed by ${user.name}.`,
-           type: 'order_placed',
-           link: `/admin/orders/${savedOrder._id}`
-         });
+        // Save notifications for admins
+        const admins = await this.usersService.findAdmins();
+        for (const admin of admins) {
+           await this.notificationsService.create({
+             userId: admin._id.toString(),
+             title: 'New Order Received',
+             message: `A new order #${savedOrder._id.toString().slice(-8).toUpperCase()} has been placed by ${user.name}.`,
+             type: 'order_placed',
+             link: `/admin/orders/${savedOrder._id}`
+           });
+        }
       }
 
       await session.commitTransaction();
       return savedOrder;
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  async confirmStripePayment(stripeSessionId: string, paymentIntentId: string) {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      const order = await this.orderModel
+        .findOne({ stripeSessionId })
+        .session(session);
+
+      if (!order || order.paymentStatus === 'paid') {
+        await session.commitTransaction();
+        return; // Idempotent — don't process twice
+      }
+
+      order.paymentStatus = 'paid';
+      order.status = 'processing';
+      order.stripePaymentIntentId = paymentIntentId;
+      await order.save({ session });
+
+      // Deduct points if applicable (points were NOT deducted at order creation for stripe orders)
+      if (order.totalPoints > 0) {
+        await this.usersService.updatePoints(
+          order.userId.toString(),
+          -order.totalPoints,
+          session,
+        );
+      }
+
+      // Notify user
+      await this.notificationsService.create({
+        userId: order.userId.toString(),
+        title: 'Payment Confirmed!',
+        message: `Payment for order #${order._id.toString().slice(-8).toUpperCase()} was successful.`,
+        type: 'order_placed',
+        link: `/orders/${order._id}`,
+      });
+
+      const admins = await this.usersService.findAdmins();
+      for (const admin of admins) {
+        await this.notificationsService.create({
+          userId: admin._id.toString(),
+          title: 'Stripe Payment Received',
+          message: `Order #${order._id.toString().slice(-8).toUpperCase()} payment confirmed via Stripe.`,
+          type: 'order_placed',
+          link: `/admin/orders/${order._id}`,
+        });
+      }
+
+      await session.commitTransaction();
+    } catch (error) {
+      await session.abortTransaction();
+      throw error;
+    } finally {
+      session.endSession();
+    }
+  }
+
+  async failStripePayment(stripeSessionId: string) {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+
+    try {
+      const order = await this.orderModel.findOne({ stripeSessionId }).session(session);
+      if (!order || order.status === 'cancelled') {
+        await session.commitTransaction();
+        return; // Idempotent or not found
+      }
+
+      order.paymentStatus = 'failed';
+      order.status = 'cancelled';
+      await order.save({ session });
+
+      // Restore stock
+      for (const item of order.items) {
+        const product = await this.productsService.findById(item.productId.toString());
+        if (product) {
+          await this.productsService.update(product._id.toString(), {
+            stock: product.stock + item.quantity,
+          });
+        }
+      }
+
+      await session.commitTransaction();
     } catch (error) {
       await session.abortTransaction();
       throw error;

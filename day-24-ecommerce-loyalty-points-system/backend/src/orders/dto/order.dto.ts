@@ -41,6 +41,10 @@ export class CreateOrderDto {
     city: string;
     phone: string;
   };
+
+  @IsString()
+  @IsOptional()
+  stripeSessionId?: string;
 }
 
 export class UpdateOrderStatusDto {

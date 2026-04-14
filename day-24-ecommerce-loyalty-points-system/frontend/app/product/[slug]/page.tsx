@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, use } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { Star, Minus, Plus, Shield, Truck, RefreshCcw, Loader2, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -13,10 +14,12 @@ import Navbar from '@/components/Navbar'
 import Footer from '@/components/Footer'
 import { useAuth } from '@/components/AuthProvider'
 import ReviewsSection from '@/components/ReviewsSection'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 
 export default function ProductDetail({ params: paramsPromise }: { params: Promise<{ slug: string }> }) {
   const params = use(paramsPromise);
   const { slug } = params;
+  const router = useRouter();
   const { addToCart } = useCart();
   const { user } = useAuth();
   const [product, setProduct] = useState<any>(null);
@@ -91,8 +94,8 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
     }
 
     if (purchaseType === 'points' && user && (user.points ?? 0) < (product.pointsPrice || 0) * quantity) {
-        toast.error('Insufficient loyalty points');
-        return;
+      toast.error('Insufficient loyalty points');
+      return;
     }
 
     addToCart({
@@ -109,11 +112,16 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
       purchaseType: product.purchaseType,
     });
 
-    toast.success('Added to cart');
+    toast.success('Added to cart', {
+      action: {
+        label: 'View Cart',
+        onClick: () => router.push('/cart')
+      }
+    });
   }
 
   const currentPrice = product.discountedPrice !== undefined && product.discountedPrice !== null ? product.discountedPrice : product.price;
-  const discount = product.price > currentPrice 
+  const discount = product.price > currentPrice
     ? Math.round(((product.price - currentPrice) / product.price) * 100)
     : 0;
 
@@ -122,28 +130,32 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
       <Navbar />
       <main className="flex-1 pt-20">
         <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex flex-col lg:flex-row gap-12 items-start">
+          <div className="flex flex-col lg:flex-row gap-12">
             {/* Image Gallery */}
-            <div className="flex-1 flex flex-col md:flex-row gap-4 items-start">
+            <div className="flex-1 flex flex-col md:flex-row gap-4">
               <div className="flex md:flex-col gap-4 order-2 md:order-1 overflow-x-auto md:overflow-y-auto max-h-[600px] w-full md:w-auto pb-4">
                 {displayImages.map((img: string, i: number) => (
-                  <div 
-                    key={img + i} 
+                  <div
+                    key={img + i}
                     onClick={() => setMainImageIndex(i)}
                     className={`w-24 h-24 flex-shrink-0 relative rounded-xl border-2 overflow-hidden cursor-pointer transition-all ${mainImageIndex === i ? 'border-black' : 'border-gray-100 hover:border-gray-300'}`}
                   >
-                    <Image src={img} alt={`${product.name} ${i}`} fill className="object-cover" />
+                    <AspectRatio ratio={1 / 1}>
+                      <Image src={img} alt={`${product.name} ${i}`} fill className="object-cover" />
+                    </AspectRatio>
                   </div>
                 ))}
               </div>
-              <div className="flex-1 aspect-square relative rounded-3xl border border-gray-50 overflow-hidden order-1 md:order-2 bg-gray-50/50">
-                <Image 
-                  src={displayImages?.[mainImageIndex] || '/placeholder-product.png'} 
-                  alt={product.name} 
-                  fill 
-                  className="object-contain p-8" 
-                  priority
-                />
+              <div className="flex-1 relative w-full rounded-3xl border border-gray-50 overflow-hidden order-1 md:order-2 bg-gray-50/50">
+                <AspectRatio ratio={1 / 1}>
+                  <Image
+                    src={displayImages?.[mainImageIndex] || '/placeholder-product.png'}
+                    alt={product.name}
+                    fill
+                    className="object-contain p-8"
+                    priority
+                  />
+                </AspectRatio>
               </div>
             </div>
 
@@ -163,7 +175,7 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
               <h1 className="text-4xl md:text-6xl font-black italic mb-4 uppercase tracking-tighter leading-none">
                 {product.name}
               </h1>
-              
+
               <div className="flex items-center gap-4 mb-8">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
@@ -188,13 +200,12 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
               {/* Purchase Options */}
               {product.purchaseType !== 'money' && (
                 <div className="grid grid-cols-2 gap-4 mb-10">
-                  <button 
+                  <button
                     onClick={() => setPurchaseType('money')}
-                    className={`flex flex-col items-start p-5 border-2 rounded-3xl transition-all duration-300 ${
-                      purchaseType === 'money' 
-                        ? 'border-black bg-black text-white shadow-2xl translate-y-[-2px]' 
+                    className={`flex flex-col items-start p-5 border-2 rounded-3xl transition-all duration-300 ${purchaseType === 'money'
+                        ? 'border-black bg-black text-white shadow-2xl translate-y-[-2px]'
                         : 'border-gray-50 bg-gray-50/50 text-gray-400 hover:border-gray-200'
-                    }`}
+                      }`}
                   >
                     <span className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-60">Standard</span>
                     <span className="text-lg font-black italic uppercase italic">Cash Payment</span>
@@ -203,14 +214,13 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                     </span>
                   </button>
 
-                  <button 
+                  <button
                     disabled={product.purchaseType === 'money'}
                     onClick={() => setPurchaseType('points')}
-                    className={`flex flex-col items-start p-5 border-2 rounded-3xl transition-all duration-300 ${
-                      purchaseType === 'points' 
-                        ? 'border-blue-600 bg-blue-600 text-white shadow-2xl translate-y-[-2px]' 
+                    className={`flex flex-col items-start p-5 border-2 rounded-3xl transition-all duration-300 ${purchaseType === 'points'
+                        ? 'border-blue-600 bg-blue-600 text-white shadow-2xl translate-y-[-2px]'
                         : 'border-gray-50 bg-gray-50/50 text-gray-400 hover:border-gray-200 disabled:opacity-50'
-                    }`}
+                      }`}
                   >
                     <span className="text-[10px] font-black uppercase tracking-widest mb-1 opacity-60">Loyalty</span>
                     <span className="text-lg font-black italic uppercase italic">{product.pointsPrice} LP</span>
@@ -235,15 +245,14 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                         <button
                           key={color}
                           onClick={() => setSelectedColor(color)}
-                          className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${
-                            selectedColor === color 
-                              ? 'border-black scale-110 shadow-lg' 
+                          className={`w-10 h-10 rounded-full border-2 transition-all flex items-center justify-center ${selectedColor === color
+                              ? 'border-black scale-110 shadow-lg'
                               : 'border-gray-200 hover:border-gray-300'
-                          }`}
+                            }`}
                           style={{ backgroundColor: color.toLowerCase() }}
                           title={color}
                         >
-                           {selectedColor === color && <Check className={`w-4 h-4 ${['white', 'yellow'].includes(color.toLowerCase()) ? 'text-black' : 'text-white'}`} />}
+                          {selectedColor === color && <Check className={`w-4 h-4 ${['white', 'yellow'].includes(color.toLowerCase()) ? 'text-black' : 'text-white'}`} />}
                         </button>
                       ))}
                     </div>
@@ -259,11 +268,10 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                         <button
                           key={size}
                           onClick={() => setSelectedSize(size)}
-                          className={`px-8 py-3 rounded-2xl text-sm font-black transition-all ${
-                            selectedSize === size 
-                              ? 'bg-black text-white shadow-xl translate-y-[-2px]' 
+                          className={`px-8 py-3 rounded-2xl text-sm font-black transition-all ${selectedSize === size
+                              ? 'bg-black text-white shadow-xl translate-y-[-2px]'
                               : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
-                          }`}
+                            }`}
                         >
                           {size}
                         </button>
@@ -275,14 +283,14 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                 {/* Quantity and Add to Cart */}
                 <div className="flex gap-4 items-center pt-4">
                   <div className="flex items-center bg-gray-50 rounded-3xl px-8 py-5 gap-10">
-                    <button 
+                    <button
                       onClick={() => setQuantity(Math.max(1, quantity - 1))}
                       className="text-gray-400 hover:text-black transition-colors"
                     >
                       <Minus className="w-5 h-5 stroke-[3px]" />
                     </button>
                     <span className="font-black text-2xl min-w-[30px] text-center italic">{quantity}</span>
-                    <button 
+                    <button
                       onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
                       disabled={quantity >= product.stock}
                       className="text-gray-400 hover:text-black transition-colors disabled:opacity-20"
@@ -290,7 +298,7 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                       <Plus className="w-5 h-5 stroke-[3px]" />
                     </button>
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleAddToCart}
                     size="lg"
                     disabled={product.stock <= 0}
@@ -338,20 +346,20 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
           <div className="mt-24">
             <Tabs defaultValue="details" className="w-full">
               <TabsList className="w-full justify-start border-b border-gray-100 bg-transparent h-auto p-0 gap-12">
-                <TabsTrigger 
-                  value="details" 
+                <TabsTrigger
+                  value="details"
                   className="px-4 py-6 data-[state=active]:border-b-4 data-[state=active]:border-black rounded-none shadow-none text-xl font-black uppercase tracking-tighter italic data-[state=active]:bg-transparent"
                 >
                   Description
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="reviews" 
+                <TabsTrigger
+                  value="reviews"
                   className="px-4 py-6 data-[state=active]:border-b-4 data-[state=active]:border-black rounded-none shadow-none text-xl font-black uppercase tracking-tighter italic data-[state=active]:bg-transparent"
                 >
                   Reviews ({product.numReviews})
                 </TabsTrigger>
-                <TabsTrigger 
-                  value="faq" 
+                <TabsTrigger
+                  value="faq"
                   className="px-4 py-6 data-[state=active]:border-b-4 data-[state=active]:border-black rounded-none shadow-none text-xl font-black uppercase tracking-tighter italic data-[state=active]:bg-transparent"
                 >
                   FAQ
@@ -360,9 +368,9 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
               <TabsContent value="details" className="py-16">
                 <div className="max-w-4xl">
                   <h3 className="text-4xl font-black italic uppercase tracking-tighter mb-8 leading-none">Uncompromising Quality</h3>
-                  <div 
+                  <div
                     className="prose prose-xl max-w-none text-gray-400 font-medium leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: product.description }} 
+                    dangerouslySetInnerHTML={{ __html: product.description }}
                   />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16 p-10 bg-gray-50 rounded-3xl">
                     <div>
@@ -377,12 +385,12 @@ export default function ProductDetail({ params: paramsPromise }: { params: Promi
                 </div>
               </TabsContent>
               <TabsContent value="reviews">
-                 <ReviewsSection key={`${product._id}-${product.numReviews}`} productId={product._id} onReviewAdded={fetchProduct} />
+                <ReviewsSection key={`${product._id}-${product.numReviews}`} productId={product._id} onReviewAdded={fetchProduct} />
               </TabsContent>
               <TabsContent value="faq" className="py-20 text-center">
-                 <div className="max-w-xl mx-auto">
-                    <p className="text-gray-400 font-medium text-lg italic uppercase">Frequently asked questions coming soon.</p>
-                 </div>
+                <div className="max-w-xl mx-auto">
+                  <p className="text-gray-400 font-medium text-lg italic uppercase">Frequently asked questions coming soon.</p>
+                </div>
               </TabsContent>
             </Tabs>
           </div>
