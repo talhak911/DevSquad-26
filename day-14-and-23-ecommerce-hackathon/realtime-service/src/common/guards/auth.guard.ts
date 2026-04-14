@@ -48,7 +48,18 @@ export class AuthGuard implements CanActivate {
       request.user = user;
       return true;
     } catch (err) {
-      throw new UnauthorizedException('Invalid or expired token');
+      const secret = this.configService.get<string>('JWT_SECRET') || '';
+      const maskedSecret = secret.length > 4 ? `${secret.substring(0, 2)}...${secret.substring(secret.length - 2)}` : '***';
+      
+      console.error(`AuthGuard Debug [Secret: ${maskedSecret}]:`, err.message);
+      
+      if (err instanceof UnauthorizedException || err instanceof ForbiddenException) {
+        // Carry over the specific message
+        const responseMessage = `AuthGuard: ${err.message}`;
+        throw new UnauthorizedException(responseMessage);
+      }
+      
+      throw new UnauthorizedException(`AuthGuard: ${err.message || 'Invalid or expired token'}`);
     }
   }
 }

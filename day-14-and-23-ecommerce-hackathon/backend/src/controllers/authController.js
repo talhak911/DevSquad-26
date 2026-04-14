@@ -15,7 +15,7 @@ const hashToken = (token) => {
 };
 
 // Helper – build consistent auth response and handle Refresh Token logic
-const sendTokenResponse = async (user, statusCode, res, message) => {
+const sendTokenResponse = async (user, statusCode, req, res, message) => {
   // 1. Generate Access Token (JWT)
   const accessToken = signToken(user._id);
 
@@ -37,12 +37,14 @@ const sendTokenResponse = async (user, statusCode, res, message) => {
   });
 
   // 5. Send raw token securely via HttpOnly cookie
-  const isProduction = process.env.NODE_ENV === "production";
+  const isLocalStorageOrLocalDev = !req.get("origin") || req.get("origin").includes("localhost");
+  const isProduction = process.env.NODE_ENV === "production" || !isLocalStorageOrLocalDev;
+
   const cookieOptions = {
     expires: expiresAt,
     httpOnly: true,
-    secure: isProduction, // Must be HTTPS in prod for cross-site cookies
-    sameSite: isProduction ? "none" : "lax", // 'none' allows cross-domain cookies, 'lax' is fine for localhost
+    secure: isProduction, // Must be true for SameSite: none
+    sameSite: isProduction ? "none" : "lax", // 'none' for cross-domain Vercel/Render, 'lax' for local
   };
 
   res
@@ -85,7 +87,7 @@ const register = async (req, res, next) => {
 
     // Registration creates a customer account by default
     const user = await User.create({ name, email, password, role: "user" });
-    await sendTokenResponse(user, 201, res, "Account created successfully");
+    await sendTokenResponse(user, 201, req, res, "Account created successfully");
   } catch (error) {
     next(error);
   }
@@ -109,7 +111,23 @@ const login = async (req, res, next) => {
       });
     }
 
-    await sendTokenResponse(user, 200, res, "Logged in successfully");
+    if (!user.isActive) {
+      return res.status(403).json({
+        success: false,
+        data: null,
+        message: "Your account is inactive. Please contact support.",
+      });
+    }
+
+    if (user.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        data: null,
+        message: "Your account has been blocked. Please contact support.",
+      });
+    }
+
+    await sendTokenResponse(user, 200, req, res, "Logged in successfully");
   } catch (error) {
     next(error);
   }
@@ -182,9 +200,17 @@ const refreshTokens = async (req, res, next) => {
       });
     }
 
+    if (!user.isActive || user.isBlocked) {
+      return res.status(403).json({
+        success: false,
+        data: null,
+        message: "Your account is blocked or inactive. Please contact support.",
+      });
+    }
+
     // Refresh Token Rotation: Delete old token, issue entirely fresh tokens
     await Token.findByIdAndDelete(tokenDoc._id);
-    await sendTokenResponse(user, 200, res, "Tokens refreshed successfully");
+    await sendTokenResponse(user, 200, req, res, "Tokens refreshed successfully");
   } catch (error) {
     next(error);
   }
@@ -205,10 +231,12 @@ const logout = async (req, res, next) => {
       await Token.findOneAndDelete({ token: hashedIncomingToken });
     }
 
-    const isProduction = process.env.NODE_ENV === "production";
+    const isLocalStorageOrLocalDev = !req.get("origin") || req.get("origin").includes("localhost");
+    const isProduction = process.env.NODE_ENV === "production" || !isLocalStorageOrLocalDev;
+
     // Clear client-side cookie
     res.cookie("refresh_token", "none", {
-      expires: new Date(Date.now() + 10 * 1000), // 10 seconds generic expiration to override immediately
+      expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true,
       secure: isProduction,
       sameSite: isProduction ? "none" : "lax",
