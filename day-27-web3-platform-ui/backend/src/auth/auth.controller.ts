@@ -34,11 +34,13 @@ export class AuthController {
     const frontendUrl =
       this.configService.get<string>('FRONTEND_URL') || 'http://localhost:3000';
 
+    const isProduction = process.env.NODE_ENV === 'production' || frontendUrl.includes('https');
+
     // Store JWT in secure HttpOnly cookie
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
