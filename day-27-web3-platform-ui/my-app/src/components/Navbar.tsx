@@ -14,8 +14,9 @@ import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { useState } from 'react';
 import Link from 'next/link';
-import { useGetMeQuery, useLogoutMutation } from '@/services/authApi';
+import { authApi, useGetMeQuery, useLogoutMutation } from '@/services/authApi';
 import { useRouter } from 'next/navigation';
+import { useDispatch } from 'react-redux';
 
 const navLinks = ['How it work', 'Blog', 'Support'];
 
@@ -27,13 +28,15 @@ export default function Navbar() {
   const { data: user, isLoading } = useGetMeQuery();
   const [logout] = useLogoutMutation();
 
+  const dispatch = useDispatch();
   const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const handleLogout = async () => {
     handleMenuClose();
     await logout();
+    // Manually reset the API state to clear user info from UI instantly
+    dispatch(authApi.util.resetApiState());
     router.push('/');
-    router.refresh();
   };
 
   return (
