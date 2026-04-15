@@ -68,7 +68,7 @@ export default function HeroSection() {
       sx={{
         position: 'relative',
         overflow: 'hidden',
-        pt: { xs: 6, md: 20 },
+        pt: { xs: 14, md: 20 },
         pb: { xs: 8, md: 12 },
         minHeight: { xs: 'auto', md: '540px' },
       }}
