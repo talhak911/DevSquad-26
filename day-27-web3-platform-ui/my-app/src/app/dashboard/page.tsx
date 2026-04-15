@@ -1,6 +1,6 @@
 'use client';
 
-import { useGetMeQuery, useLogoutMutation } from '@/services/authApi';
+import { useGetMeQuery, useLogoutMutation, authApi } from '@/services/authApi';
 import {
   Box, Button, Card, CardContent, Chip, CircularProgress,
   Container, Divider, Grid, Stack, Typography, Avatar,
@@ -12,6 +12,7 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import Link from 'next/link';
 
 const stats = [
@@ -37,8 +38,10 @@ export default function DashboardPage() {
     if (!isLoading && isError) router.push('/login');
   }, [isLoading, isError, router]);
 
+  const dispatch = useDispatch();
   const handleLogout = async () => {
     await logout();
+    dispatch(authApi.util.resetApiState());
     router.push('/');
   };
 
