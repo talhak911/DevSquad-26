@@ -25,6 +25,7 @@ export class ProductsService {
           slug
           price
           featured
+          shoeCategory
           description {
             text
           }
@@ -34,6 +35,7 @@ export class ProductsService {
         }
       }
     `;
+
 
     try {
       const response = await lastValueFrom(
