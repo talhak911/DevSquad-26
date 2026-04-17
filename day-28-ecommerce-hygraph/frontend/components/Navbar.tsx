@@ -22,19 +22,22 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: "WOMAN", fw: 400 },
-    { label: "MEN", fw: 400 },
-    { label: "ALL", fw: 700 }
+    { label: "ALL", href: "/", fw: 700 },
+    { label: "MEN", href: "/category/MEN", fw: 400 },
+    { label: "WOMEN", href: "/category/WOMEN", fw: 400 },
+    { label: "KIDS", href: "/category/KIDS", fw: 400 }
   ];
 
   const sidebarLinks = [
-    { label: "ALL", fw: 700 },
-    { label: "WOMAN", fw: 400 },
-    { label: "MEN", fw: 400 },
-    { label: "WORCOUT", fw: 400 },
-    { label: "RUN", fw: 400 },
-    { label: "FOOTBALL", fw: 400 }
+    { label: "ALL", href: "/", fw: 700 },
+    { label: "MEN", href: "/category/MEN", fw: 400 },
+    { label: "WOMEN", href: "/category/WOMEN", fw: 400 },
+    { label: "KIDS", href: "/category/KIDS", fw: 400 },
+    { label: "WORCOUT", href: "#", fw: 400 },
+    { label: "RUN", href: "#", fw: 400 },
+    { label: "FOOTBALL", href: "#", fw: 400 }
   ];
+
 
   return (
     <Box sx={{ width: "100%", backgroundColor: "#FFFFFF", py: 2, borderBottom: "1px solid #EAEAEA" }}>
@@ -55,23 +58,26 @@ export default function Navbar() {
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 4, alignItems: "center", flex: 1 }}>
             {navItems.map((item) => (
               <Box key={item.label} sx={{ position: "relative" }}>
-                <Typography 
-                  sx={{ 
-                    cursor: "pointer", 
-                    fontFamily: "var(--font-montserrat)", 
-                    fontWeight: item.fw,
-                    fontSize: { xs: "14px", md: "16px" },
-                    color: "#000000"
-                  }}
-                >
-                  {item.label}
-                </Typography>
+                <Link href={item.href} style={{ textDecoration: 'none' }}>
+                  <Typography 
+                    sx={{ 
+                      cursor: "pointer", 
+                      fontFamily: "var(--font-montserrat)", 
+                      fontWeight: item.fw,
+                      fontSize: { xs: "14px", md: "16px" },
+                      color: "#000000"
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                </Link>
                 {item.label === "ALL" && (
                   <Box sx={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: "2px", backgroundColor: "#000000" }} />
                 )}
               </Box>
             ))}
           </Box>
+
 
           {/* Logo */}
           <Box sx={{ flex: 1, display: "flex", justifyContent: { xs: "center", sm: "center" } }}>
@@ -170,27 +176,29 @@ export default function Navbar() {
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1 }}>
             {sidebarLinks.map((item) => (
               <Box key={item.label} sx={{ position: "relative", alignSelf: "flex-start" }}>
-                <Typography 
-                  onClick={handleDrawerToggle}
-                  sx={{ 
-                    fontFamily: "var(--font-montserrat)", 
-                    fontWeight: item.fw, 
-                    fontSize: "24px",
-                    color: "#000000",
-                    textTransform: "uppercase",
-                    cursor: "pointer",
-                    letterSpacing: "0.05em",
-                    pb: item.label === "ALL" ? 0.5 : 0
-                  }}
-                >
-                  {item.label}
-                </Typography>
+                <Link href={item.href} style={{ textDecoration: 'none' }} onClick={handleDrawerToggle}>
+                  <Typography 
+                    sx={{ 
+                      fontFamily: "var(--font-montserrat)", 
+                      fontWeight: item.fw, 
+                      fontSize: "24px",
+                      color: "#000000",
+                      textTransform: "uppercase",
+                      cursor: "pointer",
+                      letterSpacing: "0.05em",
+                      pb: item.label === "ALL" ? 0.5 : 0
+                    }}
+                  >
+                    {item.label}
+                  </Typography>
+                </Link>
                 {item.label === "ALL" && (
                    <Box sx={{ position: "absolute", bottom: -2, left: 0, width: "100%", height: "4px", backgroundColor: "#000000" }} />
                 )}
               </Box>
             ))}
           </Box>
+
 
           {/* Bottom Nike Logo */}
           <Box sx={{ mt: 'auto', display: 'flex', justifyContent: 'center', pb: 4 }}>
