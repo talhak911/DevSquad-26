@@ -5,32 +5,34 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import { useGetProductsQuery, useAddToCartMutation } from '../services/api';
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 interface TopSneakersProps {
   category?: string;
 }
 
 export default function TopSneakers({ category = 'ALL' }: TopSneakersProps) {
-  const { data: products = [] } = useGetProductsQuery();
+  const { data: products = [], isLoading } = useGetProductsQuery(category);
   const [addToCart] = useAddToCartMutation();
   const [snackOpen, setSnackOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const sessionId = "default-session";
 
-  const allProducts = products.length > 0 ? products : [
+  // When category changes, reset the scroll index
+  useEffect(() => {
+    setCurrentIndex(0);
+  }, [category]);
+
+  const allProducts = products.length > 0 ? products : (isLoading ? [] : [
     { id: "1", name: "Air Max 97", price: 180, shoeCategory: "MEN", image: { url: "/nike-air-max.png" } },
     { id: "2", name: "Air Force 1", price: 120, shoeCategory: "WOMEN", image: { url: "/nike-air-max-red.png" } },
     { id: "3", name: "Dunk Low", price: 110, shoeCategory: "KIDS", image: { url: "/nike-air-max.png" } },
-  ];
+  ]);
 
-  const filteredProducts = category === 'ALL' 
-    ? allProducts 
-    : allProducts.filter((p: any) => p.shoeCategory === category);
-
-  const displayProducts = filteredProducts;
-
+  const displayProducts = allProducts;
   const visibleProducts = displayProducts.slice(currentIndex, currentIndex + 3);
+
 
   const handleAddToCart = async (item: any) => {
     const productData = {
@@ -101,8 +103,12 @@ export default function TopSneakers({ category = 'ALL' }: TopSneakersProps) {
 
 
         {/* Product Cards Grid */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4 }}>
-          {visibleProducts.map((item: any, index: number) => (
+        <Box sx={{ display: "flex", flexDirection: { xs: "column", md: "row" }, gap: 4, minHeight: '400px', justifyContent: 'center', alignItems: 'center' }}>
+          {isLoading ? (
+            <Typography>Loading sneakers...</Typography>
+          ) : visibleProducts.length > 0 ? (
+            visibleProducts.map((item: any, index: number) => (
+
             <Box 
               key={item.id || index} 
               sx={{ 
@@ -178,8 +184,12 @@ export default function TopSneakers({ category = 'ALL' }: TopSneakersProps) {
 
 
             </Box>
-          ))}
+          ))
+          ) : (
+            <Typography>No products found in this category.</Typography>
+          )}
         </Box>
+
       </Container>
 
       <Snackbar open={snackOpen} autoHideDuration={2000} onClose={() => setSnackOpen(false)} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>

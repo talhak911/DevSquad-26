@@ -6,12 +6,14 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import ShoppingBagOutlinedIcon from '@mui/icons-material/ShoppingBagOutlined';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import { usePathname } from 'next/navigation';
 import { useState } from "react";
 import { useGetCartQuery } from '../services/api';
 import Link from 'next/link';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
   const sessionId = "default-session"; // Hardcoded session ID for demo
   const { data: cart } = useGetCartQuery(sessionId);
 
@@ -22,21 +24,29 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { label: "ALL", href: "/", fw: 700 },
-    { label: "MEN", href: "/category/MEN", fw: 400 },
-    { label: "WOMEN", href: "/category/WOMEN", fw: 400 },
-    { label: "KIDS", href: "/category/KIDS", fw: 400 }
+    { label: "ALL", href: "/" },
+    { label: "MEN", href: "/category/MEN" },
+    { label: "WOMEN", href: "/category/WOMEN" },
+    { label: "KIDS", href: "/category/KIDS" }
   ];
 
   const sidebarLinks = [
-    { label: "ALL", href: "/", fw: 700 },
-    { label: "MEN", href: "/category/MEN", fw: 400 },
-    { label: "WOMEN", href: "/category/WOMEN", fw: 400 },
-    { label: "KIDS", href: "/category/KIDS", fw: 400 },
-    { label: "WORCOUT", href: "#", fw: 400 },
-    { label: "RUN", href: "#", fw: 400 },
-    { label: "FOOTBALL", href: "#", fw: 400 }
+    { label: "ALL", href: "/" },
+    { label: "MEN", href: "/category/MEN" },
+    { label: "WOMEN", href: "/category/WOMEN" },
+    { label: "KIDS", href: "/category/KIDS" },
+    { label: "WORCOUT", href: "#" },
+    { label: "RUN", href: "#" },
+    { label: "FOOTBALL", href: "#" }
   ];
+
+  const isActive = (href: string) => {
+    if (href === '/' && pathname === '/') return true;
+    if (href !== '/' && href !== '#' && pathname.startsWith(href)) return true;
+    return false;
+  };
+
+
 
 
   return (
@@ -56,27 +66,31 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, gap: 4, alignItems: "center", flex: 1 }}>
-            {navItems.map((item) => (
-              <Box key={item.label} sx={{ position: "relative" }}>
-                <Link href={item.href} style={{ textDecoration: 'none' }}>
-                  <Typography 
-                    sx={{ 
-                      cursor: "pointer", 
-                      fontFamily: "var(--font-montserrat)", 
-                      fontWeight: item.fw,
-                      fontSize: { xs: "14px", md: "16px" },
-                      color: "#000000"
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </Link>
-                {item.label === "ALL" && (
-                  <Box sx={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: "2px", backgroundColor: "#000000" }} />
-                )}
-              </Box>
-            ))}
+            {navItems.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Box key={item.label} sx={{ position: "relative" }}>
+                  <Link href={item.href} style={{ textDecoration: 'none' }}>
+                    <Typography 
+                      sx={{ 
+                        cursor: "pointer", 
+                        fontFamily: "var(--font-montserrat)", 
+                        fontWeight: active ? 700 : 400,
+                        fontSize: { xs: "14px", md: "16px" },
+                        color: "#000000"
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Link>
+                  {active && (
+                    <Box sx={{ position: "absolute", bottom: -4, left: 0, width: "100%", height: "2px", backgroundColor: "#000000" }} />
+                  )}
+                </Box>
+              );
+            })}
           </Box>
+
 
 
           {/* Logo */}
@@ -174,30 +188,34 @@ export default function Navbar() {
 
           {/* Navigation Categories */}
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, flex: 1 }}>
-            {sidebarLinks.map((item) => (
-              <Box key={item.label} sx={{ position: "relative", alignSelf: "flex-start" }}>
-                <Link href={item.href} style={{ textDecoration: 'none' }} onClick={handleDrawerToggle}>
-                  <Typography 
-                    sx={{ 
-                      fontFamily: "var(--font-montserrat)", 
-                      fontWeight: item.fw, 
-                      fontSize: "24px",
-                      color: "#000000",
-                      textTransform: "uppercase",
-                      cursor: "pointer",
-                      letterSpacing: "0.05em",
-                      pb: item.label === "ALL" ? 0.5 : 0
-                    }}
-                  >
-                    {item.label}
-                  </Typography>
-                </Link>
-                {item.label === "ALL" && (
-                   <Box sx={{ position: "absolute", bottom: -2, left: 0, width: "100%", height: "4px", backgroundColor: "#000000" }} />
-                )}
-              </Box>
-            ))}
+            {sidebarLinks.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Box key={item.label} sx={{ position: "relative", alignSelf: "flex-start" }}>
+                  <Link href={item.href} style={{ textDecoration: 'none' }} onClick={handleDrawerToggle}>
+                    <Typography 
+                      sx={{ 
+                        fontFamily: "var(--font-montserrat)", 
+                        fontWeight: active ? 700 : 400, 
+                        fontSize: "24px",
+                        color: "#000000",
+                        textTransform: "uppercase",
+                        cursor: "pointer",
+                        letterSpacing: "0.05em",
+                        pb: active ? 0.5 : 0
+                      }}
+                    >
+                      {item.label}
+                    </Typography>
+                  </Link>
+                  {active && (
+                    <Box sx={{ position: "absolute", bottom: -2, left: 0, width: "100%", height: "4px", backgroundColor: "#000000" }} />
+                  )}
+                </Box>
+              );
+            })}
           </Box>
+
 
 
           {/* Bottom Nike Logo */}
