@@ -1,53 +1,106 @@
-import { Box, Typography } from "@mui/material";
+'use client';
+
+import { Box, Typography, Container } from "@mui/material";
 
 export default function Categories() {
+  const categories = [
+    { 
+      name: "WORKOUT", 
+      image: "/cat-workout.png", 
+      reverse: false 
+    },
+    { 
+      name: "RUN", 
+      image: "/cat-run.png", 
+      reverse: true 
+    },
+    { 
+      name: "FOOTBALL", 
+      image: "/cat-football.png", 
+      reverse: false 
+    }
+  ];
+
   return (
-    <Box sx={{ width: "100%", maxWidth: "1600px", mx: "auto", py: { xs: 4, md: 8 }, px: { xs: 2, sm: 4, md: 6, lg: 8 } }}>
-      <Typography 
-        sx={{ 
-          fontFamily: "var(--font-montserrat)", 
-          fontWeight: 700, 
-          fontSize: { xs: "20px", md: "24px" },
-          mb: 4
-        }}
-      >
-        Buy by category
-      </Typography>
+    <Box sx={{ width: "100%", py: 10 }}>
+      <Container maxWidth="xl">
+        <Typography 
+          sx={{ 
+            fontFamily: "var(--font-montserrat)", 
+            fontWeight: 700, 
+            fontSize: "40px",
+            mb: 8,
+            color: "#000"
+          }}
+        >
+          Buy by category
+        </Typography>
 
-      {/* Structured flexbox layout */}
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 0 }}>
-        
-        {/* Row 1: WORKOUT */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", md: "row" }, height: { xs: "auto", md: "400px" } }}>
-          <Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", p: 4, backgroundColor: "#FFFFFF" }}>
-            <Typography sx={{ fontFamily: "var(--font-montserrat)", fontWeight: 900, fontStyle: "italic", fontSize: { xs: "24px", md: "36px" }, letterSpacing: "0.2em", color: "#000000" }}>
-              WORKOUT
-            </Typography>
-          </Box>
-          <Box sx={{ flex: 1, backgroundColor: "#EAEAEA", height: { xs: "250px", md: "100%" }, backgroundSize: "cover", backgroundPosition: "center" }} />
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 0 }}>
+          {categories.map((cat, index) => (
+            <Box 
+              key={cat.name}
+              sx={{ 
+                display: "flex", 
+                flexDirection: { 
+                  md: cat.reverse ? "row-reverse" : "row" 
+                },
+                height: { xs: "320px", md: "570px" },
+                position: "relative",
+                overflow: "hidden"
+              }}
+            >
+              {/* Image Container */}
+              <Box 
+                sx={{ 
+                  flex: 1, 
+                  height: "100%",
+                  width: { xs: "100%", md: "auto" },
+                  position: { xs: "absolute", md: "relative" },
+                  top: 0,
+                  left: 0,
+                  zIndex: 1,
+                  backgroundImage: `url('${cat.image}')`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat"
+                }}
+              />
+
+              {/* Text Container */}
+              <Box 
+                sx={{ 
+                  flex: 1, 
+                  height: "100%",
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center", 
+                  backgroundColor: { xs: "transparent", md: "#FFF" },
+                  p: 4,
+                  position: "relative",
+                  zIndex: 2,
+                }}
+              >
+                <Typography 
+                  sx={{ 
+                    fontFamily: "var(--font-montserrat)", 
+                    fontWeight: 900, 
+                    fontStyle: "italic", 
+                    fontSize: { xs: "48px", md: "36px" }, 
+                    letterSpacing: { xs: "0.1em", md: "0.3em" }, 
+                    color: { xs: "#FFF", md: "#000" },
+                    textAlign: "center",
+                    textTransform: "uppercase",
+                    textShadow: { xs: "0px 4px 20px rgba(0,0,0,0.5)", md: "none" }
+                  }}
+                >
+                  {cat.name}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
         </Box>
-
-        {/* Row 2: RUN */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", md: "row" }, height: { xs: "auto", md: "400px" } }}>
-          <Box sx={{ flex: 1, backgroundColor: "#2D2D2D", height: { xs: "250px", md: "100%" }, backgroundSize: "cover", backgroundPosition: "center" }} />
-          <Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", p: 4, backgroundColor: "#FFFFFF" }}>
-            <Typography sx={{ fontFamily: "var(--font-montserrat)", fontWeight: 900, fontStyle: "italic", fontSize: { xs: "24px", md: "36px" }, letterSpacing: "0.2em", color: "#000000" }}>
-              RUN
-            </Typography>
-          </Box>
-        </Box>
-
-        {/* Row 3: FOOTBALL */}
-        <Box sx={{ display: "flex", flexDirection: { xs: "column-reverse", md: "row" }, height: { xs: "auto", md: "400px" } }}>
-          <Box sx={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center", p: 4, backgroundColor: "#FFFFFF" }}>
-            <Typography sx={{ fontFamily: "var(--font-montserrat)", fontWeight: 900, fontStyle: "italic", fontSize: { xs: "24px", md: "36px" }, letterSpacing: "0.2em", color: "#000000" }}>
-              FOOTBALL
-            </Typography>
-          </Box>
-          <Box sx={{ flex: 1, backgroundColor: "#A05A42", height: { xs: "250px", md: "100%" }, backgroundSize: "cover", backgroundPosition: "center" }} />
-        </Box>
-
-      </Box>
+      </Container>
     </Box>
   );
 }

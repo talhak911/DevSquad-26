@@ -2,7 +2,7 @@
 
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import DiscountPromotion from "../components/DiscountPromotion";
+import FeaturedSection from "../components/FeaturedSection";
 import TopSneakers from "../components/TopSneakers";
 import Categories from "../components/Categories";
 import PromoBanner from "../components/PromoBanner";
@@ -35,7 +35,7 @@ export default function Home() {
       <Box sx={{ width: "100%", overflowX: "hidden" }}>
         <Navbar />
         <Hero />
-        <DiscountPromotion />
+        <FeaturedSection />
         <TopSneakers />
         <Categories />
         <PromoBanner />

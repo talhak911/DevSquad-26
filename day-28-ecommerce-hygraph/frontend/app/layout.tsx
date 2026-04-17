@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Montserrat, Work_Sans } from "next/font/google";
+import { Montserrat, Work_Sans, Poppins } from "next/font/google";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -12,7 +12,14 @@ const montserrat = Montserrat({
 const workSans = Work_Sans({
   variable: "--font-work-sans",
   subsets: ["latin"],
-  weight: ["400", "600"],
+  weight: ["400", "600", "700"],
+});
+
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["900"],
+  style: ["italic"]
 });
 
 export const metadata: Metadata = {
@@ -30,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${montserrat.variable} ${workSans.variable} h-full antialiased`}
+      className={`${montserrat.variable} ${workSans.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-montserrat m-0 p-0 overflow-x-hidden bg-white text-black">
         <StoreProvider>

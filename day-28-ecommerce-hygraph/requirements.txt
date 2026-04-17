@@ -1,0 +1,215 @@
+Design see the design-and-css folder inside frontend
+Your task is to convert this new design into a working full-stack web application using:
+
+* Next.js (App Router)
+* RTK Query (API layer)
+* NestJS
+* Material UI (MUI)
+* Hygraph (Product CMS)
+
+All UI from the new design must be implemented exactly.
+
+---
+
+1. What you must build
+
+You must implement the newly added e-commerce screens from Figma.
+
+Public UI
+
+* Header / Navbar
+* Hero / Banner section
+* Product listing sections
+* Product cards
+* Footer
+
+Cart UI
+
+* Cart page
+* Cart item list
+* Quantity controls
+* Remove item action
+
+No checkout page is required.
+
+---
+
+2. Mandatory dynamic features
+
+A) Product Listing via Hygraph (Mandatory)
+
+All products must load from Hygraph.
+
+Flow:
+
+1. NestJS fetches product data from Hygraph
+2. Frontend requests products from NestJS using RTK Query
+3. Products render dynamically in UI
+
+Hard rules:
+
+* ❌ No hardcoded products
+* ❌ No direct Hygraph calls from frontend
+* ✅ Hygraph access happens only in backend
+
+---
+
+B) Cart Functionality (Mandatory)
+
+Cart must be fully functional.
+
+Required behavior:
+
+* Add product to cart
+* Increase / decrease quantity
+* Remove product from cart
+* Persist cart state (backend-driven)
+
+Flow:
+
+1. User interacts with cart UI
+2. Frontend calls NestJS via RTK Query
+3. Backend stores and returns cart state
+4. UI updates correctly
+
+Rules:
+
+* ❌ No checkout
+* ❌ No localStorage-only cart
+* ✅ Cart data must come from backend APIs
+
+---
+
+3. Required architecture
+
+Frontend (Next.js – App Router)
+
+Required structure:
+
+/app
+  /cart
+  /page.tsx → Home (new Figma design)
+/components
+/services
+
+Rules:
+
+* Must use App Router
+* Must use RTK Query for all API calls
+* Must use MUI for UI
+* ❌ No direct fetch() or axios in components
+
+RTK Query must handle:
+
+* Product APIs
+* Cart APIs
+
+---
+
+Backend (NestJS)
+
+Required modules:
+
+/products
+/cart
+
+Responsibilities:
+
+* Products module fetches data from Hygraph
+* Cart module manages cart state
+
+APIs must include:
+
+* Get products
+* Add to cart
+* Update cart item
+* Remove cart item
+* Fetch cart
+
+---
+
+4. Technology explanation
+
+Hygraph
+
+Headless CMS used as the single source of truth for products.
+
+* Products are created in Hygraph
+* Backend fetches products via GraphQL
+* Frontend never talks to Hygraph directly
+
+---
+
+RTK Query
+
+Central API layer responsible for:
+
+* Fetching products
+* Managing cart state
+* Caching responses
+* Handling loading and errors
+
+---
+
+Next.js (App Router)
+
+Used for:
+
+* File-based routing
+* Component composition
+* Scalable frontend architecture
+
+---
+
+NestJS
+
+Used for:
+
+* Clean API structure
+* External service integration (Hygraph)
+* Cart state management
+
+---
+
+Material UI
+
+Used for:
+
+* Layout and grid system
+* Product cards
+* Buttons and inputs
+
+---
+
+5. Evaluation criteria
+
+UI:
+
+* Matches the new Figma design exactly
+
+Products:
+
+* Loaded dynamically from Hygraph
+
+Cart:
+
+* Fully functional (add, update, remove)
+
+Backend:
+
+* NestJS APIs exist and are used
+
+Architecture:
+
+* Proper frontend ↔ backend separation
+
+---
+
+6. Hard rules
+
+* ❌ No hardcoded product data
+* ❌ No frontend-direct Hygraph calls
+* ❌ No frontend-only cart
+* ❌ No checkout flow
+* ❌ No redesign
+* ❌ No direct fetch/axios in components
