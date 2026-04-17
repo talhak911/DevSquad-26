@@ -5,9 +5,16 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_API_URL }),
   tagTypes: ['Cart'],
   endpoints: (builder) => ({
-    getProducts: builder.query<any[], void>({
-      query: () => 'products',
+    getProducts: builder.query<any[], string | void>({
+      query: (category) => {
+        let url = 'products';
+        if (category && category !== 'ALL') {
+          url += `?category=${category}`;
+        }
+        return url;
+      },
     }),
+
     getCart: builder.query<any, string>({
       query: (sessionId) => `cart/${sessionId}`,
       providesTags: ['Cart'],

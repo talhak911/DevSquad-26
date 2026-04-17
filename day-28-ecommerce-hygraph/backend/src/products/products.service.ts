@@ -16,10 +16,11 @@ export class ProductsService {
     this.hygraphToken = this.configService.get<string>('HYGRAPH_API_TOKEN') ?? '';
   }
 
-  async getProducts() {
+  async getProducts(category?: string) {
+    const isFiltered = category && category !== 'ALL';
     const query = `
-      query GetProducts {
-        products {
+      query GetProducts($where: ProductWhereInput) {
+        products(where: $where) {
           id
           name
           slug
@@ -36,12 +37,13 @@ export class ProductsService {
       }
     `;
 
+    const variables = isFiltered ? { where: { shoeCategory: category } } : {};
 
     try {
       const response = await lastValueFrom(
         this.httpService.post(
           this.hygraphUrl,
-          { query },
+          { query, variables },
           {
             headers: {
               Authorization: `Bearer ${this.hygraphToken}`,
@@ -58,9 +60,8 @@ export class ProductsService {
       return response.data.data.products;
     } catch (error) {
       console.error('Error fetching products from Hygraph:', error.message);
-      // Return empty array instead of crashing if Hygraph is not set up correctly yet
-      // This helps UI load without breaking while testing integration
       return []; 
     }
   }
+
 }
