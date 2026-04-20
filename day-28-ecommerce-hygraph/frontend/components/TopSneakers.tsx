@@ -24,14 +24,9 @@ export default function TopSneakers({ category = 'ALL' }: TopSneakersProps) {
     setCurrentIndex(0);
   }, [category]);
 
-  const allProducts = products.length > 0 ? products : (isLoading ? [] : [
-    { id: "1", name: "Air Max 97", price: 180, shoeCategory: "MEN", image: { url: "/nike-air-max.png" } },
-    { id: "2", name: "Air Force 1", price: 120, shoeCategory: "WOMEN", image: { url: "/nike-air-max-red.png" } },
-    { id: "3", name: "Dunk Low", price: 110, shoeCategory: "KIDS", image: { url: "/nike-air-max.png" } },
-  ]);
-
-  const displayProducts = allProducts;
+  const displayProducts = products;
   const visibleProducts = displayProducts.slice(currentIndex, currentIndex + 3);
+
 
 
   const handleAddToCart = async (item: any) => {
