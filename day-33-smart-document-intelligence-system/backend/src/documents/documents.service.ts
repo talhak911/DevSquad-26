@@ -34,22 +34,29 @@ export class DocumentsService {
     return this.documentModel.findById(id).exec() as any;
   }
 
-  async updateAnalysis(id: string, analysis: any): Promise<DocumentDocument | null> {
+  async updateAnalysis(
+    id: string,
+    analysis: any,
+    fullText?: string,
+  ): Promise<DocumentDocument | null> {
+    const updateData: any = { analysis, status: 'ready' };
+    if (fullText) {
+      updateData.fullText = fullText;
+    }
     return this.documentModel
-      .findByIdAndUpdate(
-        id,
-        { 
-          analysis,
-          status: 'ready'
-        },
-        { returnDocument: 'after' }
-      )
+      .findByIdAndUpdate(id, updateData, { returnDocument: 'after' })
       .exec() as any;
   }
 
-  async updateStatus(id: string, status: string): Promise<DocumentDocument | null> {
-    return this.documentModel
-      .findByIdAndUpdate(id, { status }, { returnDocument: 'after' })
+  async updateStatus(
+    id: string,
+    status: string,
+  ): Promise<DocumentDocument | null> {
+    return this.documentModel.findByIdAndUpdate(
+      id,
+      { status },
+      { returnDocument: 'after' },
+    );
   }
 
   async delete(id: string): Promise<void> {
