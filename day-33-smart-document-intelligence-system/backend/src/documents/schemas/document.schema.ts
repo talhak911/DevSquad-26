@@ -34,6 +34,9 @@ export class DocumentItem {
     entities?: string[];
     sections?: Array<{ title: string; content: string }>;
   };
+
+  @Prop()
+  fullText?: string;
 }
 
 export const DocumentSchema = SchemaFactory.createForClass(DocumentItem);

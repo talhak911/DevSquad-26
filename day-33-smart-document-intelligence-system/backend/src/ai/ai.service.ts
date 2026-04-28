@@ -9,25 +9,29 @@ setTracingDisabled(true);
 export class AIService {
   private readonly logger = new Logger(AIService.name);
 
-  async chat(message: string, filePath?: string, documentId?: string, fullText?: string, cloudinaryUrl?: string): Promise<any> {
+  async chat(
+    message: string,
+    documentId?: string,
+    fullText?: string,
+  ): Promise<any> {
     const startTime = Date.now();
-    
-    // Provide Context but REQUIRE Tool Call for Text
+
+    // Build context with document information
     let input = message;
-    if (filePath) input = `[Local File Path: ${filePath}]\n${input}`;
-    if (cloudinaryUrl) input = `[Cloudinary URL: ${cloudinaryUrl}]\n${input}`;
     if (documentId) input = `[Document ID: ${documentId}]\n${input}`;
-    
+    if (fullText)
+      input = `[Document Content]\n${fullText.substring(0, 15000)}\n\n[User Question]\n${input}`;
+
     this.logger.log(`\n\n=== [NEW AGENTIC RUN] ===`);
     this.logger.log(`Input: ${message.substring(0, 100)}...`);
-    
+
     try {
       const { routerAgent } = createAgents();
       const runner = new Runner();
 
       // --- TRACING LOGS ---
       const r = runner as any;
-      
+
       r.on('run:start', () => {
         this.logger.log(`[System] Execution started.`);
       });
@@ -66,7 +70,9 @@ export class AIService {
       };
     } catch (error) {
       const duration = Date.now() - startTime;
-      this.logger.error(`[System] Run failed after ${duration}ms: ${error.message}`);
+      this.logger.error(
+        `[System] Run failed after ${duration}ms: ${error.message}`,
+      );
       throw error;
     }
   }
