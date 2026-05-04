@@ -1,0 +1,80 @@
+📌 Objective
+
+Build a web app that acts like a mini research team.
+When a user asks a question, different “agents” (nodes) in a LangGraph workflow work together: some break the question down, some look up documents, some summarize, some double-check for mistakes, and finally one writes the answer.
+
+---
+
+🛠️ Project Description
+
+1. User asks a question
+Example: “Compare SQL vs NoSQL databases.”
+2. Workflow (how your “team” of nodes should work):
+  * Step 1 – Question Splitter: Break the big question into smaller parts.
+(e.g., “What is SQL?”, “What is NoSQL?”, “What are pros/cons?”)
+  * Step 2 – Document Finder: Look inside your local database (MongoDB) for notes, articles, or files related to each small question.
+  * Step 3 – Ranker: Pick the most useful documents. (Use a simple scoring system like TF-IDF or cosine similarity. No LLMs allowed here.)
+  * Step 4 – Summarizer: Create short summaries of the top documents. (Use an algorithm like TextRank, or just pick the most important sentences.)
+  * Step 5 – Cross-Checker: Compare the summaries. If two sources say opposite things, flag it as a contradiction.
+  * Step 6 – Final Answer Maker: Put everything together into one clear answer, and also show a “trace” of what happened (which steps ran, which docs were used, any contradictions).
+3. Frontend (Next.js)
+  * A simple dashboard with:
+    * Input box for your question
+    * Final answer display
+    * A panel showing the step-by-step trace (so users see how the system thought).
+4. Backend (Nest.js)
+  * Expose APIs (just for example):
+    * /ask → run the workflow
+    * /upload → upload new docs into MongoDB
+    * /trace/:id → fetch trace of a past query
+5. MongoDB
+  * Store:
+    * Uploaded documents
+    * User questions
+    * Final answers
+    * Execution traces
+
+---
+
+📚 Dataset Topics
+
+1. SQL vs NoSQL Databases
+  * What SQL is, what NoSQL is, use-cases, pros/cons.
+2. REST API vs GraphQL
+  * Basics of REST and GraphQL, when to use each, limitations.
+3. Monolithic vs Microservices Architecture
+  * Differences, advantages, disadvantages.
+4. Server-Side Rendering (SSR) vs Client-Side Rendering (CSR)
+  * Explain how SSR/CSR work in frameworks like Next.js.
+5. WebSockets vs HTTP Polling
+  * How real-time communication works, pros/cons of each.
+
+---
+
+🔧 Instructions
+
+1. Prepare documents
+  * Each topic should have at least 2–3 small text files (200–500 words each).
+  * Can be from:
+    * Their own notes
+    * Summaries of blogs/articles (paraphrased, not copy-pasted)
+    * Class notes
+2. Insert into MongoDB
+  * Store docs with fields:
+
+{
+  "title": "SQL vs NoSQL Basics",
+  "topic": "Databases",
+  "content": "...",
+  "createdAt": "2025-09-22",
+   ....,
+   ...
+}
+
+
+1. Use these docs in the workflow
+  * Question Splitter → break queries into sub-questions
+  * Document Finder → fetch from MongoDB
+  * Ranker → score & pick top docs
+  * Summarizer → compress info
+  * Cross-Checker → highlight contradictions (e.g., if one doc says “SQL scales better” and another says “NoSQL scales better”).
