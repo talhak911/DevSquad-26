@@ -5,7 +5,12 @@ import {
   Query,
   Body,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
+  Res,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import { AuthGuard } from '@nestjs/passport';
 import { ProductsService } from './products.service';
 
@@ -38,4 +43,26 @@ export class ProductsController {
   getCategories() {
     return this.productsService.getCategories();
   }
+
+  @Post('speech-to-text')
+  @UseInterceptors(
+    FileInterceptor('audio', {
+      storage: memoryStorage(),
+      limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB max (Whisper limit)
+    }),
+  )
+  transcribeAudio(@UploadedFile() file: Express.Multer.File) {
+    return this.productsService.transcribeAudio(file);
+  }
+
+  @Post('text-to-speech')
+  async textToSpeech(@Body('text') text: string, @Res() res: any) {
+    const audioBuffer = await this.productsService.textToSpeech(text);
+    res.set({
+      'Content-Type': 'audio/wav',
+      'Content-Length': audioBuffer.length,
+    });
+    res.send(audioBuffer);
+  }
 }
+

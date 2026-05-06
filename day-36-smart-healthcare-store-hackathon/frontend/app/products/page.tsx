@@ -107,7 +107,15 @@ export default function ProductsPage() {
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [transcribing, setTranscribing] = useState(false);
+  const [ttsEnabled, setTtsEnabled] = useState(true);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
 
   // Auth guard
   useEffect(() => {
@@ -166,10 +174,86 @@ export default function ProductsPage() {
     fetchProducts(cat !== "All" ? cat : undefined);
   };
 
+  // ── Text-to-Speech (Groq Backend) ────────────────────────────────────────────
+  const speakText = async (text: string) => {
+    if (!ttsEnabled || typeof window === "undefined") return;
+
+    // Stop current audio if playing
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    // Clean text for speech
+    const clean = text.replace(/[#*`_~>\[\]]/g, "").replace(/\n+/g, " ").trim();
+
+    try {
+      setIsSpeaking(true);
+
+      const res = await fetch(`${BACKEND}/products/text-to-speech`, {
+        method: "POST",
+        headers: authHeaders(),
+        body: JSON.stringify({ text: clean }),
+      });
+
+      if (!res.ok) {
+        // Check if it's TTS_UNAVAILABLE — fall back to browser voice
+        const err = await res.json().catch(() => ({}));
+        if (err?.message?.code === "TTS_UNAVAILABLE" || res.status === 400) {
+          throw new Error("FALLBACK");
+        }
+        throw new Error("TTS request failed");
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+      audioRef.current = audio;
+
+      audio.onended = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(url);
+        audioRef.current = null;
+      };
+      audio.onerror = () => {
+        setIsSpeaking(false);
+        URL.revokeObjectURL(url);
+        audioRef.current = null;
+      };
+      await audio.play();
+    } catch {
+      // Fallback: use browser's built-in speechSynthesis
+      console.warn("Groq TTS unavailable, falling back to browser voice.");
+      if (!window.speechSynthesis) { setIsSpeaking(false); return; }
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(clean);
+      utter.rate = 1.0;
+      utter.pitch = 1.0;
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find((v) =>
+        v.name.includes("Google") || v.name.includes("Samantha") || v.name.includes("Natural")
+      );
+      if (preferred) utter.voice = preferred;
+      utter.onend = () => setIsSpeaking(false);
+      utter.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utter);
+    }
+  };
+
+
+  const stopSpeaking = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setIsSpeaking(false);
+  };
+
   const handleChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!chatInput.trim() || chatLoading) return;
     const msg = chatInput.trim();
+    stopSpeaking();
     const userMsg: ChatMsg = { id: Date.now().toString(), role: "user", content: msg };
     setChatMessages((p) => [...p, userMsg]);
     setChatInput("");
@@ -181,17 +265,128 @@ export default function ProductsPage() {
         body: JSON.stringify({ message: msg }),
       });
       const data = await res.json();
-      const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: data.response || "Sorry, I couldn't process that.", products: data.products };
+      const responseText = data.response || "Sorry, I couldn't process that.";
+      const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: responseText, products: data.products };
       setChatMessages((p) => [...p, botMsg]);
+      // Auto-speak the response
+      setTimeout(() => speakText(responseText), 100);
     } catch {
       setChatMessages((p) => [...p, { id: `err-${Date.now()}`, role: "assistant", content: "Error connecting to assistant. Please try again." }]);
     } finally { setChatLoading(false); }
+  };
+
+  // Quick-reply: fill input AND auto-send
+  const sendQuickReply = (text: string) => {
+    stopSpeaking();
+    const userMsg: ChatMsg = { id: Date.now().toString(), role: "user", content: text };
+    setChatMessages((p) => [...p, userMsg]);
+    setChatLoading(true);
+    fetch(`${BACKEND}/products/chat`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ message: text }) })
+      .then((r) => r.json())
+      .then((data) => {
+        const responseText = data.response || "Sorry, I couldn't process that.";
+        const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: responseText, products: data.products };
+        setChatMessages((p) => [...p, botMsg]);
+        setTimeout(() => speakText(responseText), 100);
+      })
+      .catch(() => setChatMessages((p) => [...p, { id: `err-${Date.now()}`, role: "assistant", content: "Error connecting to assistant." }]))
+      .finally(() => setChatLoading(false));
   };
 
   const handleLogout = () => {
     localStorage.removeItem("hc_token");
     localStorage.removeItem("hc_user");
     router.replace("/");
+  };
+
+  // ── Voice Input ──────────────────────────────────────────────────────────────
+  const startVoiceInput = async () => {
+    if (isRecording) {
+      // Stop recording
+      mediaRecorderRef.current?.stop();
+      return;
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      audioChunksRef.current = [];
+
+      // Pick best supported MIME type
+      const mimeType = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/ogg;codecs=opus",
+        "audio/ogg",
+      ].find((m) => MediaRecorder.isTypeSupported(m)) ?? "";
+
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+
+      recorder.onstop = async () => {
+        // Stop all tracks to release mic
+        stream.getTracks().forEach((t) => t.stop());
+        setIsRecording(false);
+
+        const blob = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || "audio/webm",
+        });
+
+        if (blob.size < 100) return; // too small, likely empty
+
+        setTranscribing(true);
+        try {
+          const token = localStorage.getItem("hc_token");
+          const formData = new FormData();
+          const ext = (recorder.mimeType || "audio/webm").includes("ogg") ? "ogg" : "webm";
+          formData.append("audio", blob, `voice.${ext}`);
+
+          const res = await fetch(`${BACKEND}/products/speech-to-text`, {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
+          });
+
+          if (!res.ok) throw new Error("Transcription request failed");
+          const data = await res.json();
+          if (data.text?.trim()) {
+            const transcribed = data.text.trim();
+            setChatInput(transcribed);
+            // Auto-submit the transcribed text
+            setTimeout(() => {
+              const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+              const userMsg: ChatMsg = { id: Date.now().toString(), role: "user", content: transcribed };
+              setChatMessages((p) => [...p, userMsg]);
+              setChatInput("");
+              setChatLoading(true);
+              fetch(`${BACKEND}/products/chat`, { method: "POST", headers: authHeaders(), body: JSON.stringify({ message: transcribed }) })
+                .then((r) => r.json())
+                .then((data) => {
+                  const responseText = data.response || "Sorry, I couldn't process that.";
+                  const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: responseText, products: data.products };
+                  setChatMessages((p) => [...p, botMsg]);
+                  setTimeout(() => speakText(responseText), 100);
+                })
+                .catch(() => setChatMessages((p) => [...p, { id: `err-${Date.now()}`, role: "assistant", content: "Error connecting to assistant." }]))
+                .finally(() => setChatLoading(false));
+            }, 50);
+          }
+        } catch (err) {
+          console.error("Speech-to-text error:", err);
+        } finally {
+          setTranscribing(false);
+        }
+      };
+
+      recorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Microphone access denied:", err);
+      alert("Microphone access is required for voice input.");
+    }
   };
 
   return (
@@ -412,15 +607,31 @@ export default function ProductsPage() {
             <div className="absolute right-0 top-0 bottom-0 w-[90%] max-w-[400px] lg:w-full lg:static lg:h-[calc(100vh-120px)] lg:sticky lg:top-28 flex flex-col shadow-2xl lg:shadow-none">
               <div className="glass-card" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", padding: 0 }}>
                 {/* Chat Header */}
-                <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <div style={{ padding: "14px 16px", borderBottom: "1px solid var(--border)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(16,185,129,0.04)" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div style={{ width: "36px", height: "36px", borderRadius: "10px", background: "linear-gradient(135deg,#10b981,#059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "18px" }}>🤖</div>
+                    <div style={{ width: "38px", height: "38px", borderRadius: "12px", background: "linear-gradient(135deg,#10b981,#059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "20px", boxShadow: "0 4px 12px rgba(16,185,129,0.3)" }}>🤖</div>
                     <div>
-                      <p style={{ fontWeight: "700", fontSize: "14px" }}>AI Health Assistant</p>
-                      <p style={{ fontSize: "11px", color: "var(--accent)" }}>● Online</p>
+                      <p style={{ fontWeight: "700", fontSize: "14px", color: "var(--text-primary)" }}>AI Health Assistant</p>
+                      <p style={{ fontSize: "11px", color: isRecording ? "#ef4444" : transcribing ? "#f59e0b" : isSpeaking ? "#a78bfa" : "var(--accent)", display: "flex", alignItems: "center", gap: "4px" }}>
+                        {isRecording ? "🔴 Recording…" : transcribing ? "⏳ Transcribing…" : isSpeaking ? "🔊 Speaking…" : "● Online"}
+                      </p>
                     </div>
                   </div>
-                  <button onClick={() => setShowChat(false)} style={{ background: "none", border: "none", color: "var(--text-muted)", cursor: "pointer", fontSize: "18px", lineHeight: 1 }}>✕</button>
+                  <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                    {/* TTS Toggle */}
+                    <button
+                      onClick={() => { setTtsEnabled((v) => !v); if (isSpeaking) stopSpeaking(); }}
+                      title={ttsEnabled ? "Mute AI voice" : "Enable AI voice"}
+                      style={{ width: "32px", height: "32px", borderRadius: "8px", border: `1px solid ${ttsEnabled ? "rgba(167,139,250,0.4)" : "var(--border)"}`, background: ttsEnabled ? "rgba(167,139,250,0.12)" : "transparent", color: ttsEnabled ? "#a78bfa" : "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s", fontSize: "15px" }}
+                    >
+                      {ttsEnabled ? "🔊" : "🔇"}
+                    </button>
+                    {/* Stop speaking */}
+                    {isSpeaking && (
+                      <button onClick={stopSpeaking} title="Stop speaking" style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid rgba(167,139,250,0.4)", background: "rgba(167,139,250,0.12)", color: "#a78bfa", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px" }}>⏹</button>
+                    )}
+                    <button onClick={() => setShowChat(false)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✕</button>
+                  </div>
                 </div>
 
                 {/* Messages */}
@@ -431,10 +642,15 @@ export default function ProductsPage() {
                       <p style={{ fontWeight: "700", color: "var(--text-secondary)", marginBottom: "8px" }}>Ask me anything!</p>
                       <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.6" }}>Try: "Suggest vitamins for hair fall" or "What helps with weak immunity?"</p>
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "16px" }}>
-                        {["Suggest vitamins for hair fall", "Help with weak bones", "Best supplements for energy"].map((q) => (
-                          <button key={q} onClick={() => setChatInput(q)}
-                            style={{ padding: "8px 12px", borderRadius: "10px", background: "var(--accent-light)", border: "1px solid rgba(16,185,129,0.2)", color: "var(--accent)", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textAlign: "left" }}>
-                            {q}
+                        {[
+                          { icon: "💊", text: "Suggest vitamins for hair fall" },
+                          { icon: "🦴", text: "Help with weak bones" },
+                          { icon: "⚡", text: "Best supplements for energy" },
+                          { icon: "🛡️", text: "Boost my immunity" },
+                        ].map(({ icon, text }) => (
+                          <button key={text} onClick={() => sendQuickReply(text)}
+                            style={{ padding: "9px 12px", borderRadius: "10px", background: "var(--accent-light)", border: "1px solid rgba(16,185,129,0.2)", color: "var(--accent)", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }}>
+                            <span>{icon}</span><span>{text}</span>
                           </button>
                         ))}
                       </div>
@@ -442,18 +658,37 @@ export default function ProductsPage() {
                   )}
 
                   {chatMessages.map((msg) => (
-                    <div key={msg.id} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}>
-                      <div style={{
-                        maxWidth: "88%", borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "16px 16px 16px 4px",
-                        padding: "10px 14px", background: msg.role === "user" ? "linear-gradient(135deg,#10b981,#059669)" : "rgba(255,255,255,0.05)",
-                        border: msg.role === "assistant" ? "1px solid var(--border)" : "none", color: "var(--text-primary)"
-                      }}>
-                        {msg.role === "assistant"
-                          ? <div className="prose" style={{ fontSize: "13px", color: "white", lineHeight: "1.65" }}>
-                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-                          </div>
-                          : <p style={{ fontSize: "14px", color: "white" }}>{msg.content}</p>
-                        }
+                    <div key={msg.id} style={{ display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start", gap: "6px", alignItems: "flex-end" }}>
+                      {msg.role === "assistant" && (
+                        <div style={{ width: "28px", height: "28px", borderRadius: "8px", background: "linear-gradient(135deg,#10b981,#059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "14px", flexShrink: 0 }}>🤖</div>
+                      )}
+                      <div style={{ maxWidth: "82%" }}>
+                        <div style={{
+                          borderRadius: msg.role === "user" ? "16px 16px 4px 16px" : "4px 16px 16px 16px",
+                          padding: "10px 14px",
+                          background: msg.role === "user" ? "linear-gradient(135deg,#10b981,#059669)" : "rgba(255,255,255,0.06)",
+                          border: msg.role === "assistant" ? "1px solid var(--border)" : "none",
+                          color: "var(--text-primary)",
+                        }}>
+                          {msg.role === "assistant"
+                            ? <div className="prose" style={{ fontSize: "13px", color: "white", lineHeight: "1.65" }}>
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                            </div>
+                            : <p style={{ fontSize: "14px", color: "white" }}>{msg.content}</p>
+                          }
+                        </div>
+                        {/* Per-message replay button */}
+                        {msg.role === "assistant" && (
+                          <button
+                            onClick={() => speakText(msg.content)}
+                            title="Read aloud"
+                            style={{ marginTop: "4px", background: "none", border: "none", cursor: "pointer", color: "var(--text-muted)", fontSize: "11px", padding: "2px 4px", display: "flex", alignItems: "center", gap: "3px", opacity: 0.6, transition: "opacity 0.2s" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.opacity = "1")}
+                            onMouseLeave={(e) => (e.currentTarget.style.opacity = "0.6")}
+                          >
+                            🔊 <span>Read aloud</span>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -469,11 +704,57 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Chat Input */}
-                <form onSubmit={handleChat} style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px" }}>
+                <form onSubmit={handleChat} style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px", alignItems: "center" }}>
+                  {/* Mic Button */}
+                  <button
+                    type="button"
+                    onClick={startVoiceInput}
+                    disabled={transcribing}
+                    title={isRecording ? "Stop recording" : "Start voice input"}
+                    style={{
+                      flexShrink: 0,
+                      width: "40px",
+                      height: "40px",
+                      borderRadius: "12px",
+                      border: isRecording ? "2px solid #ef4444" : "1px solid var(--border)",
+                      background: isRecording
+                        ? "rgba(239,68,68,0.15)"
+                        : transcribing
+                        ? "rgba(245,158,11,0.1)"
+                        : "rgba(255,255,255,0.05)",
+                      color: isRecording ? "#ef4444" : transcribing ? "#f59e0b" : "var(--text-muted)",
+                      cursor: transcribing ? "not-allowed" : "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      transition: "all 0.2s",
+                      animation: isRecording ? "pulse-mic 1s ease-in-out infinite" : "none",
+                    }}
+                  >
+                    {transcribing ? (
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ animation: "spin 1s linear infinite" }}>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                    ) : isRecording ? (
+                      /* Stop icon */
+                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                      </svg>
+                    ) : (
+                      /* Mic icon */
+                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+                      </svg>
+                    )}
+                  </button>
+
                   <input id="chat-input" className="input-field" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-                    placeholder="Ask about health products…" disabled={chatLoading}
+                    placeholder={isRecording ? "Listening…" : transcribing ? "Transcribing…" : "Ask about health products…"}
+                    disabled={chatLoading || isRecording}
                     style={{ flex: 1, padding: "10px 14px", fontSize: "13px" }} />
-                  <button type="submit" className="btn-primary" id="chat-send-btn" disabled={chatLoading || !chatInput.trim()}
+
+                  <button type="submit" className="btn-primary" id="chat-send-btn" disabled={chatLoading || !chatInput.trim() || isRecording}
                     style={{ flexShrink: 0, padding: "10px 14px", minWidth: "auto" }}>
                     <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -490,6 +771,10 @@ export default function ProductsPage() {
         @keyframes bounce {
           0%, 100% { transform: translateY(0); }
           50% { transform: translateY(-4px); }
+        }
+        @keyframes pulse-mic {
+          0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); }
+          50% { box-shadow: 0 0 0 8px rgba(239,68,68,0); }
         }
       `}</style>
     </div>
