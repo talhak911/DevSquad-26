@@ -4,7 +4,9 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: true,
+  });
   app.enableCors({
     origin: ['http://localhost:3000', 'http://localhost:3001'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
@@ -18,3 +20,4 @@ async function bootstrap() {
   console.log(`🏥 Smart Healthcare Store API running on http://localhost:${port}`);
 }
 bootstrap();
+
