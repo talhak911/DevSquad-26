@@ -190,7 +190,51 @@ Write a brief, friendly 2-3 sentence explanation of why these products are recom
   private async chatIntentDetector(
     state: HealthcareState,
   ): Promise<Partial<HealthcareState>> {
-    return this.intentDetector(state);
+    this.logger.log(`[ChatIntentDetector] Analyzing symptoms for query: ${state.query}`);
+    try {
+      const symptomMapping = {
+        "tired": ["Vitamin B Complex", "Iron Supplements", "Vitamins", "Supplements"],
+        "fatigue": ["Vitamins", "Supplements", "Protein & Fitness"],
+        "low energy": ["Vitamins", "Protein & Fitness"],
+        "hair fall": ["Biotin", "Zinc", "Multivitamin", "Hair & Nail"],
+        "weak bones": ["Calcium", "Vitamin D", "Bone Health"],
+        "stress": ["Magnesium", "Ashwagandha", "Sleep & Stress"]
+      };
+
+      const prompt = `You are an AI symptom checker and healthcare product intent analyzer.
+      
+User symptoms/query: "${state.query}"
+
+Known mappings for common symptoms:
+${JSON.stringify(symptomMapping, null, 2)}
+
+Analyze the user's symptoms and return a JSON with:
+1. "intent" - a brief description of the primary symptom or health need (e.g., "fatigue and low energy", "hair loss", "fragile bones").
+2. "categories" - array of up to 3 product categories that match the symptoms (choose from: "Vitamins", "Supplements", "Pain Relief", "Skin Care", "Digestive Health", "Immunity", "Hair & Nail", "Bone Health", "Heart Health", "Eye Care", "Sleep & Stress", "Weight Management", "Diabetes Care", "Protein & Fitness"). Use the known mappings if they match.
+3. "tags" - array of up to 5 specific ingredient/keyword tags that are commonly used for these symptoms (e.g. "iron", "calcium", "biotin", "magnesium", "ashwagandha").
+
+Respond ONLY with JSON:
+{"intent": "...", "categories": [...], "tags": [...]}`;
+
+      const response = await this.llm.invoke(prompt);
+      const content = response.content as string;
+      const match = content.match(/\{[\s\S]*\}/);
+      if (match) {
+        const result = JSON.parse(match[0]);
+        return {
+          detectedIntent: result.intent || state.query,
+          suggestedCategories: result.categories || [],
+          suggestedTags: result.tags || [],
+        };
+      }
+    } catch (e) {
+      this.logger.error(`[ChatIntentDetector] ${e.message}`);
+    }
+    return {
+      detectedIntent: state.query,
+      suggestedCategories: [],
+      suggestedTags: [],
+    };
   }
 
   private async chatProductFetcher(
@@ -207,22 +251,29 @@ Write a brief, friendly 2-3 sentence explanation of why these products are recom
       const productList =
         state.products.length > 0
           ? state.products
-              .slice(0, 5)
+              .slice(0, 3)
               .map(
                 (p) =>
-                  `- **${p.name}** (${p.category}) — ₹z${p.price} — ${p.description.substring(0, 120)}`,
+                  `- **${p.name}** (${p.category}) — ${p.description.substring(0, 120)}...`,
               )
               .join('\n')
           : 'No specific products found.';
 
-      const prompt = `You are a friendly healthcare assistant chatbot.
+      const prompt = `You are a friendly healthcare assistant and symptom checker.
 
-User asked: "${state.query}"
+User's reported symptoms: "${state.query}"
+Detected need: "${state.detectedIntent}"
 
-Here are relevant products from our store:
+Here are relevant products from our store to address these symptoms:
 ${productList}
 
-Respond in a warm, helpful tone. Format as markdown. Start with a brief answer to their question, then list the products with a 1-line explanation for EACH product of why it helps. End with a short tip. Keep it under 250 words.`;
+Respond in a warm, empathetic tone. Format as markdown.
+Your response MUST include:
+1. A short explanation connecting their symptoms to potential deficiencies or needs (e.g., "Fatigue and low energy are often linked to Vitamin B and Iron deficiencies. Here are some supplements you can try 👇").
+2. A list of the suggested products with a 1-line reasoning of why it helps.
+3. End with a short tip or a reminder that you are an AI and they should consult a doctor if symptoms persist.
+
+Keep it concise, clear, and helpful.`;
 
       const response = await this.llm.invoke(prompt);
       return { explanation: (response.content as string).trim() };

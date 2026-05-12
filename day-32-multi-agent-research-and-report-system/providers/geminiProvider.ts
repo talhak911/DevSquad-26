@@ -35,7 +35,7 @@ function cleanSchema(schema: any): any {
 }
 
 export class GeminiModel implements Model {
-  name = "gemini-2.5-flash-lite"; // default
+  name = "gemini-2.5-flash"; // default
 
   constructor(name?: string) {
     if (name) this.name = name;
@@ -244,6 +244,6 @@ export class GeminiModel implements Model {
 
 export class GeminiProvider implements ModelProvider {
   getModel(modelName?: string): Model {
-    return new GeminiModel(modelName || "gemini-2.5-flash-lite");
+    return new GeminiModel(modelName || "gemini-2.5-flash");
   }
 }

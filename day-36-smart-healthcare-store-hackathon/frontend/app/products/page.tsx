@@ -114,15 +114,28 @@ export default function ProductsPage() {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const audioSourceRef = useRef<AudioBufferSourceNode | null>(null);
+  const isCancellingRef = useRef(false);
 
-
-  // Auth guard
+  // Auth guard & Cleanup
   useEffect(() => {
     const token = localStorage.getItem("hc_token");
     const userData = localStorage.getItem("hc_user");
     if (!token) { router.replace("/"); return; }
     if (userData) setUser(JSON.parse(userData));
+
+    return () => {
+      window.speechSynthesis?.cancel();
+      if (audioSourceRef.current) {
+        try { audioSourceRef.current.stop(); } catch {}
+        audioSourceRef.current = null;
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+        audioContextRef.current = null;
+      }
+    };
   }, [router]);
 
   const fetchProducts = useCallback(async (cat?: string) => {
@@ -179,10 +192,7 @@ export default function ProductsPage() {
     if (!ttsEnabled || typeof window === "undefined") return;
 
     // Stop current audio if playing
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
+    stopSpeaking();
 
     // Clean text for speech
     const clean = text.replace(/[#*`_~>\[\]]/g, "").replace(/\n+/g, " ").trim();
@@ -205,26 +215,40 @@ export default function ProductsPage() {
         throw new Error("TTS request failed");
       }
 
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audioRef.current = audio;
+      // Use Web Audio API to prevent OS media player notifications
+      const arrayBuffer = await res.arrayBuffer();
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const audioContext = new AudioCtx();
+      audioContextRef.current = audioContext;
 
-      audio.onended = () => {
+      const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+      const source = audioContext.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(audioContext.destination);
+      audioSourceRef.current = source;
+
+      source.onended = () => {
         setIsSpeaking(false);
-        URL.revokeObjectURL(url);
-        audioRef.current = null;
+        audioSourceRef.current = null;
       };
-      audio.onerror = () => {
-        setIsSpeaking(false);
-        URL.revokeObjectURL(url);
-        audioRef.current = null;
-      };
-      await audio.play();
+
+      // Aggressively prevent Chrome media session
+      if ('mediaSession' in navigator) {
+        try { navigator.mediaSession.playbackState = 'none'; } catch {}
+      }
+
+      source.start(0);
+
     } catch {
       // Fallback: use browser's built-in speechSynthesis
       console.warn("Groq TTS unavailable, falling back to browser voice.");
       if (!window.speechSynthesis) { setIsSpeaking(false); return; }
+      
+      // Aggressively prevent Chrome media session for speech synthesis too
+      if ('mediaSession' in navigator) {
+        try { navigator.mediaSession.playbackState = 'none'; } catch {}
+      }
+      
       window.speechSynthesis.cancel();
       const utter = new SpeechSynthesisUtterance(clean);
       utter.rate = 1.0;
@@ -240,11 +264,12 @@ export default function ProductsPage() {
     }
   };
 
-
   const stopSpeaking = () => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    window.speechSynthesis?.cancel();
+    if (audioSourceRef.current) {
+      try { audioSourceRef.current.stop(); } catch {}
+      audioSourceRef.current.disconnect();
+      audioSourceRef.current = null;
     }
     setIsSpeaking(false);
   };
@@ -268,8 +293,6 @@ export default function ProductsPage() {
       const responseText = data.response || "Sorry, I couldn't process that.";
       const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: responseText, products: data.products };
       setChatMessages((p) => [...p, botMsg]);
-      // Auto-speak the response
-      setTimeout(() => speakText(responseText), 100);
     } catch {
       setChatMessages((p) => [...p, { id: `err-${Date.now()}`, role: "assistant", content: "Error connecting to assistant. Please try again." }]);
     } finally { setChatLoading(false); }
@@ -287,7 +310,6 @@ export default function ProductsPage() {
         const responseText = data.response || "Sorry, I couldn't process that.";
         const botMsg: ChatMsg = { id: `bot-${Date.now()}`, role: "assistant", content: responseText, products: data.products };
         setChatMessages((p) => [...p, botMsg]);
-        setTimeout(() => speakText(responseText), 100);
       })
       .catch(() => setChatMessages((p) => [...p, { id: `err-${Date.now()}`, role: "assistant", content: "Error connecting to assistant." }]))
       .finally(() => setChatLoading(false));
@@ -301,15 +323,10 @@ export default function ProductsPage() {
 
   // ── Voice Input ──────────────────────────────────────────────────────────────
   const startVoiceInput = async () => {
-    if (isRecording) {
-      // Stop recording
-      mediaRecorderRef.current?.stop();
-      return;
-    }
-
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioChunksRef.current = [];
+      isCancellingRef.current = false;
 
       // Pick best supported MIME type
       const mimeType = [
@@ -330,6 +347,8 @@ export default function ProductsPage() {
         // Stop all tracks to release mic
         stream.getTracks().forEach((t) => t.stop());
         setIsRecording(false);
+        
+        if (isCancellingRef.current) return;
 
         const blob = new Blob(audioChunksRef.current, {
           type: recorder.mimeType || "audio/webm",
@@ -386,6 +405,20 @@ export default function ProductsPage() {
     } catch (err) {
       console.error("Microphone access denied:", err);
       alert("Microphone access is required for voice input.");
+    }
+  };
+
+  const stopVoiceInput = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      isCancellingRef.current = false;
+      mediaRecorderRef.current.stop();
+    }
+  };
+
+  const cancelVoiceInput = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      isCancellingRef.current = true;
+      mediaRecorderRef.current.stop();
     }
   };
 
@@ -602,7 +635,7 @@ export default function ProductsPage() {
         {showChat && (
           <aside className="fixed inset-0 z-50 lg:relative lg:inset-auto lg:z-0 lg:w-[380px] lg:flex-shrink-0 animate-slide-right">
             {/* Mobile Backdrop */}
-            <div className="absolute inset-0 bg-[#0a0f1e]/60 backdrop-blur-sm lg:hidden" onClick={() => setShowChat(false)}></div>
+            <div className="absolute inset-0 bg-[#0a0f1e]/60 backdrop-blur-sm lg:hidden" onClick={() => { setShowChat(false); stopSpeaking(); }}></div>
 
             <div className="absolute right-0 top-0 bottom-0 w-[90%] max-w-[400px] lg:w-full lg:static lg:h-[calc(100vh-120px)] lg:sticky lg:top-28 flex flex-col shadow-2xl lg:shadow-none">
               <div className="glass-card" style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", padding: 0 }}>
@@ -630,7 +663,7 @@ export default function ProductsPage() {
                     {isSpeaking && (
                       <button onClick={stopSpeaking} title="Stop speaking" style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid rgba(167,139,250,0.4)", background: "rgba(167,139,250,0.12)", color: "#a78bfa", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "13px" }}>⏹</button>
                     )}
-                    <button onClick={() => setShowChat(false)} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✕</button>
+                    <button onClick={() => { setShowChat(false); stopSpeaking(); }} style={{ width: "32px", height: "32px", borderRadius: "8px", border: "1px solid var(--border)", background: "transparent", color: "var(--text-muted)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px" }}>✕</button>
                   </div>
                 </div>
 
@@ -638,15 +671,15 @@ export default function ProductsPage() {
                 <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
                   {chatMessages.length === 0 && (
                     <div style={{ textAlign: "center", padding: "32px 16px" }}>
-                      <p style={{ fontSize: "32px", marginBottom: "12px" }}>💬</p>
-                      <p style={{ fontWeight: "700", color: "var(--text-secondary)", marginBottom: "8px" }}>Ask me anything!</p>
-                      <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.6" }}>Try: "Suggest vitamins for hair fall" or "What helps with weak immunity?"</p>
+                      <p style={{ fontSize: "32px", marginBottom: "12px" }}>🩺</p>
+                      <p style={{ fontWeight: "700", color: "var(--text-secondary)", marginBottom: "8px" }}>Describe your symptoms</p>
+                      <p style={{ fontSize: "13px", color: "var(--text-muted)", lineHeight: "1.6" }}>Try: "I feel tired and weak" or "I am losing hair"</p>
                       <div style={{ display: "flex", flexDirection: "column", gap: "6px", marginTop: "16px" }}>
                         {[
-                          { icon: "💊", text: "Suggest vitamins for hair fall" },
-                          { icon: "🦴", text: "Help with weak bones" },
-                          { icon: "⚡", text: "Best supplements for energy" },
-                          { icon: "🛡️", text: "Boost my immunity" },
+                          { icon: "💊", text: "I feel tired all day" },
+                          { icon: "🦴", text: "My bones are fragile" },
+                          { icon: "⚡", text: "I have low energy" },
+                          { icon: "🛡️", text: "I'm stressed and can't sleep" },
                         ].map(({ icon, text }) => (
                           <button key={text} onClick={() => sendQuickReply(text)}
                             style={{ padding: "9px 12px", borderRadius: "10px", background: "var(--accent-light)", border: "1px solid rgba(16,185,129,0.2)", color: "var(--accent)", fontSize: "12px", cursor: "pointer", fontFamily: "inherit", textAlign: "left", display: "flex", alignItems: "center", gap: "8px", transition: "all 0.15s" }}>
@@ -671,9 +704,31 @@ export default function ProductsPage() {
                           color: "var(--text-primary)",
                         }}>
                           {msg.role === "assistant"
-                            ? <div className="prose" style={{ fontSize: "13px", color: "white", lineHeight: "1.65" }}>
-                              <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
-                            </div>
+                            ? (
+                              <>
+                                <div className="prose prose-invert" style={{ fontSize: "13px", color: "white", lineHeight: "1.65" }}>
+                                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
+                                </div>
+                                {msg.products && msg.products.length > 0 && (
+                                  <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                                    {msg.products.map((p) => (
+                                      <div key={p._id} 
+                                        className="hover:bg-white/10 transition-colors"
+                                        style={{ display: "flex", gap: "10px", alignItems: "center", background: "rgba(0,0,0,0.2)", border: "1px solid rgba(16,185,129,0.3)", padding: "8px", borderRadius: "10px", cursor: "pointer" }}
+                                      >
+                                        <div style={{ width: "36px", height: "36px", borderRadius: "6px", background: "var(--accent-light)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", flexShrink: 0 }}>
+                                          💊
+                                        </div>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                          <p style={{ fontSize: "12px", fontWeight: "600", color: "white", margin: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</p>
+                                          <p style={{ fontSize: "11px", color: "var(--text-muted)", margin: 0 }}>₹{p.price} • {p.category}</p>
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </>
+                            )
                             : <p style={{ fontSize: "14px", color: "white" }}>{msg.content}</p>
                           }
                         </div>
@@ -704,63 +759,68 @@ export default function ProductsPage() {
                 </div>
 
                 {/* Chat Input */}
-                <form onSubmit={handleChat} style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px", alignItems: "center" }}>
-                  {/* Mic Button */}
-                  <button
-                    type="button"
-                    onClick={startVoiceInput}
-                    disabled={transcribing}
-                    title={isRecording ? "Stop recording" : "Start voice input"}
-                    style={{
-                      flexShrink: 0,
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "12px",
-                      border: isRecording ? "2px solid #ef4444" : "1px solid var(--border)",
-                      background: isRecording
-                        ? "rgba(239,68,68,0.15)"
-                        : transcribing
-                        ? "rgba(245,158,11,0.1)"
-                        : "rgba(255,255,255,0.05)",
-                      color: isRecording ? "#ef4444" : transcribing ? "#f59e0b" : "var(--text-muted)",
-                      cursor: transcribing ? "not-allowed" : "pointer",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      transition: "all 0.2s",
-                      animation: isRecording ? "pulse-mic 1s ease-in-out infinite" : "none",
-                    }}
-                  >
-                    {transcribing ? (
-                      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ animation: "spin 1s linear infinite" }}>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                    ) : isRecording ? (
-                      /* Stop icon */
-                      <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="16" height="16" rx="2" />
-                      </svg>
-                    ) : (
-                      /* Mic icon */
+                {isRecording ? (
+                  <div style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px", alignItems: "center", justifyContent: "space-between", background: "rgba(239,68,68,0.05)" }}>
+                    <button type="button" onClick={cancelVoiceInput} style={{ color: "#ef4444", background: "rgba(239,68,68,0.1)", border: "none", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "13px", fontWeight: "600", transition: "all 0.2s" }}>
+                      Cancel
+                    </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#ef4444", fontSize: "14px", fontWeight: "600" }}>
+                      <span style={{ animation: "pulse-mic 1s ease-in-out infinite", width: "10px", height: "10px", borderRadius: "50%", background: "#ef4444", boxShadow: "0 0 8px rgba(239,68,68,0.6)" }}></span>
+                      Recording...
+                    </div>
+                    <button type="button" onClick={stopVoiceInput} style={{ color: "#10b981", background: "rgba(16,185,129,0.1)", border: "none", padding: "8px 12px", borderRadius: "8px", cursor: "pointer", fontSize: "13px", fontWeight: "600", transition: "all 0.2s" }}>
+                      Send
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleChat} style={{ padding: "12px 16px", borderTop: "1px solid var(--border)", display: "flex", gap: "8px", alignItems: "center" }}>
+                    {/* Mic Button */}
+                    <button
+                      type="button"
+                      onClick={startVoiceInput}
+                      disabled={transcribing}
+                      title="Start voice input"
+                      style={{
+                        flexShrink: 0,
+                        width: "40px",
+                        height: "40px",
+                        borderRadius: "12px",
+                        border: "1px solid var(--border)",
+                        background: transcribing ? "rgba(245,158,11,0.1)" : "rgba(255,255,255,0.05)",
+                        color: transcribing ? "#f59e0b" : "var(--text-muted)",
+                        cursor: transcribing ? "not-allowed" : "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {transcribing ? (
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" style={{ animation: "spin 1s linear infinite" }}>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                      ) : (
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+                        </svg>
+                      )}
+                    </button>
+
+                    <input id="chat-input" className="input-field" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
+                      placeholder={transcribing ? "Transcribing…" : "Describe your symptoms…"}
+                      disabled={chatLoading}
+                      style={{ flex: 1, padding: "10px 14px", fontSize: "13px" }} />
+
+                    <button type="submit" className="btn-primary" id="chat-send-btn" disabled={chatLoading || !chatInput.trim()}
+                      style={{ flexShrink: 0, padding: "10px 14px", minWidth: "auto" }}>
                       <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                       </svg>
-                    )}
-                  </button>
+                    </button>
+                  </form>
+                )}
 
-                  <input id="chat-input" className="input-field" value={chatInput} onChange={(e) => setChatInput(e.target.value)}
-                    placeholder={isRecording ? "Listening…" : transcribing ? "Transcribing…" : "Ask about health products…"}
-                    disabled={chatLoading || isRecording}
-                    style={{ flex: 1, padding: "10px 14px", fontSize: "13px" }} />
-
-                  <button type="submit" className="btn-primary" id="chat-send-btn" disabled={chatLoading || !chatInput.trim() || isRecording}
-                    style={{ flexShrink: 0, padding: "10px 14px", minWidth: "auto" }}>
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                    </svg>
-                  </button>
-                </form>
               </div>
             </div>
           </aside>
