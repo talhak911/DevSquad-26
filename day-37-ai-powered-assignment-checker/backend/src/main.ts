@@ -17,7 +17,7 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3002;
   await app.listen(port);
-  console.log(`🏥 Smart Healthcare Store API running on http://localhost:${port}`);
+  console.log(`📚 AI Assignment Checker API running on http://localhost:${port}`);
 }
 bootstrap();
 

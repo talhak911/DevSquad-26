@@ -1,21 +1,22 @@
 import 'dotenv/config'; // load env vars first
+
+// Map Groq config to OpenAI defaults BEFORE importing @openai/agents
+if (process.env.GROQ_API_KEY) {
+  process.env.OPENAI_API_KEY = process.env.GROQ_API_KEY;
+  process.env.OPENAI_BASE_URL = 'https://api.groq.com/openai/v1';
+} else {
+  console.error("Missing GROQ_API_KEY in .env");
+  process.exit(1);
+}
+
 import { setTracingDisabled } from '@openai/agents-core';
 import { Runner } from '@openai/agents';
 import * as readline from 'readline';
-import { GeminiModel } from './providers/geminiProvider';
 import { managerAgent } from './agents/agents';
-import { setDefaultModelProvider } from '@openai/agents';
 
-// Disable SDK tracing — it would otherwise try to POST to api.openai.com with our Gemini key
+// Disable SDK tracing — it would otherwise try to POST to api.openai.com with our Groq key
 setTracingDisabled(true);
 
-// Create a Runner instance configured with our custom native Gemini provider
-
-setDefaultModelProvider({
-  async getModel(name?: string) {
-    return new GeminiModel(name);
-  },
-});
 const runner = new Runner();
 
 const rl = readline.createInterface({
