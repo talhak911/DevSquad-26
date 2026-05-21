@@ -1,0 +1,19 @@
+{
+  "name": "Quantum Nexus Matrix #1",
+  "description": "A glowing neon quantum grid matrix crystal relic, cyberpunk dark space aesthetic.",
+  "image": "ipfs://QmdSzxZQLNBJXXqYQ8Rr1phTZ6MgdfEQfW5xvVvGozJvq1/1.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Mythic"
+    },
+    {
+      "trait_type": "Power Level",
+      "value": "98"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Quantum"
+    }
+  ]
+}

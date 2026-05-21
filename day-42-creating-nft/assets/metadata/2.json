@@ -1,0 +1,19 @@
+{
+  "name": "Cybernetic Void Core #2",
+  "description": "A dark swirling black hole void core with floating neon pink and purple cybernetic structures.",
+  "image": "ipfs://QmdSzxZQLNBJXXqYQ8Rr1phTZ6MgdfEQfW5xvVvGozJvq1/2.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Power Level",
+      "value": "89"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Void"
+    }
+  ]
+}

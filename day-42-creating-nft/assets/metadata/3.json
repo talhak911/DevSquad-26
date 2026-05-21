@@ -1,0 +1,19 @@
+{
+  "name": "Aetherial Warp Prism #3",
+  "description": "A crystalline neon prism warping space and light around it, with glowing cosmic sparkles.",
+  "image": "ipfs://QmdSzxZQLNBJXXqYQ8Rr1phTZ6MgdfEQfW5xvVvGozJvq1/3.png",
+  "attributes": [
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    },
+    {
+      "trait_type": "Power Level",
+      "value": "83"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Aether"
+    }
+  ]
+}
