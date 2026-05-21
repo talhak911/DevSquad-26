@@ -79,7 +79,7 @@ export default function TeacherDashboard() {
     });
 
     try {
-      const response = await fetch("http://localhost:3002/evaluate", {
+      const response = await fetch(process.env.NEXT_PUBLIC_BACKEND_URL + "/evaluate", {
         method: "POST",
         body: formData,
       });
@@ -149,8 +149,8 @@ export default function TeacherDashboard() {
               </label>
               <div className="flex gap-4">
                 <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border cursor-pointer transition-all ${mode === 'strict'
-                    ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400'
-                    : 'bg-gray-950 border-gray-800 text-gray-400 hover:border-gray-700'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400'
+                  : 'bg-gray-950 border-gray-800 text-gray-400 hover:border-gray-700'
                   }`}>
                   <input
                     type="radio"
@@ -167,8 +167,8 @@ export default function TeacherDashboard() {
                 </label>
 
                 <label className={`flex-1 flex items-center justify-center gap-2 p-4 rounded-xl border cursor-pointer transition-all ${mode === 'loose'
-                    ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400'
-                    : 'bg-gray-950 border-gray-800 text-gray-400 hover:border-gray-700'
+                  ? 'bg-indigo-500/10 border-indigo-500 text-indigo-400'
+                  : 'bg-gray-950 border-gray-800 text-gray-400 hover:border-gray-700'
                   }`}>
                   <input
                     type="radio"

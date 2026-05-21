@@ -205,7 +205,7 @@ Output MUST be purely a JSON object in this exact format (no markdown, no other 
 {
   "studentName": "Extracted Name or Unknown",
   "rollNumber": "Extracted Roll Number or Unknown",
-  "score": number,
+  "score": number (0-100),
   "remarks": "Detailed remarks on what was good and what went wrong based on the mode and instructions"
 }`;
 

@@ -8,10 +8,9 @@ async function bootstrap() {
     bodyParser: true,
   });
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001','https://smart-healthcare-products-talha.vercel.app'],
+    origin: ['http://localhost:3000', 'http://localhost:3001','https://ai-assignment-checker-talha.vercel.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
+ 
   });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
 
