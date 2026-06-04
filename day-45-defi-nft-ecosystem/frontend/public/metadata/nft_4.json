@@ -1,0 +1,15 @@
+{
+  "name": "Ether Shard",
+  "description": "A crystalline fragment of pure decentralized energy.",
+  "image": "https://gateway.pinata.cloud/ipfs/bafybeicfp2gc7odearywjbnr6gixxd2prn7m3drmnwk4ikfbnwptumxqem",
+  "attributes": [
+    {
+      "trait_type": "Class",
+      "value": "Crystalline"
+    },
+    {
+      "trait_type": "Price",
+      "value": "250 DNFT"
+    }
+  ]
+}

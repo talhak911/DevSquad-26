@@ -1,0 +1,15 @@
+{
+  "name": "Nebula Voyager",
+  "description": "Deep space explorer vessel floating in cosmic dust.",
+  "image": "https://gateway.pinata.cloud/ipfs/bafybeicfafsx63zh2sdfuvalrhbblqnhuci5nhbbjsrf6ssxgjfyoqee5i",
+  "attributes": [
+    {
+      "trait_type": "Class",
+      "value": "Cosmic"
+    },
+    {
+      "trait_type": "Price",
+      "value": "100 DNFT"
+    }
+  ]
+}
