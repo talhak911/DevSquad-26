@@ -155,7 +155,7 @@ export class EvaluationService {
         await evaluation.save();
         results.push(evaluationResult);
       } catch (error: any) {
-        this.logger.error(`Failed to process a file: ${error.message}`);
+        this.logger.error(`Failed to processs a file: ${error.message}`);
         results.push({
           studentName: 'Error',
           rollNumber: 'Error',
